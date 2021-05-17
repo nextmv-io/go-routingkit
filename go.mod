@@ -1,3 +1,3 @@
-module github.com/rktest
+module github.com/nextmv-io/go-routingkit
 
 go 1.16

@@ -7,7 +7,8 @@
 // Instantiate templates used by example
 namespace std {
   %template(IntVector) vector<int>;
-  %template(DoubleVector) vector<double>;
+  %template(FloatVector) vector<float>;
+  %template(PointVector) vector<Point>;
 }
 
 %include "Client.h"

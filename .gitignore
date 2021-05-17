@@ -23,3 +23,6 @@
 .vscode/
 
 go.sum
+
+# Temporary directories
+third_party/RoutingKit/

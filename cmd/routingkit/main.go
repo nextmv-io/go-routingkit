@@ -3,37 +3,63 @@ package main
 
 import (
 	"fmt"
-	"sync"
+	"os"
 	"time"
 
-	routingkit "github.com/rktest/routingkit"
+	"github.com/nextmv-io/go-routingkit/routingkit"
 )
 
 func main() {
-	start := time.Now()
+
+	mapFile := "data/map.osm.pbf"
+	chFile := "data/map.ch"
+
 	myClass := routingkit.NewClient()
 	defer routingkit.DeleteClient(myClass)
-	myClass.Load("map.osm.pbf", "map.ch")
-	elapsed := time.Since(start)
-	fmt.Println("Load pbf and ch took %v", elapsed)
+
+	start := time.Now()
+	if _, err := os.Stat(chFile); os.IsNotExist(err) {
+		myClass.Build_ch(mapFile, chFile)
+		fmt.Println("Load pbf and build ch took %v", time.Since(start))
+	} else {
+		myClass.Load(mapFile, chFile)
+		fmt.Println("Load pbf and ch took %v", time.Since(start))
+	}
+
 	start = time.Now()
+	p1 := routingkit.NewPoint()
+	p1.SetLon(-76.58749)
+	p1.SetLat(39.29971)
+	p2 := routingkit.NewPoint()
+	p2.SetLon(-76.59735)
+	p2.SetLat(39.30587)
+
 	var number int64 = 100
-	v := routingkit.NewIntVector(number)
-	defer routingkit.DeleteIntVector(v)
+	points := routingkit.NewPointVector(number)
+	defer routingkit.DeletePointVector(points)
 	for i := 0; i < 100; i++ {
-		v.Set(i, i)
+		if i%2 == 0 {
+			points.Set(i, p1)
+		} else {
+			points.Set(i, p2)
+		}
+
 	}
-	average := myClass.Average(v)
-	fmt.Println(average)
-	wg := sync.WaitGroup{}
-	wg.Add(10000)
-	for i := 0; i < 10000; i++ {
-		go func() {
-			defer wg.Done()
-			_ = myClass.Int_get(39.29971, -76.58749, 39.30587, -76.59735)
-		}()
-	}
-	wg.Wait()
-	elapsed = time.Since(start)
-	fmt.Println("100 queries took %v", elapsed)
+	//distances := myClass.Table(points, points)
+	_ = myClass.Table(points, points)
+	// for i := 0; i < int(distances.Size()); i++ {
+	// 	fmt.Printf("%f, ", distances.Get(i))
+	// }
+	fmt.Println("100 queries took ", time.Since(start))
+
+	// wg := sync.WaitGroup{}
+	// wg.Add(100)
+	// for i := 0; i < 100; i++ {
+	// 	go func() {
+	// 		defer wg.Done()
+	// 		_ = myClass.Distance(-76.58749, 39.29971, -76.59735, 39.30587)
+	// 	}()
+	// }
+	// wg.Wait()
+	//fmt.Println("100 queries took %v", time.Since(start))
 }
