@@ -24,5 +24,8 @@
 
 go.sum
 
+# Ignore binaries
+cmd/routingkit/routingkit
+
 # Temporary directories
 third_party/RoutingKit/
