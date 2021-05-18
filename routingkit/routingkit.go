@@ -15,7 +15,7 @@ type Client interface {
 }
 
 func finalizer(client *rk.Client) {
-	defer routingkit.DeleteClient(*client)
+	routingkit.DeleteClient(*client)
 }
 
 func Wrapper(mapFile, chFile string) (Client, error) {
