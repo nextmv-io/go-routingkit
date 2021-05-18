@@ -3,6 +3,10 @@
 #include "Client.h"
 %}
 
+%insert(cgo_comment_typedefs) %{
+#cgo LDFLAGS: -L. -l:libroutingkit.so
+%}
+
 %include "std_vector.i"
 // Instantiate templates used by example
 namespace std {
