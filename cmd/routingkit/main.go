@@ -20,8 +20,6 @@ func main() {
 	myClass := routingkit.NewClient()
 	defer routingkit.DeleteClient(myClass)
 
-	testFile(myClass)
-
 	start := time.Now()
 	if _, err := os.Stat(chFile); os.IsNotExist(err) {
 		myClass.Build_ch(mapFile, chFile)
@@ -30,6 +28,8 @@ func main() {
 		myClass.Load(mapFile, chFile)
 		fmt.Println("Load pbf and ch took %v", time.Since(start))
 	}
+
+	testFile(myClass)
 
 	start = time.Now()
 	p1 := routingkit.NewPoint()
@@ -96,6 +96,13 @@ func testFile(client routingkit.Client) {
 		p.SetLat(float32(point[1]))
 		pointVector.Set(i, p)
 	}
+	// for _, p1 := range points {
+	// 	for _, p2 := range points {
+	// 		flon, flat, tlon, tlat := float32(p1[0]), float32(p1[1]), float32(p2[0]), float32(p2[1])
+	// 		dist := client.Distance(flon, flat, tlon, tlat)
+	// 		fmt.Printf("%f,%f -> %f,%f : %f \n", flon, flat, tlon, tlat, dist)
+	// 	}
+	// }
 	distances := client.Table(pointVector, pointVector)
 	queries := len(points) * len(points)
 	elapsed := time.Since(start)
