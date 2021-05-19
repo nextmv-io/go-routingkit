@@ -97,6 +97,26 @@ float Client::distance(float from_longitude, float from_latitude, float to_longi
 	return distance;
 }
 
+QueryResponse Client::queryrequest(float radius, float from_longitude, float from_latitude, float to_longitude, float to_latitude) {
+	// Use the query object to answer queries from stdin to stdout
+	unsigned from = map.find_nearest_neighbor_within_radius(from_latitude, from_longitude, radius).id;
+	unsigned to = map.find_nearest_neighbor_within_radius(to_latitude, to_longitude, radius).id;
+	QueryResponse response;
+	if(from == invalid_id || to == invalid_id){
+		response.distance=-1.0;
+		return response;
+	}
+
+	query.reset().add_source(from).add_target(to).run();
+	auto distance = query.get_distance();
+	response.distance=distance;
+	auto path = query.get_node_path();
+	for(auto x:path)
+	    response.waypoints.push_back(Point{lon: graph.longitude[x], lat: graph.latitude[x]});
+
+	return response;
+}
+
 std::vector<float> Client::table(std::vector<Point> sources, std::vector<Point> targets){
 	vector<float> vect;
 

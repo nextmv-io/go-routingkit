@@ -10,8 +10,13 @@ import (
 	rk "github.com/nextmv-io/go-routingkit/routingkit/internal/routingkit"
 )
 
+type Response struct {
+	WayPoints [][]float64
+	Distance  float64
+}
+
 type Client interface {
-	Distance([]float64, []float64) float64
+	Query(float64, []float64, []float64) Response
 }
 
 func finalizer(client *rk.Client) {
@@ -41,11 +46,24 @@ type client struct {
 	client rk.Client
 }
 
-func (c client) Distance(from []float64, to []float64) float64 {
-	return float64(c.client.Distance(
+func (c client) Query(radius float64, from []float64, to []float64) Response {
+	resp := c.client.Queryrequest(
+		float32(radius),
 		float32(from[0]),
 		float32(from[1]),
 		float32(to[0]),
 		float32(to[1]),
-	))
+	)
+	wp := resp.GetWaypoints()
+	waypoints := make([][]float64, wp.Size())
+	for i := 0; i < len(waypoints); i++ {
+		p := wp.Get(i)
+		waypoints[i] = []float64{float64(p.GetLon()), float64(p.GetLat())}
+	}
+
+	reponse := Response{
+		Distance:  float64(resp.GetDistance()),
+		WayPoints: waypoints,
+	}
+	return reponse
 }

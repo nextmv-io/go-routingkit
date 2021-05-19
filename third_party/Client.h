@@ -7,9 +7,15 @@ struct Point {
 	float lat;
 };
 
+struct QueryResponse{
+        float distance;
+        std::vector<Point> waypoints;
+};
+
 class Client {
         public:
                 float distance(float from_longitude, float from_latitude, float to_longitude, float to_latitude);
+                QueryResponse queryrequest(float radius, float from_longitude, float from_latitude, float to_longitude, float to_latitude);
                 std::vector<float> table(std::vector<Point> sources, std::vector<Point> targets);
                 void build_ch(char* pbf_file, char* ch_file);
                 void load(char *pbf_file, char *ch_file);

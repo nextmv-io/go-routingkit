@@ -91,7 +91,14 @@ extern void _wrap_Point_lat_set_routingkit_007dcf72057aca2d(uintptr_t arg1, floa
 extern float _wrap_Point_lat_get_routingkit_007dcf72057aca2d(uintptr_t arg1);
 extern uintptr_t _wrap_new_Point_routingkit_007dcf72057aca2d(void);
 extern void _wrap_delete_Point_routingkit_007dcf72057aca2d(uintptr_t arg1);
+extern void _wrap_QueryResponse_distance_set_routingkit_007dcf72057aca2d(uintptr_t arg1, float arg2);
+extern float _wrap_QueryResponse_distance_get_routingkit_007dcf72057aca2d(uintptr_t arg1);
+extern void _wrap_QueryResponse_waypoints_set_routingkit_007dcf72057aca2d(uintptr_t arg1, uintptr_t arg2);
+extern uintptr_t _wrap_QueryResponse_waypoints_get_routingkit_007dcf72057aca2d(uintptr_t arg1);
+extern uintptr_t _wrap_new_QueryResponse_routingkit_007dcf72057aca2d(void);
+extern void _wrap_delete_QueryResponse_routingkit_007dcf72057aca2d(uintptr_t arg1);
 extern float _wrap_Client_distance_routingkit_007dcf72057aca2d(uintptr_t arg1, float arg2, float arg3, float arg4, float arg5);
+extern uintptr_t _wrap_Client_queryrequest_routingkit_007dcf72057aca2d(uintptr_t arg1, float arg2, float arg3, float arg4, float arg5, float arg6);
 extern uintptr_t _wrap_Client_table_routingkit_007dcf72057aca2d(uintptr_t arg1, uintptr_t arg2, uintptr_t arg3);
 extern void _wrap_Client_build_ch_routingkit_007dcf72057aca2d(uintptr_t arg1, swig_type_13 arg2, swig_type_14 arg3);
 extern void _wrap_Client_load_routingkit_007dcf72057aca2d(uintptr_t arg1, swig_type_15 arg2, swig_type_16 arg3);
@@ -542,6 +549,61 @@ type Point interface {
 	GetLat() (_swig_ret float32)
 }
 
+type SwigcptrQueryResponse uintptr
+
+func (p SwigcptrQueryResponse) Swigcptr() uintptr {
+	return (uintptr)(p)
+}
+
+func (p SwigcptrQueryResponse) SwigIsQueryResponse() {
+}
+
+func (arg1 SwigcptrQueryResponse) SetDistance(arg2 float32) {
+	_swig_i_0 := arg1
+	_swig_i_1 := arg2
+	C._wrap_QueryResponse_distance_set_routingkit_007dcf72057aca2d(C.uintptr_t(_swig_i_0), C.float(_swig_i_1))
+}
+
+func (arg1 SwigcptrQueryResponse) GetDistance() (_swig_ret float32) {
+	var swig_r float32
+	_swig_i_0 := arg1
+	swig_r = (float32)(C._wrap_QueryResponse_distance_get_routingkit_007dcf72057aca2d(C.uintptr_t(_swig_i_0)))
+	return swig_r
+}
+
+func (arg1 SwigcptrQueryResponse) SetWaypoints(arg2 PointVector) {
+	_swig_i_0 := arg1
+	_swig_i_1 := arg2.Swigcptr()
+	C._wrap_QueryResponse_waypoints_set_routingkit_007dcf72057aca2d(C.uintptr_t(_swig_i_0), C.uintptr_t(_swig_i_1))
+}
+
+func (arg1 SwigcptrQueryResponse) GetWaypoints() (_swig_ret PointVector) {
+	var swig_r PointVector
+	_swig_i_0 := arg1
+	swig_r = (PointVector)(SwigcptrPointVector(C._wrap_QueryResponse_waypoints_get_routingkit_007dcf72057aca2d(C.uintptr_t(_swig_i_0))))
+	return swig_r
+}
+
+func NewQueryResponse() (_swig_ret QueryResponse) {
+	var swig_r QueryResponse
+	swig_r = (QueryResponse)(SwigcptrQueryResponse(C._wrap_new_QueryResponse_routingkit_007dcf72057aca2d()))
+	return swig_r
+}
+
+func DeleteQueryResponse(arg1 QueryResponse) {
+	_swig_i_0 := arg1.Swigcptr()
+	C._wrap_delete_QueryResponse_routingkit_007dcf72057aca2d(C.uintptr_t(_swig_i_0))
+}
+
+type QueryResponse interface {
+	Swigcptr() uintptr
+	SwigIsQueryResponse()
+	SetDistance(arg2 float32)
+	GetDistance() (_swig_ret float32)
+	SetWaypoints(arg2 PointVector)
+	GetWaypoints() (_swig_ret PointVector)
+}
+
 type SwigcptrClient uintptr
 
 func (p SwigcptrClient) Swigcptr() uintptr {
@@ -559,6 +621,18 @@ func (arg1 SwigcptrClient) Distance(arg2 float32, arg3 float32, arg4 float32, ar
 	_swig_i_3 := arg4
 	_swig_i_4 := arg5
 	swig_r = (float32)(C._wrap_Client_distance_routingkit_007dcf72057aca2d(C.uintptr_t(_swig_i_0), C.float(_swig_i_1), C.float(_swig_i_2), C.float(_swig_i_3), C.float(_swig_i_4)))
+	return swig_r
+}
+
+func (arg1 SwigcptrClient) Queryrequest(arg2 float32, arg3 float32, arg4 float32, arg5 float32, arg6 float32) (_swig_ret QueryResponse) {
+	var swig_r QueryResponse
+	_swig_i_0 := arg1
+	_swig_i_1 := arg2
+	_swig_i_2 := arg3
+	_swig_i_3 := arg4
+	_swig_i_4 := arg5
+	_swig_i_5 := arg6
+	swig_r = (QueryResponse)(SwigcptrQueryResponse(C._wrap_Client_queryrequest_routingkit_007dcf72057aca2d(C.uintptr_t(_swig_i_0), C.float(_swig_i_1), C.float(_swig_i_2), C.float(_swig_i_3), C.float(_swig_i_4), C.float(_swig_i_5))))
 	return swig_r
 }
 
@@ -620,6 +694,7 @@ type Client interface {
 	Swigcptr() uintptr
 	SwigIsClient()
 	Distance(arg2 float32, arg3 float32, arg4 float32, arg5 float32) (_swig_ret float32)
+	Queryrequest(arg2 float32, arg3 float32, arg4 float32, arg5 float32, arg6 float32) (_swig_ret QueryResponse)
 	Table(arg2 PointVector, arg3 PointVector) (_swig_ret FloatVector)
 	Build_ch(arg2 string, arg3 string)
 	Load(arg2 string, arg3 string)

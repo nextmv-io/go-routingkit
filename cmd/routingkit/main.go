@@ -41,7 +41,8 @@ func main() {
 
 	for i := 0; i < 100; i++ {
 		for j := 0; j < 100; j++ {
-			_ = client.Distance(points[i], points[j])
+			resp := client.Query(1000, points[i], points[j])
+			fmt.Print(resp.Distance)
 		}
 	}
 	fmt.Println("10000 queries took ", time.Since(start))
@@ -68,7 +69,7 @@ func testFile(client routingkit.Client) {
 	start := time.Now()
 	for _, p1 := range points {
 		for _, p2 := range points {
-			_ = client.Distance(p1, p2)
+			_ = client.Query(1000, p1, p2)
 			// fmt.Printf("%f,%f -> %f,%f : %f \n", p1[0], p1[1], p2[0], p2[1], dist)
 		}
 	}
