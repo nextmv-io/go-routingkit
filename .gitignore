@@ -24,6 +24,9 @@
 
 go.sum
 
+# ignore C++ object files
+.o
+
 # Ignore binaries
 cmd/routingkit/routingkit
 
