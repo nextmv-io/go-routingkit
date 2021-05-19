@@ -869,22 +869,47 @@ void _wrap_delete_Point_routingkit_007dcf72057aca2d(Point *_swig_go_0) {
 }
 
 
-float _wrap_Client_distance_routingkit_007dcf72057aca2d(Client *_swig_go_0, float _swig_go_1, float _swig_go_2, float _swig_go_3, float _swig_go_4) {
+float _wrap_Client_distance_routingkit_007dcf72057aca2d(Client *_swig_go_0, intgo _swig_go_1, float _swig_go_2, float _swig_go_3, float _swig_go_4, float _swig_go_5) {
   Client *arg1 = (Client *) 0 ;
-  float arg2 ;
+  int arg2 ;
   float arg3 ;
   float arg4 ;
   float arg5 ;
+  float arg6 ;
   float result;
   float _swig_go_result;
   
   arg1 = *(Client **)&_swig_go_0; 
-  arg2 = (float)_swig_go_1; 
+  arg2 = (int)_swig_go_1; 
   arg3 = (float)_swig_go_2; 
   arg4 = (float)_swig_go_3; 
   arg5 = (float)_swig_go_4; 
+  arg6 = (float)_swig_go_5; 
   
-  result = (float)(arg1)->distance(arg2,arg3,arg4,arg5);
+  result = (float)(arg1)->distance(arg2,arg3,arg4,arg5,arg6);
+  _swig_go_result = result; 
+  return _swig_go_result;
+}
+
+
+float _wrap_Client_threaded_routingkit_007dcf72057aca2d(Client *_swig_go_0, intgo _swig_go_1, float _swig_go_2, float _swig_go_3, float _swig_go_4, float _swig_go_5) {
+  Client *arg1 = (Client *) 0 ;
+  int arg2 ;
+  float arg3 ;
+  float arg4 ;
+  float arg5 ;
+  float arg6 ;
+  float result;
+  float _swig_go_result;
+  
+  arg1 = *(Client **)&_swig_go_0; 
+  arg2 = (int)_swig_go_1; 
+  arg3 = (float)_swig_go_2; 
+  arg4 = (float)_swig_go_3; 
+  arg5 = (float)_swig_go_4; 
+  arg6 = (float)_swig_go_5; 
+  
+  result = (float)(arg1)->threaded(arg2,arg3,arg4,arg5,arg6);
   _swig_go_result = result; 
   return _swig_go_result;
 }

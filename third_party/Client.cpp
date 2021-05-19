@@ -6,13 +6,15 @@
 #include <routingkit/geo_position_to_node.h>
 #include <iostream>
 #include <numeric>
+#include <thread>
+#include <future>
 using namespace RoutingKit;
 using namespace std;
 
 static ContractionHierarchy ch;
 static SimpleOSMCarRoutingGraph graph;
 static GeoPositionToNode map;
-static ContractionHierarchyQuery query;
+static std::vector<ContractionHierarchyQuery> queries;
 
 void Client::build_ch(char* pbf_file, char* ch_file){
 	// Load a car routing graph from OpenStreetMap-based data
@@ -34,8 +36,10 @@ void Client::build_ch(char* pbf_file, char* ch_file){
 	map = map_geo_position;
 
 	// Besides the CH itself we need a query object. 
-	ContractionHierarchyQuery ch_query(ch);
-	query = ch_query;
+	for (int i = 0; i < 100; i++) {
+		ContractionHierarchyQuery ch_query(ch);
+		queries.push_back(ch_query);
+	}
 }
 
 void Client::load(char* pbf_file, char* ch_file){
@@ -50,16 +54,36 @@ void Client::load(char* pbf_file, char* ch_file){
 	map = map_geo_position;
 
 	// Besides the CH itself we need a query object. 
-	ContractionHierarchyQuery ch_query(ch);
-	query = ch_query;
+	for (int i = 0; i < 100; i++) {
+		ContractionHierarchyQuery ch_query(ch);
+		queries.push_back(ch_query);
+	}
 }
 
 double Client::average(std::vector<int> v) {
   return std::accumulate(v.begin(), v.end(), 0.0)/v.size();
 }
 
-float Client::distance(float from_longitude, float from_latitude, float to_longitude, float to_latitude) {
+float Client::threaded(int i, float from_longitude, float from_latitude, float to_longitude, float to_latitude){
+	auto dist= [](int i, float from_longitude, float from_latitude, float to_longitude, float to_latitude) {
+		// Use the query object to answer queries from stdin to stdout
+		unsigned from = map.find_nearest_neighbor_within_radius(from_latitude, from_longitude, 1000).id;
+		unsigned to = map.find_nearest_neighbor_within_radius(to_latitude, to_longitude, 1000).id;
+		if(from == invalid_id || to == invalid_id){
+			return -1.0;
+		}
+		queries[i].reset().add_source(from).add_target(to).run();
+		float distance = queries[i].get_distance();
+		return static_cast<double>(distance);
+	};
 
+	auto future = std::async(dist, i, from_longitude, from_latitude, to_longitude, to_latitude);
+	float simple = future.get();
+	return simple;
+}
+
+
+float Client::distance(int i, float from_longitude, float from_latitude, float to_longitude, float to_latitude) {
 	// cout << "distance lon: " << from_longitude << " lat: " << from_latitude <<  ", lon: " << to_longitude << " lat: " << to_latitude << endl;
 
 	long long start_time = get_micro_time();
@@ -82,8 +106,8 @@ float Client::distance(float from_longitude, float from_latitude, float to_longi
 	}
 
 	start_time = get_micro_time();
-	query.reset().add_source(from).add_target(to).run();
-	auto distance = query.get_distance();
+	queries[i].reset().add_source(from).add_target(to).run();
+	auto distance = queries[i].get_distance();
 	// auto path = query.get_node_path();
 	end_time = get_micro_time();
 
@@ -104,7 +128,7 @@ std::vector<float> Client::table(std::vector<Point> sources, std::vector<Point> 
 	{  
 		for (auto &target : targets)
 		{  
-			vect.push_back(distance(source.lon, source.lat, target.lon, target.lat));
+			vect.push_back(distance(0, source.lon, source.lat, target.lon, target.lat));
 		}
 	}
  

@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"sync"
 	"time"
 
 	"github.com/nextmv-io/go-routingkit/routingkit"
@@ -39,11 +40,17 @@ func main() {
 
 	}
 
+	wg := sync.WaitGroup{}
+	wg.Add(10000)
 	for i := 0; i < 100; i++ {
 		for j := 0; j < 100; j++ {
-			_ = client.Distance(points[i], points[j])
+			go func(i, j int) {
+				wg.Done()
+				_ = client.Threaded(points[i], points[j])
+			}(i, j)
 		}
 	}
+	wg.Wait()
 	fmt.Println("10000 queries took ", time.Since(start))
 }
 

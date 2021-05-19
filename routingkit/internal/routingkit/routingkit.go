@@ -91,7 +91,8 @@ extern void _wrap_Point_lat_set_routingkit_007dcf72057aca2d(uintptr_t arg1, floa
 extern float _wrap_Point_lat_get_routingkit_007dcf72057aca2d(uintptr_t arg1);
 extern uintptr_t _wrap_new_Point_routingkit_007dcf72057aca2d(void);
 extern void _wrap_delete_Point_routingkit_007dcf72057aca2d(uintptr_t arg1);
-extern float _wrap_Client_distance_routingkit_007dcf72057aca2d(uintptr_t arg1, float arg2, float arg3, float arg4, float arg5);
+extern float _wrap_Client_distance_routingkit_007dcf72057aca2d(uintptr_t arg1, swig_intgo arg2, float arg3, float arg4, float arg5, float arg6);
+extern float _wrap_Client_threaded_routingkit_007dcf72057aca2d(uintptr_t arg1, swig_intgo arg2, float arg3, float arg4, float arg5, float arg6);
 extern uintptr_t _wrap_Client_table_routingkit_007dcf72057aca2d(uintptr_t arg1, uintptr_t arg2, uintptr_t arg3);
 extern void _wrap_Client_build_ch_routingkit_007dcf72057aca2d(uintptr_t arg1, swig_type_13 arg2, swig_type_14 arg3);
 extern void _wrap_Client_load_routingkit_007dcf72057aca2d(uintptr_t arg1, swig_type_15 arg2, swig_type_16 arg3);
@@ -551,14 +552,27 @@ func (p SwigcptrClient) Swigcptr() uintptr {
 func (p SwigcptrClient) SwigIsClient() {
 }
 
-func (arg1 SwigcptrClient) Distance(arg2 float32, arg3 float32, arg4 float32, arg5 float32) (_swig_ret float32) {
+func (arg1 SwigcptrClient) Distance(arg2 int, arg3 float32, arg4 float32, arg5 float32, arg6 float32) (_swig_ret float32) {
 	var swig_r float32
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2
 	_swig_i_2 := arg3
 	_swig_i_3 := arg4
 	_swig_i_4 := arg5
-	swig_r = (float32)(C._wrap_Client_distance_routingkit_007dcf72057aca2d(C.uintptr_t(_swig_i_0), C.float(_swig_i_1), C.float(_swig_i_2), C.float(_swig_i_3), C.float(_swig_i_4)))
+	_swig_i_5 := arg6
+	swig_r = (float32)(C._wrap_Client_distance_routingkit_007dcf72057aca2d(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1), C.float(_swig_i_2), C.float(_swig_i_3), C.float(_swig_i_4), C.float(_swig_i_5)))
+	return swig_r
+}
+
+func (arg1 SwigcptrClient) Threaded(arg2 int, arg3 float32, arg4 float32, arg5 float32, arg6 float32) (_swig_ret float32) {
+	var swig_r float32
+	_swig_i_0 := arg1
+	_swig_i_1 := arg2
+	_swig_i_2 := arg3
+	_swig_i_3 := arg4
+	_swig_i_4 := arg5
+	_swig_i_5 := arg6
+	swig_r = (float32)(C._wrap_Client_threaded_routingkit_007dcf72057aca2d(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1), C.float(_swig_i_2), C.float(_swig_i_3), C.float(_swig_i_4), C.float(_swig_i_5)))
 	return swig_r
 }
 
@@ -619,7 +633,8 @@ func DeleteClient(arg1 Client) {
 type Client interface {
 	Swigcptr() uintptr
 	SwigIsClient()
-	Distance(arg2 float32, arg3 float32, arg4 float32, arg5 float32) (_swig_ret float32)
+	Distance(arg2 int, arg3 float32, arg4 float32, arg5 float32, arg6 float32) (_swig_ret float32)
+	Threaded(arg2 int, arg3 float32, arg4 float32, arg5 float32, arg6 float32) (_swig_ret float32)
 	Table(arg2 PointVector, arg3 PointVector) (_swig_ret FloatVector)
 	Build_ch(arg2 string, arg3 string)
 	Load(arg2 string, arg3 string)
