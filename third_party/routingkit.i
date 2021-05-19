@@ -4,7 +4,7 @@
 %}
 
 %insert(cgo_comment_typedefs) %{
-#cgo LDFLAGS: ${SRCDIR}/libroutingkit.so
+#cgo LDFLAGS: ${SRCDIR}/libroutingkit.a
 %}
 
 %include "std_vector.i"

@@ -1,8 +1,14 @@
 #!/bin/bash
 HERE="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 pushd "${HERE}" || exit 1
-g++ -IRoutingKit/include -LRoutingKit/lib -std=c++11 Client.cpp -shared -o libroutingkit.so -lroutingkit -lz -fopenmp -pthread -lm -fPIC -ffast-math -O3
+g++ -IRoutingKit/include -LRoutingKit/lib/libroutingkit.a -std=c++11 -c Client.cpp -lroutingkit -lz -fopenmp -pthread -lm -fPIC -ffast-math -O3
+mkdir temp
+cd temp
+ar -x /usr/lib/x86_64-linux-gnu/libz.a
+cd ..
+ar rvs libroutingkit.a Client.o RoutingKit/build/* temp/*
+rm -r temp
 swig -go -cgo -c++ -IRoutingKit/include/routingkit -intgosize 64 -O routingkit.i
-mv routingkit_wrap.cxx routingkit.go ../routingkit/internal/routingkit/
-cp Client.h libroutingkit.so ../routingkit/internal/routingkit/
+mv routingkit_wrap.cxx routingkit.go libroutingkit.a ../routingkit/internal/routingkit/
+cp Client.h ../routingkit/internal/routingkit/
 popd
