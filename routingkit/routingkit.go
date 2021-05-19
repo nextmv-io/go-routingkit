@@ -43,16 +43,16 @@ func Wrapper(mapFile, chFile string) (Client, error) {
 type client struct {
 	client  rk.Client
 	sem     Semaphore
-	counter uint64
+	counter int64
 }
 
 func (c client) Distance(from []float64, to []float64) float64 {
 	c.sem.Lock()
 	defer func() {
-		atomic.AddUint64(&c.counter, ^uint64(0))
+		atomic.AddInt64(&c.counter, -1)
 		c.sem.Unlock()
 	}()
-	counter := atomic.AddUint64(&c.counter, 1)
+	counter := atomic.AddInt64(&c.counter, 1)
 	return float64(c.client.Distance(
 		int(counter-1),
 		float32(from[0]),
@@ -65,10 +65,10 @@ func (c client) Distance(from []float64, to []float64) float64 {
 func (c client) Threaded(from []float64, to []float64) float64 {
 	c.sem.Lock()
 	defer func() {
-		atomic.AddUint64(&c.counter, ^uint64(0))
+		atomic.AddInt64(&c.counter, -1)
 		c.sem.Unlock()
 	}()
-	counter := atomic.AddUint64(&c.counter, 1)
+	counter := atomic.AddInt64(&c.counter, 1)
 	return float64(c.client.Threaded(
 		int(counter-1),
 		float32(from[0]),

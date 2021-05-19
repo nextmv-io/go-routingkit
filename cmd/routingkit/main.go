@@ -30,8 +30,8 @@ func main() {
 	p1 := []float64{-76.58749, 39.29971}
 	p2 := []float64{-76.59735, 39.30587}
 
-	points := make([][]float64, 100)
-	for i := 0; i < 100; i++ {
+	points := make([][]float64, 1000)
+	for i := 0; i < 1000; i++ {
 		if i%2 == 0 {
 			points[i] = p1
 		} else {
@@ -41,12 +41,12 @@ func main() {
 	}
 
 	wg := sync.WaitGroup{}
-	wg.Add(10000)
-	for i := 0; i < 100; i++ {
-		for j := 0; j < 100; j++ {
+	wg.Add(1000000)
+	for i := 0; i < 1000; i++ {
+		for j := 0; j < 1000; j++ {
 			go func(i, j int) {
-				wg.Done()
-				_ = client.Threaded(points[i], points[j])
+				defer wg.Done()
+				_ = client.Distance(points[i], points[j])
 			}(i, j)
 		}
 	}
