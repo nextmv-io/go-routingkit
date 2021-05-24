@@ -77,7 +77,7 @@ float Client::threaded(int i, float from_longitude, float from_latitude, float t
 		return static_cast<double>(distance);
 	};
 
-	auto future = std::async(launch::async, dist, i, from_longitude, from_latitude, to_longitude, to_latitude);
+	auto future = std::async(launch::deferred, dist, i, from_longitude, from_latitude, to_longitude, to_latitude);
 	float simple = future.get();
 	return simple;
 }

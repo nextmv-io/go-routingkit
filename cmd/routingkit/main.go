@@ -13,7 +13,6 @@ import (
 )
 
 func main() {
-
 	mapFile := "data/map.osm.pbf"
 	chFile := "data/map.ch"
 
@@ -46,7 +45,7 @@ func main() {
 		for j := 0; j < 1000; j++ {
 			go func(i, j int) {
 				defer wg.Done()
-				_ = client.Distance(points[i], points[j])
+				_ = client.Threaded(points[i], points[j])
 			}(i, j)
 		}
 	}

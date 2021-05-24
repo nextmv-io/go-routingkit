@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"runtime"
-	"sync/atomic"
 
 	"github.com/nextmv-io/go-routingkit/routingkit/internal/routingkit"
 	rk "github.com/nextmv-io/go-routingkit/routingkit/internal/routingkit"
@@ -34,27 +33,30 @@ func Wrapper(mapFile, chFile string) (Client, error) {
 		c.Load(mapFile, chFile)
 	}
 
+	count := 100
+	channel := make(chan int, count)
+	for i := 0; i < count; i++ {
+		channel <- i
+	}
+
 	return client{
-		client: c,
-		sem:    NewSemaphore(100),
+		client:  c,
+		channel: channel,
 	}, nil
 }
 
 type client struct {
 	client  rk.Client
-	sem     Semaphore
-	counter int64
+	channel chan int
 }
 
 func (c client) Distance(from []float64, to []float64) float64 {
-	c.sem.Lock()
+	counter := <-c.channel
 	defer func() {
-		atomic.AddInt64(&c.counter, -1)
-		c.sem.Unlock()
+		c.channel <- counter
 	}()
-	counter := atomic.AddInt64(&c.counter, 1)
 	return float64(c.client.Distance(
-		int(counter-1),
+		int(counter),
 		float32(from[0]),
 		float32(from[1]),
 		float32(to[0]),
@@ -63,34 +65,15 @@ func (c client) Distance(from []float64, to []float64) float64 {
 }
 
 func (c client) Threaded(from []float64, to []float64) float64 {
-	c.sem.Lock()
+	counter := <-c.channel
 	defer func() {
-		atomic.AddInt64(&c.counter, -1)
-		c.sem.Unlock()
+		c.channel <- counter
 	}()
-	counter := atomic.AddInt64(&c.counter, 1)
 	return float64(c.client.Threaded(
-		int(counter-1),
+		int(counter),
 		float32(from[0]),
 		float32(from[1]),
 		float32(to[0]),
 		float32(to[1]),
 	))
-}
-
-type Semaphore chan struct {
-}
-
-func NewSemaphore(size int) Semaphore {
-	return make(Semaphore, size)
-}
-
-func (s Semaphore) Lock() {
-	// Writes will only succeed if there is room in s.
-	s <- struct{}{}
-}
-
-func (s Semaphore) Unlock() {
-	// Make room for other users of the semaphore.
-	<-s
 }
