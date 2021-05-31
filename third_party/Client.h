@@ -11,7 +11,7 @@ class Client {
         public:
                 float distance(int i, float from_longitude, float from_latitude, float to_longitude, float to_latitude);
                 float threaded(int i, float from_longitude, float from_latitude, float to_longitude, float to_latitude);
-                std::vector<float> table(std::vector<Point> sources, std::vector<Point> targets);
+                std::vector<unsigned> table(int i, Point source, std::vector<struct Point> targets);
                 void build_ch(char* pbf_file, char* ch_file);
                 void load(char *pbf_file, char *ch_file);
                 double average(std::vector<int> v);

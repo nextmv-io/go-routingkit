@@ -13,6 +13,8 @@ import (
 type Client interface {
 	Distance([]float64, []float64) float64
 	Threaded([]float64, []float64) float64
+	Table([]float64, [][]float64) []float64
+	Average() float64
 }
 
 func finalizer(client *rk.Client) {
@@ -50,6 +52,13 @@ type client struct {
 	channel chan int
 }
 
+func (c client) Average() float64 {
+	ints := make([]int, 10)
+	vector := rk.NewIntVector(int64(len(ints)))
+	defer rk.DeleteIntVector(vector)
+	return c.client.Average(vector)
+}
+
 func (c client) Distance(from []float64, to []float64) float64 {
 	counter := <-c.channel
 	defer func() {
@@ -76,4 +85,38 @@ func (c client) Threaded(from []float64, to []float64) float64 {
 		float32(to[0]),
 		float32(to[1]),
 	))
+}
+
+func (c client) Table(source []float64, targets [][]float64) []float64 {
+	counter := <-c.channel
+	defer func() {
+		c.channel <- counter
+	}()
+	targetsVector := rk.NewPointVector(int64(len(targets)))
+	s := rk.NewPoint()
+	s.SetLon(float32(source[0]))
+	s.SetLat(float32(source[1]))
+
+	for i := 0; i < len(targets); i++ {
+		t := rk.NewPoint()
+		t.SetLon(float32(targets[i][0]))
+		t.SetLat(float32(targets[i][1]))
+		targetsVector.Set(i, t)
+	}
+
+	matrix := c.client.Table(counter, s, targetsVector)
+	numRows := matrix.Size()
+	rows := make([]float64, numRows)
+	for i := 0; i < int(numRows); i++ {
+		col := matrix.Get(i)
+		rows[i] = float64(col)
+	}
+
+	// defer func() {
+	// 	routingkit.DeletePointVector(sourcesVector)
+	// 	routingkit.DeletePointVector(targetsVector)
+	// 	routingkit.DeleteMatrix(matrix)
+	// }()
+
+	return rows
 }

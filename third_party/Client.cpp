@@ -121,16 +121,16 @@ float Client::distance(int i, float from_longitude, float from_latitude, float t
 	return distance;
 }
 
-std::vector<float> Client::table(std::vector<Point> sources, std::vector<Point> targets){
-	vector<float> vect;
-
-	for (auto &source : sources)
+std::vector<unsigned> Client::table(int i, Point source, std::vector<struct Point> targets){
+	std::vector<unsigned>target_list;
+	for (auto &target : targets)
 	{  
-		for (auto &target : targets)
-		{  
-			vect.push_back(distance(0, source.lon, source.lat, target.lon, target.lat));
-		}
+		unsigned to = map.find_nearest_neighbor_within_radius(target.lat, target.lon, 1000).id;
+		target_list.push_back(to);
 	}
- 
-    return vect;
+
+	queries[i].reset().pin_targets(target_list);
+
+	unsigned from = map.find_nearest_neighbor_within_radius(source.lat, source.lon, 1000).id;
+	return queries[i].reset_source().add_source(from).run_to_pinned_targets().get_distances_to_targets();
 }

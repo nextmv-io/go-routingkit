@@ -25,7 +25,6 @@ func main() {
 
 	testFile(client)
 
-	start = time.Now()
 	p1 := []float64{-76.58749, 39.29971}
 	p2 := []float64{-76.59735, 39.30587}
 
@@ -38,6 +37,11 @@ func main() {
 		}
 
 	}
+
+	start = time.Now()
+	matrix := client.Table(points[0], points)
+	fmt.Println("Matrix request took ", time.Since(start))
+	fmt.Print(matrix)
 
 	wg := sync.WaitGroup{}
 	wg.Add(1000000)
