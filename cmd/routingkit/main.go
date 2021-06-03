@@ -39,7 +39,7 @@ func main() {
 	}
 
 	start = time.Now()
-	matrix := client.Table(points[0], points)
+	matrix := client.Tables(points, points)
 	fmt.Println("Matrix request took ", time.Since(start))
 	fmt.Print(matrix)
 
@@ -49,7 +49,7 @@ func main() {
 		for j := 0; j < 1000; j++ {
 			go func(i, j int) {
 				defer wg.Done()
-				_ = client.Threaded(points[i], points[j])
+				_ = client.Query(1000, points[i], points[j])
 			}(i, j)
 		}
 	}
@@ -78,7 +78,7 @@ func testFile(client routingkit.Client) {
 	start := time.Now()
 	for _, p1 := range points {
 		for _, p2 := range points {
-			_ = client.Distance(p1, p2)
+			_ = client.Query(1000, p1, p2)
 			// fmt.Printf("%f,%f -> %f,%f : %f \n", p1[0], p1[1], p2[0], p2[1], dist)
 		}
 	}

@@ -16,17 +16,17 @@ static SimpleOSMCarRoutingGraph graph;
 static GeoPositionToNode map;
 static std::vector<ContractionHierarchyQuery> queries;
 
-void Client::build_ch(char* pbf_file, char* ch_file){
+void Client::build_ch(char *pbf_file, char *ch_file)
+{
 	// Load a car routing graph from OpenStreetMap-based data
-    graph = simple_load_osm_car_routing_graph_from_pbf(pbf_file);
+	graph = simple_load_osm_car_routing_graph_from_pbf(pbf_file);
 	auto tail = invert_inverse_vector(graph.first_out);
 
 	// Build the shortest path index
 	ch = ContractionHierarchy::build(
-		graph.node_count(), 
-		tail, graph.head, 
-		graph.geo_distance
-	);
+		graph.node_count(),
+		tail, graph.head,
+		graph.geo_distance);
 
 	// Store contraction hierarchy
 	ch.save_file(ch_file);
@@ -35,16 +35,18 @@ void Client::build_ch(char* pbf_file, char* ch_file){
 	GeoPositionToNode map_geo_position(graph.latitude, graph.longitude);
 	map = map_geo_position;
 
-	// Besides the CH itself we need a query object. 
-	for (int i = 0; i < 100; i++) {
+	// Besides the CH itself we need a query object.
+	for (int i = 0; i < 100; i++)
+	{
 		ContractionHierarchyQuery ch_query(ch);
 		queries.push_back(ch_query);
 	}
 }
 
-void Client::load(char* pbf_file, char* ch_file){
+void Client::load(char *pbf_file, char *ch_file)
+{
 	// Load a car routing graph from OpenStreetMap-based data
-    graph = simple_load_osm_car_routing_graph_from_pbf(pbf_file);
+	graph = simple_load_osm_car_routing_graph_from_pbf(pbf_file);
 
 	// Load corresponding contraction hierarchy
 	ch = ContractionHierarchy::load_file(ch_file);
@@ -53,23 +55,28 @@ void Client::load(char* pbf_file, char* ch_file){
 	GeoPositionToNode map_geo_position(graph.latitude, graph.longitude);
 	map = map_geo_position;
 
-	// Besides the CH itself we need a query object. 
-	for (int i = 0; i < 100; i++) {
+	// Besides the CH itself we need a query object.
+	for (int i = 0; i < 100; i++)
+	{
 		ContractionHierarchyQuery ch_query(ch);
 		queries.push_back(ch_query);
 	}
 }
 
-double Client::average(std::vector<int> v) {
-  return std::accumulate(v.begin(), v.end(), 0.0)/v.size();
+double Client::average(std::vector<int> v)
+{
+	return std::accumulate(v.begin(), v.end(), 0.0) / v.size();
 }
 
-float Client::threaded(int i, float from_longitude, float from_latitude, float to_longitude, float to_latitude){
-	auto dist= [](int i, float from_longitude, float from_latitude, float to_longitude, float to_latitude) {
+float Client::threaded(int i, float from_longitude, float from_latitude, float to_longitude, float to_latitude)
+{
+	auto dist = [](int i, float from_longitude, float from_latitude, float to_longitude, float to_latitude)
+	{
 		// Use the query object to answer queries from stdin to stdout
 		unsigned from = map.find_nearest_neighbor_within_radius(from_latitude, from_longitude, 1000).id;
 		unsigned to = map.find_nearest_neighbor_within_radius(to_latitude, to_longitude, 1000).id;
-		if(from == invalid_id || to == invalid_id){
+		if (from == invalid_id || to == invalid_id)
+		{
 			return -1.0;
 		}
 		queries[i].reset().add_source(from).add_target(to).run();
@@ -82,8 +89,8 @@ float Client::threaded(int i, float from_longitude, float from_latitude, float t
 	return simple;
 }
 
-
-float Client::distance(int i, float from_longitude, float from_latitude, float to_longitude, float to_latitude) {
+float Client::distance(int i, float from_longitude, float from_latitude, float to_longitude, float to_latitude)
+{
 	// cout << "distance lon: " << from_longitude << " lat: " << from_latitude <<  ", lon: " << to_longitude << " lat: " << to_latitude << endl;
 
 	long long start_time = get_micro_time();
@@ -100,7 +107,8 @@ float Client::distance(int i, float from_longitude, float from_latitude, float t
 	// }
 	long long end_time = get_micro_time();
 	// cout << "find_nearest_neighbor_within_radius; took " << (end_time - start_time) << " microseconds." << endl;
-	if(from == invalid_id || to == invalid_id){
+	if (from == invalid_id || to == invalid_id)
+	{
 		// cout << "No node within 1000m from target position" << endl;
 		return -1.0;
 	}
@@ -121,16 +129,39 @@ float Client::distance(int i, float from_longitude, float from_latitude, float t
 	return distance;
 }
 
-std::vector<unsigned> Client::table(int i, Point source, std::vector<struct Point> targets){
-	std::vector<unsigned>target_list;
-	for (auto &target : targets)
-	{  
-		unsigned to = map.find_nearest_neighbor_within_radius(target.lat, target.lon, 1000).id;
-		target_list.push_back(to);
+std::vector<float> Client::table(int i, std::vector<Point> sources, std::vector<struct Point> targets)
+{
+	vector<float> vect;
+
+	for (auto &source : sources)
+	{
+		for (auto &target : targets)
+		{
+			vect.push_back(distance(i, source.lon, source.lat, target.lon, target.lat));
+		}
 	}
 
-	queries[i].reset().pin_targets(target_list);
+	return vect;
+}
 
-	unsigned from = map.find_nearest_neighbor_within_radius(source.lat, source.lon, 1000).id;
-	return queries[i].reset_source().add_source(from).run_to_pinned_targets().get_distances_to_targets();
+QueryResponse Client::queryrequest(int i, float radius, float from_longitude, float from_latitude, float to_longitude, float to_latitude)
+{
+	// Use the query object to answer queries from stdin to stdout
+	unsigned from = map.find_nearest_neighbor_within_radius(from_latitude, from_longitude, radius).id;
+	unsigned to = map.find_nearest_neighbor_within_radius(to_latitude, to_longitude, radius).id;
+	QueryResponse response;
+	if (from == invalid_id || to == invalid_id)
+	{
+		response.distance = -1.0;
+		return response;
+	}
+
+	queries[i].reset().add_source(from).add_target(to).run();
+	auto distance = queries[i].get_distance();
+	response.distance = distance;
+	auto path = queries[i].get_node_path();
+	for (auto x : path)
+		response.waypoints.push_back(Point{lon : graph.longitude[x], lat : graph.latitude[x]});
+
+	return response;
 }
