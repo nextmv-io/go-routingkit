@@ -10,16 +10,11 @@ import (
 	rk "github.com/nextmv-io/go-routingkit/routingkit/internal/routingkit"
 )
 
-type Response struct {
-	WayPoints [][]float64
-	Distance  float64
-}
-
 type Client interface {
 	Threaded([]float64, []float64) float64
 	Tables([][]float64, [][]float64) []float64
 	Average() float64
-	Query(float64, []float64, []float64) Response
+	Query(float64, []float64, []float64) (float64, [][]float64)
 }
 
 func finalizer(client *rk.Client) {
@@ -64,7 +59,7 @@ func (c client) Average() float64 {
 	return c.client.Average(vector)
 }
 
-func (c client) Query(radius float64, from []float64, to []float64) Response {
+func (c client) Query(radius float64, from []float64, to []float64) (float64, [][]float64) {
 	counter := <-c.channel
 	defer func() {
 		c.channel <- counter
@@ -84,11 +79,7 @@ func (c client) Query(radius float64, from []float64, to []float64) Response {
 		waypoints[i] = []float64{float64(p.GetLon()), float64(p.GetLat())}
 	}
 
-	reponse := Response{
-		Distance:  float64(resp.GetDistance()),
-		WayPoints: waypoints,
-	}
-	return reponse
+	return float64(resp.GetDistance()), waypoints
 }
 
 func (c client) Threaded(from []float64, to []float64) float64 {
