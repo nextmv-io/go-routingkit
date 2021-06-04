@@ -52,13 +52,6 @@ type Client struct {
 	snapRadius float64
 }
 
-func (c Client) Average() float64 {
-	ints := make([]int, 10)
-	vector := rk.NewIntVector(int64(len(ints)))
-	defer rk.DeleteIntVector(vector)
-	return c.client.Average(vector)
-}
-
 func (c Client) Query(from []float64, to []float64) (float64, [][]float64) {
 	counter := <-c.channel
 	defer func() {
@@ -80,20 +73,6 @@ func (c Client) Query(from []float64, to []float64) (float64, [][]float64) {
 	}
 
 	return float64(resp.GetDistance()), waypoints
-}
-
-func (c Client) Threaded(from []float64, to []float64) float64 {
-	counter := <-c.channel
-	defer func() {
-		c.channel <- counter
-	}()
-	return float64(c.client.Threaded(
-		int(counter),
-		float32(from[0]),
-		float32(from[1]),
-		float32(to[0]),
-		float32(to[1]),
-	))
 }
 
 func (c Client) Table(source []float64, targets [][]float64) []float64 {

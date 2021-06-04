@@ -1115,52 +1115,6 @@ void _wrap_delete_QueryResponse_routingkit_66c4b23584bbe149(QueryResponse *_swig
 }
 
 
-float _wrap_Client_distance_routingkit_66c4b23584bbe149(Client *_swig_go_0, intgo _swig_go_1, float _swig_go_2, float _swig_go_3, float _swig_go_4, float _swig_go_5) {
-  Client *arg1 = (Client *) 0 ;
-  int arg2 ;
-  float arg3 ;
-  float arg4 ;
-  float arg5 ;
-  float arg6 ;
-  float result;
-  float _swig_go_result;
-  
-  arg1 = *(Client **)&_swig_go_0; 
-  arg2 = (int)_swig_go_1; 
-  arg3 = (float)_swig_go_2; 
-  arg4 = (float)_swig_go_3; 
-  arg5 = (float)_swig_go_4; 
-  arg6 = (float)_swig_go_5; 
-  
-  result = (float)(arg1)->distance(arg2,arg3,arg4,arg5,arg6);
-  _swig_go_result = result; 
-  return _swig_go_result;
-}
-
-
-float _wrap_Client_threaded_routingkit_66c4b23584bbe149(Client *_swig_go_0, intgo _swig_go_1, float _swig_go_2, float _swig_go_3, float _swig_go_4, float _swig_go_5) {
-  Client *arg1 = (Client *) 0 ;
-  int arg2 ;
-  float arg3 ;
-  float arg4 ;
-  float arg5 ;
-  float arg6 ;
-  float result;
-  float _swig_go_result;
-  
-  arg1 = *(Client **)&_swig_go_0; 
-  arg2 = (int)_swig_go_1; 
-  arg3 = (float)_swig_go_2; 
-  arg4 = (float)_swig_go_3; 
-  arg5 = (float)_swig_go_4; 
-  arg6 = (float)_swig_go_5; 
-  
-  result = (float)(arg1)->threaded(arg2,arg3,arg4,arg5,arg6);
-  _swig_go_result = result; 
-  return _swig_go_result;
-}
-
-
 QueryResponse *_wrap_Client_queryrequest_routingkit_66c4b23584bbe149(Client *_swig_go_0, intgo _swig_go_1, float _swig_go_2, float _swig_go_3, float _swig_go_4, float _swig_go_5, float _swig_go_6) {
   Client *arg1 = (Client *) 0 ;
   int arg2 ;
@@ -1268,28 +1222,6 @@ void _wrap_Client_load_routingkit_66c4b23584bbe149(Client *_swig_go_0, intgo _sw
   
   free(arg3); 
   free(arg4); 
-}
-
-
-double _wrap_Client_average_routingkit_66c4b23584bbe149(Client *_swig_go_0, std::vector< int > *_swig_go_1) {
-  Client *arg1 = (Client *) 0 ;
-  std::vector< int > arg2 ;
-  std::vector< int > *argp2 ;
-  double result;
-  double _swig_go_result;
-  
-  arg1 = *(Client **)&_swig_go_0; 
-  
-  argp2 = (std::vector< int > *)_swig_go_1;
-  if (argp2 == NULL) {
-    _swig_gopanic("Attempt to dereference null std::vector< int >");
-  }
-  arg2 = (std::vector< int >)*argp2;
-  
-  
-  result = (double)(arg1)->average(arg2);
-  _swig_go_result = result; 
-  return _swig_go_result;
 }
 
 

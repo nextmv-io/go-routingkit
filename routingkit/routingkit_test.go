@@ -26,7 +26,7 @@ func tempFile(dir, pattern string) (string, error) {
 	return filename, nil
 }
 
-func TestTables(t *testing.T) {
+func TestTable(t *testing.T) {
 	tests := []struct {
 		source       []float64
 		destinations [][]float64

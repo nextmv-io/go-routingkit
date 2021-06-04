@@ -63,104 +63,51 @@ void Client::load(int conc, char *pbf_file, char *ch_file)
 	}
 }
 
-double Client::average(std::vector<int> v)
-{
-	return std::accumulate(v.begin(), v.end(), 0.0) / v.size();
-}
-
-float Client::threaded(int i, float from_longitude, float from_latitude, float to_longitude, float to_latitude)
-{
-	auto dist = [](int i, float from_longitude, float from_latitude, float to_longitude, float to_latitude)
-	{
-		// Use the query object to answer queries from stdin to stdout
-		unsigned from = map.find_nearest_neighbor_within_radius(from_latitude, from_longitude, 1000).id;
-		unsigned to = map.find_nearest_neighbor_within_radius(to_latitude, to_longitude, 1000).id;
-		if (from == invalid_id || to == invalid_id)
-		{
-			return -1.0;
-		}
-		queries[i].reset().add_source(from).add_target(to).run();
-		float distance = queries[i].get_distance();
-		return static_cast<double>(distance);
-	};
-
-	auto future = std::async(launch::deferred, dist, i, from_longitude, from_latitude, to_longitude, to_latitude);
-	float simple = future.get();
-	return simple;
-}
-
-float Client::distance(int i, float from_longitude, float from_latitude, float to_longitude, float to_latitude)
-{
-	// cout << "distance lon: " << from_longitude << " lat: " << from_latitude <<  ", lon: " << to_longitude << " lat: " << to_latitude << endl;
-
-	long long start_time = get_micro_time();
-	// Use the query object to answer queries from stdin to stdout
-	unsigned from = map.find_nearest_neighbor_within_radius(from_latitude, from_longitude, 1000).id;
-	// if(from == invalid_id){
-	// 	//cout << "No node within 1000m from source position" << endl;
-	// 	return -1.0;
-	// }
-	unsigned to = map.find_nearest_neighbor_within_radius(to_latitude, to_longitude, 1000).id;
-	// if(to == invalid_id){
-	// 	// cout << "No node within 1000m from target position" << endl;
-	// 	return -1.0;
-	// }
-	long long end_time = get_micro_time();
-	// cout << "find_nearest_neighbor_within_radius; took " << (end_time - start_time) << " microseconds." << endl;
-	if (from == invalid_id || to == invalid_id)
-	{
-		// cout << "No node within 1000m from target position" << endl;
-		return -1.0;
-	}
-
-	start_time = get_micro_time();
-	queries[i].reset().add_source(from).add_target(to).run();
-	auto distance = queries[i].get_distance();
-	// auto path = query.get_node_path();
-	end_time = get_micro_time();
-
-	// cout << "To get from "<< from << " to "<< to << " one needs " << distance << " meters." << endl;
-	// cout << "This query was answered in " << (end_time - start_time) << " microseconds." << endl;
-	// cout << "The path is";
-	// for(auto x:path)
-	// 	cout << " " << graph.longitude[x] << "," << graph.latitude[x];
-	// cout << endl;
-
-	return distance;
-}
-
 std::vector<unsigned> Client::table(int i, Point source, std::vector<struct Point> targets)
 {
-	vector<unsigned> target_list;
-	for (auto &target : targets)
+	auto tbl = [](int i, Point source, std::vector<struct Point> targets)
 	{
-		unsigned to = map.find_nearest_neighbor_within_radius(target.lat, target.lon, 1000).id;
-		target_list.push_back(to);
-	}
-	queries[i].reset().pin_targets(target_list);
+		vector<unsigned> target_list;
+		for (auto &target : targets)
+		{
+			unsigned to = map.find_nearest_neighbor_within_radius(target.lat, target.lon, 1000).id;
+			target_list.push_back(to);
+		}
+		queries[i].reset().pin_targets(target_list);
 
-	unsigned from = map.find_nearest_neighbor_within_radius(source.lat, source.lon, 1000).id;
-	return queries[i].reset_source().add_source(from).run_to_pinned_targets().get_distances_to_targets();
+		unsigned from = map.find_nearest_neighbor_within_radius(source.lat, source.lon, 1000).id;
+		return queries[i].reset_source().add_source(from).run_to_pinned_targets().get_distances_to_targets();
+	};
+
+	auto future = std::async(launch::deferred, tbl, i, source, targets);
+	auto result = future.get();
+	return result;
 }
 
 QueryResponse Client::queryrequest(int i, float radius, float from_longitude, float from_latitude, float to_longitude, float to_latitude)
 {
-	// Use the query object to answer queries from stdin to stdout
-	unsigned from = map.find_nearest_neighbor_within_radius(from_latitude, from_longitude, radius).id;
-	unsigned to = map.find_nearest_neighbor_within_radius(to_latitude, to_longitude, radius).id;
-	QueryResponse response;
-	if (from == invalid_id || to == invalid_id)
+	auto query = [](int i, float radius, float from_longitude, float from_latitude, float to_longitude, float to_latitude)
 	{
-		response.distance = -1.0;
+		unsigned from = map.find_nearest_neighbor_within_radius(from_latitude, from_longitude, radius).id;
+		unsigned to = map.find_nearest_neighbor_within_radius(to_latitude, to_longitude, radius).id;
+		QueryResponse response;
+		if (from == invalid_id || to == invalid_id)
+		{
+			response.distance = -1.0;
+			return response;
+		}
+
+		queries[i].reset().add_source(from).add_target(to).run();
+		auto distance = queries[i].get_distance();
+		response.distance = distance;
+		auto path = queries[i].get_node_path();
+		for (auto x : path)
+			response.waypoints.push_back(Point{lon : graph.longitude[x], lat : graph.latitude[x]});
+
 		return response;
-	}
+	};
 
-	queries[i].reset().add_source(from).add_target(to).run();
-	auto distance = queries[i].get_distance();
-	response.distance = distance;
-	auto path = queries[i].get_node_path();
-	for (auto x : path)
-		response.waypoints.push_back(Point{lon : graph.longitude[x], lat : graph.latitude[x]});
-
-	return response;
+	auto future = std::async(launch::deferred, query, i, radius, from_longitude, from_latitude, to_longitude, to_latitude);
+	auto result = future.get();
+	return result;
 }
