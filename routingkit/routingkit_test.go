@@ -51,7 +51,7 @@ func TestTables(t *testing.T) {
 	}
 	chFile, err := tempFile("", "routingkit-test.ch")
 	defer os.Remove(chFile)
-	cli, err := routingkit.Wrapper("testdata/maryland.osm.pbf", chFile)
+	cli, err := routingkit.NewClient("testdata/maryland.osm.pbf", chFile)
 	if err != nil {
 		t.Fatalf("creating Client: %v", err)
 	}
@@ -129,7 +129,7 @@ func TestRoutingKit(t *testing.T) {
 	}
 	chFile, err := tempFile("", "routingkit-test.ch")
 	defer os.Remove(chFile)
-	cli, err := routingkit.Wrapper("testdata/maryland.osm.pbf", chFile)
+	cli, err := routingkit.NewClient("testdata/maryland.osm.pbf", chFile)
 	if err != nil {
 		t.Fatalf("creating Client: %v", err)
 	}

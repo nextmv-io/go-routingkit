@@ -17,7 +17,7 @@ func main() {
 	chFile := "data/map.ch"
 
 	start := time.Now()
-	client, err := routingkit.Wrapper(mapFile, chFile)
+	client, err := routingkit.NewClient(mapFile, chFile)
 	if err != nil {
 		fmt.Println("Error when creating client %", err)
 	}

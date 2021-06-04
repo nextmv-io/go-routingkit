@@ -10,20 +10,13 @@ import (
 	rk "github.com/nextmv-io/go-routingkit/routingkit/internal/routingkit"
 )
 
-type Client interface {
-	Threaded([]float64, []float64) float64
-	Table([][]float64, [][]float64) [][]float64
-	Average() float64
-	Query(float64, []float64, []float64) (float64, [][]float64)
-}
-
 func finalizer(client *rk.Client) {
 	routingkit.DeleteClient(*client)
 }
 
-func Wrapper(mapFile, chFile string) (Client, error) {
+func NewClient(mapFile, chFile string) (Client, error) {
 	if _, err := os.Stat(mapFile); os.IsNotExist(err) {
-		return nil, errors.New(fmt.Sprintf("could not find map file at %v", mapFile))
+		return Client{}, errors.New(fmt.Sprintf("could not find map file at %v", mapFile))
 	}
 
 	c := rk.NewClient()
@@ -41,25 +34,25 @@ func Wrapper(mapFile, chFile string) (Client, error) {
 		channel <- i
 	}
 
-	return client{
+	return Client{
 		client:  c,
 		channel: channel,
 	}, nil
 }
 
-type client struct {
+type Client struct {
 	client  rk.Client
 	channel chan int
 }
 
-func (c client) Average() float64 {
+func (c Client) Average() float64 {
 	ints := make([]int, 10)
 	vector := rk.NewIntVector(int64(len(ints)))
 	defer rk.DeleteIntVector(vector)
 	return c.client.Average(vector)
 }
 
-func (c client) Query(radius float64, from []float64, to []float64) (float64, [][]float64) {
+func (c Client) Query(radius float64, from []float64, to []float64) (float64, [][]float64) {
 	counter := <-c.channel
 	defer func() {
 		c.channel <- counter
@@ -82,7 +75,7 @@ func (c client) Query(radius float64, from []float64, to []float64) (float64, []
 	return float64(resp.GetDistance()), waypoints
 }
 
-func (c client) Threaded(from []float64, to []float64) float64 {
+func (c Client) Threaded(from []float64, to []float64) float64 {
 	counter := <-c.channel
 	defer func() {
 		c.channel <- counter
@@ -96,7 +89,7 @@ func (c client) Threaded(from []float64, to []float64) float64 {
 	))
 }
 
-func (c client) Table(sources [][]float64, targets [][]float64) [][]float64 {
+func (c Client) Table(sources [][]float64, targets [][]float64) [][]float64 {
 	counter := <-c.channel
 	defer func() {
 		c.channel <- counter
