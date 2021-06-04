@@ -12,7 +12,7 @@ import (
 
 type Client interface {
 	Threaded([]float64, []float64) float64
-	Tables([][]float64, [][]float64) []float64
+	Table([][]float64, [][]float64) [][]float64
 	Average() float64
 	Query(float64, []float64, []float64) (float64, [][]float64)
 }
@@ -96,21 +96,23 @@ func (c client) Threaded(from []float64, to []float64) float64 {
 	))
 }
 
-func (c client) Tables(sources [][]float64, targets [][]float64) []float64 {
+func (c client) Table(sources [][]float64, targets [][]float64) [][]float64 {
 	counter := <-c.channel
 	defer func() {
 		c.channel <- counter
 	}()
 
 	sourcesVector := rk.NewPointVector(int64(len(sources)))
-	for i := 0; i < len(targets); i++ {
-		t := rk.NewPoint()
-		t.SetLon(float32(sources[i][0]))
-		t.SetLat(float32(sources[i][1]))
-		sourcesVector.Set(i, t)
+	defer routingkit.DeletePointVector(sourcesVector)
+	for i := 0; i < len(sources); i++ {
+		s := rk.NewPoint()
+		s.SetLon(float32(sources[i][0]))
+		s.SetLat(float32(sources[i][1]))
+		sourcesVector.Set(i, s)
 	}
 
 	targetsVector := rk.NewPointVector(int64(len(targets)))
+	defer routingkit.DeletePointVector(targetsVector)
 	for i := 0; i < len(targets); i++ {
 		t := rk.NewPoint()
 		t.SetLon(float32(targets[i][0]))
@@ -119,18 +121,19 @@ func (c client) Tables(sources [][]float64, targets [][]float64) []float64 {
 	}
 
 	matrix := c.client.Table(counter, sourcesVector, targetsVector)
-	numRows := matrix.Size()
-	rows := make([]float64, numRows)
+	defer routingkit.DeleteFloatVector(matrix)
+	numRows := len(sources)
+	rows := make([][]float64, len(sources))
+	pos := 0
 	for i := 0; i < int(numRows); i++ {
-		col := matrix.Get(i)
-		rows[i] = float64(col)
+		numCols := len(targets)
+		cols := make([]float64, numCols)
+		for j := 0; j < numCols; j++ {
+			cols[j] = float64(matrix.Get(pos))
+			pos++
+		}
+		rows[i] = cols
 	}
-
-	// defer func() {
-	// 	routingkit.DeletePointVector(sourcesVector)
-	// 	routingkit.DeletePointVector(targetsVector)
-	// 	routingkit.DeleteMatrix(matrix)
-	// }()
 
 	return rows
 }
