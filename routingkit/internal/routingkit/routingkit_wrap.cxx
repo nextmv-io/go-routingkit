@@ -1219,51 +1219,55 @@ std::vector< float > *_wrap_Client_table_routingkit_66c4b23584bbe149(Client *_sw
 }
 
 
-void _wrap_Client_build_ch_routingkit_66c4b23584bbe149(Client *_swig_go_0, _gostring_ _swig_go_1, _gostring_ _swig_go_2) {
+void _wrap_Client_build_ch_routingkit_66c4b23584bbe149(Client *_swig_go_0, intgo _swig_go_1, _gostring_ _swig_go_2, _gostring_ _swig_go_3) {
   Client *arg1 = (Client *) 0 ;
-  char *arg2 = (char *) 0 ;
+  int arg2 ;
   char *arg3 = (char *) 0 ;
+  char *arg4 = (char *) 0 ;
   
   arg1 = *(Client **)&_swig_go_0; 
-  
-  arg2 = (char *)malloc(_swig_go_1.n + 1);
-  memcpy(arg2, _swig_go_1.p, _swig_go_1.n);
-  arg2[_swig_go_1.n] = '\0';
-  
+  arg2 = (int)_swig_go_1; 
   
   arg3 = (char *)malloc(_swig_go_2.n + 1);
   memcpy(arg3, _swig_go_2.p, _swig_go_2.n);
   arg3[_swig_go_2.n] = '\0';
   
   
-  (arg1)->build_ch(arg2,arg3);
+  arg4 = (char *)malloc(_swig_go_3.n + 1);
+  memcpy(arg4, _swig_go_3.p, _swig_go_3.n);
+  arg4[_swig_go_3.n] = '\0';
   
-  free(arg2); 
+  
+  (arg1)->build_ch(arg2,arg3,arg4);
+  
   free(arg3); 
+  free(arg4); 
 }
 
 
-void _wrap_Client_load_routingkit_66c4b23584bbe149(Client *_swig_go_0, _gostring_ _swig_go_1, _gostring_ _swig_go_2) {
+void _wrap_Client_load_routingkit_66c4b23584bbe149(Client *_swig_go_0, intgo _swig_go_1, _gostring_ _swig_go_2, _gostring_ _swig_go_3) {
   Client *arg1 = (Client *) 0 ;
-  char *arg2 = (char *) 0 ;
+  int arg2 ;
   char *arg3 = (char *) 0 ;
+  char *arg4 = (char *) 0 ;
   
   arg1 = *(Client **)&_swig_go_0; 
-  
-  arg2 = (char *)malloc(_swig_go_1.n + 1);
-  memcpy(arg2, _swig_go_1.p, _swig_go_1.n);
-  arg2[_swig_go_1.n] = '\0';
-  
+  arg2 = (int)_swig_go_1; 
   
   arg3 = (char *)malloc(_swig_go_2.n + 1);
   memcpy(arg3, _swig_go_2.p, _swig_go_2.n);
   arg3[_swig_go_2.n] = '\0';
   
   
-  (arg1)->load(arg2,arg3);
+  arg4 = (char *)malloc(_swig_go_3.n + 1);
+  memcpy(arg4, _swig_go_3.p, _swig_go_3.n);
+  arg4[_swig_go_3.n] = '\0';
   
-  free(arg2); 
+  
+  (arg1)->load(arg2,arg3,arg4);
+  
   free(arg3); 
+  free(arg4); 
 }
 
 

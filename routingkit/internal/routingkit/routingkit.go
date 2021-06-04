@@ -117,8 +117,8 @@ extern float _wrap_Client_distance_routingkit_66c4b23584bbe149(uintptr_t arg1, s
 extern float _wrap_Client_threaded_routingkit_66c4b23584bbe149(uintptr_t arg1, swig_intgo arg2, float arg3, float arg4, float arg5, float arg6);
 extern uintptr_t _wrap_Client_queryrequest_routingkit_66c4b23584bbe149(uintptr_t arg1, swig_intgo arg2, float arg3, float arg4, float arg5, float arg6, float arg7);
 extern uintptr_t _wrap_Client_table_routingkit_66c4b23584bbe149(uintptr_t arg1, swig_intgo arg2, uintptr_t arg3, uintptr_t arg4);
-extern void _wrap_Client_build_ch_routingkit_66c4b23584bbe149(uintptr_t arg1, swig_type_17 arg2, swig_type_18 arg3);
-extern void _wrap_Client_load_routingkit_66c4b23584bbe149(uintptr_t arg1, swig_type_19 arg2, swig_type_20 arg3);
+extern void _wrap_Client_build_ch_routingkit_66c4b23584bbe149(uintptr_t arg1, swig_intgo arg2, swig_type_17 arg3, swig_type_18 arg4);
+extern void _wrap_Client_load_routingkit_66c4b23584bbe149(uintptr_t arg1, swig_intgo arg2, swig_type_19 arg3, swig_type_20 arg4);
 extern double _wrap_Client_average_routingkit_66c4b23584bbe149(uintptr_t arg1, uintptr_t arg2);
 extern uintptr_t _wrap_new_Client_routingkit_66c4b23584bbe149(void);
 extern void _wrap_delete_Client_routingkit_66c4b23584bbe149(uintptr_t arg1);
@@ -795,29 +795,31 @@ func (arg1 SwigcptrClient) Table(arg2 int, arg3 PointVector, arg4 PointVector) (
 	return swig_r
 }
 
-func (arg1 SwigcptrClient) Build_ch(arg2 string, arg3 string) {
+func (arg1 SwigcptrClient) Build_ch(arg2 int, arg3 string, arg4 string) {
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2
 	_swig_i_2 := arg3
-	C._wrap_Client_build_ch_routingkit_66c4b23584bbe149(C.uintptr_t(_swig_i_0), *(*C.swig_type_17)(unsafe.Pointer(&_swig_i_1)), *(*C.swig_type_18)(unsafe.Pointer(&_swig_i_2)))
-	if Swig_escape_always_false {
-		Swig_escape_val = arg2
-	}
+	_swig_i_3 := arg4
+	C._wrap_Client_build_ch_routingkit_66c4b23584bbe149(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1), *(*C.swig_type_17)(unsafe.Pointer(&_swig_i_2)), *(*C.swig_type_18)(unsafe.Pointer(&_swig_i_3)))
 	if Swig_escape_always_false {
 		Swig_escape_val = arg3
+	}
+	if Swig_escape_always_false {
+		Swig_escape_val = arg4
 	}
 }
 
-func (arg1 SwigcptrClient) Load(arg2 string, arg3 string) {
+func (arg1 SwigcptrClient) Load(arg2 int, arg3 string, arg4 string) {
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2
 	_swig_i_2 := arg3
-	C._wrap_Client_load_routingkit_66c4b23584bbe149(C.uintptr_t(_swig_i_0), *(*C.swig_type_19)(unsafe.Pointer(&_swig_i_1)), *(*C.swig_type_20)(unsafe.Pointer(&_swig_i_2)))
-	if Swig_escape_always_false {
-		Swig_escape_val = arg2
-	}
+	_swig_i_3 := arg4
+	C._wrap_Client_load_routingkit_66c4b23584bbe149(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1), *(*C.swig_type_19)(unsafe.Pointer(&_swig_i_2)), *(*C.swig_type_20)(unsafe.Pointer(&_swig_i_3)))
 	if Swig_escape_always_false {
 		Swig_escape_val = arg3
+	}
+	if Swig_escape_always_false {
+		Swig_escape_val = arg4
 	}
 }
 
@@ -847,8 +849,8 @@ type Client interface {
 	Threaded(arg2 int, arg3 float32, arg4 float32, arg5 float32, arg6 float32) (_swig_ret float32)
 	Queryrequest(arg2 int, arg3 float32, arg4 float32, arg5 float32, arg6 float32, arg7 float32) (_swig_ret QueryResponse)
 	Table(arg2 int, arg3 PointVector, arg4 PointVector) (_swig_ret FloatVector)
-	Build_ch(arg2 string, arg3 string)
-	Load(arg2 string, arg3 string)
+	Build_ch(arg2 int, arg3 string, arg4 string)
+	Load(arg2 int, arg3 string, arg4 string)
 	Average(arg2 IntVector) (_swig_ret float64)
 }
 

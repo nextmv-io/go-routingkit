@@ -16,7 +16,7 @@ static SimpleOSMCarRoutingGraph graph;
 static GeoPositionToNode map;
 static std::vector<ContractionHierarchyQuery> queries;
 
-void Client::build_ch(char *pbf_file, char *ch_file)
+void Client::build_ch(int conc, char *pbf_file, char *ch_file)
 {
 	// Load a car routing graph from OpenStreetMap-based data
 	graph = simple_load_osm_car_routing_graph_from_pbf(pbf_file);
@@ -36,14 +36,14 @@ void Client::build_ch(char *pbf_file, char *ch_file)
 	map = map_geo_position;
 
 	// Besides the CH itself we need a query object.
-	for (int i = 0; i < 100; i++)
+	for (int i = 0; i < conc; i++)
 	{
 		ContractionHierarchyQuery ch_query(ch);
 		queries.push_back(ch_query);
 	}
 }
 
-void Client::load(char *pbf_file, char *ch_file)
+void Client::load(int conc, char *pbf_file, char *ch_file)
 {
 	// Load a car routing graph from OpenStreetMap-based data
 	graph = simple_load_osm_car_routing_graph_from_pbf(pbf_file);
@@ -56,7 +56,7 @@ void Client::load(char *pbf_file, char *ch_file)
 	map = map_geo_position;
 
 	// Besides the CH itself we need a query object.
-	for (int i = 0; i < 100; i++)
+	for (int i = 0; i < conc; i++)
 	{
 		ContractionHierarchyQuery ch_query(ch);
 		queries.push_back(ch_query);

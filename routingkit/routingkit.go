@@ -22,15 +22,16 @@ func NewClient(mapFile, chFile string) (Client, error) {
 	c := rk.NewClient()
 	runtime.SetFinalizer(&c, finalizer)
 
+	concurrentQueries := runtime.GOMAXPROCS(0)
+
 	if _, err := os.Stat(chFile); os.IsNotExist(err) {
-		c.Build_ch(mapFile, chFile)
+		c.Build_ch(concurrentQueries, mapFile, chFile)
 	} else {
-		c.Load(mapFile, chFile)
+		c.Load(concurrentQueries, mapFile, chFile)
 	}
 
-	count := 100
-	channel := make(chan int, count)
-	for i := 0; i < count; i++ {
+	channel := make(chan int, concurrentQueries)
+	for i := 0; i < concurrentQueries; i++ {
 		channel <- i
 	}
 
