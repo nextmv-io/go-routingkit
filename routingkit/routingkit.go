@@ -36,14 +36,20 @@ func NewClient(mapFile, chFile string) (Client, error) {
 	}
 
 	return Client{
-		client:  c,
-		channel: channel,
+		client:     c,
+		channel:    channel,
+		snapRadius: 1000,
 	}, nil
 }
 
+func (c *Client) SetSnapRadius(n float64) {
+	c.snapRadius = n
+}
+
 type Client struct {
-	client  rk.Client
-	channel chan int
+	client     rk.Client
+	channel    chan int
+	snapRadius float64
 }
 
 func (c Client) Average() float64 {
@@ -53,14 +59,14 @@ func (c Client) Average() float64 {
 	return c.client.Average(vector)
 }
 
-func (c Client) Query(radius float64, from []float64, to []float64) (float64, [][]float64) {
+func (c Client) Query(from []float64, to []float64) (float64, [][]float64) {
 	counter := <-c.channel
 	defer func() {
 		c.channel <- counter
 	}()
 	resp := c.client.Queryrequest(
 		int(counter),
-		float32(radius),
+		float32(c.snapRadius),
 		float32(from[0]),
 		float32(from[1]),
 		float32(to[0]),

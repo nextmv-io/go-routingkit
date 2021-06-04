@@ -49,7 +49,7 @@ func main() {
 		for j := 0; j < 1000; j++ {
 			go func(i, j int) {
 				defer wg.Done()
-				_, _ = client.Query(1000, points[i], points[j])
+				_, _ = client.Query(points[i], points[j])
 			}(i, j)
 		}
 	}
@@ -78,7 +78,7 @@ func testFile(client routingkit.Client) {
 	start := time.Now()
 	for _, p1 := range points {
 		for _, p2 := range points {
-			_, _ = client.Query(1000, p1, p2)
+			_, _ = client.Query(p1, p2)
 			// fmt.Printf("%f,%f -> %f,%f : %f \n", p1[0], p1[1], p2[0], p2[1], dist)
 		}
 	}
