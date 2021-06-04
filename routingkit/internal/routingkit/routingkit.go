@@ -785,13 +785,13 @@ func (arg1 SwigcptrClient) Queryrequest(arg2 int, arg3 float32, arg4 float32, ar
 	return swig_r
 }
 
-func (arg1 SwigcptrClient) Table(arg2 int, arg3 PointVector, arg4 PointVector) (_swig_ret FloatVector) {
-	var swig_r FloatVector
+func (arg1 SwigcptrClient) Table(arg2 int, arg3 Point, arg4 PointVector) (_swig_ret UnsignedVector) {
+	var swig_r UnsignedVector
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2
 	_swig_i_2 := arg3.Swigcptr()
 	_swig_i_3 := arg4.Swigcptr()
-	swig_r = (FloatVector)(SwigcptrFloatVector(C._wrap_Client_table_routingkit_66c4b23584bbe149(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1), C.uintptr_t(_swig_i_2), C.uintptr_t(_swig_i_3))))
+	swig_r = (UnsignedVector)(SwigcptrUnsignedVector(C._wrap_Client_table_routingkit_66c4b23584bbe149(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1), C.uintptr_t(_swig_i_2), C.uintptr_t(_swig_i_3))))
 	return swig_r
 }
 
@@ -848,7 +848,7 @@ type Client interface {
 	Distance(arg2 int, arg3 float32, arg4 float32, arg5 float32, arg6 float32) (_swig_ret float32)
 	Threaded(arg2 int, arg3 float32, arg4 float32, arg5 float32, arg6 float32) (_swig_ret float32)
 	Queryrequest(arg2 int, arg3 float32, arg4 float32, arg5 float32, arg6 float32, arg7 float32) (_swig_ret QueryResponse)
-	Table(arg2 int, arg3 PointVector, arg4 PointVector) (_swig_ret FloatVector)
+	Table(arg2 int, arg3 Point, arg4 PointVector) (_swig_ret UnsignedVector)
 	Build_ch(arg2 int, arg3 string, arg4 string)
 	Load(arg2 int, arg3 string, arg4 string)
 	Average(arg2 IntVector) (_swig_ret float64)

@@ -90,23 +90,20 @@ func (c Client) Threaded(from []float64, to []float64) float64 {
 	))
 }
 
-func (c Client) Table(sources [][]float64, targets [][]float64) [][]float64 {
+func (c Client) Table(source []float64, targets [][]float64) []float64 {
 	counter := <-c.channel
 	defer func() {
 		c.channel <- counter
 	}()
 
-	sourcesVector := rk.NewPointVector(int64(len(sources)))
-	defer routingkit.DeletePointVector(sourcesVector)
-	for i := 0; i < len(sources); i++ {
-		s := rk.NewPoint()
-		s.SetLon(float32(sources[i][0]))
-		s.SetLat(float32(sources[i][1]))
-		sourcesVector.Set(i, s)
-	}
+	s := rk.NewPoint()
+	defer routingkit.DeletePoint(s)
+	s.SetLon(float32(source[0]))
+	s.SetLat(float32(source[1]))
 
 	targetsVector := rk.NewPointVector(int64(len(targets)))
 	defer routingkit.DeletePointVector(targetsVector)
+
 	for i := 0; i < len(targets); i++ {
 		t := rk.NewPoint()
 		t.SetLon(float32(targets[i][0]))
@@ -114,19 +111,13 @@ func (c Client) Table(sources [][]float64, targets [][]float64) [][]float64 {
 		targetsVector.Set(i, t)
 	}
 
-	matrix := c.client.Table(counter, sourcesVector, targetsVector)
-	defer routingkit.DeleteFloatVector(matrix)
-	numRows := len(sources)
-	rows := make([][]float64, len(sources))
-	pos := 0
+	matrix := c.client.Table(counter, s, targetsVector)
+	defer routingkit.DeleteUnsignedVector(matrix)
+	numRows := matrix.Size()
+	rows := make([]float64, numRows)
 	for i := 0; i < int(numRows); i++ {
-		numCols := len(targets)
-		cols := make([]float64, numCols)
-		for j := 0; j < numCols; j++ {
-			cols[j] = float64(matrix.Get(pos))
-			pos++
-		}
-		rows[i] = cols
+		col := matrix.Get(i)
+		rows[i] = float64(col)
 	}
 
 	return rows

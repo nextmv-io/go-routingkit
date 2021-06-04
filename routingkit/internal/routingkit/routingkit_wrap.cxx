@@ -1186,24 +1186,24 @@ QueryResponse *_wrap_Client_queryrequest_routingkit_66c4b23584bbe149(Client *_sw
 }
 
 
-std::vector< float > *_wrap_Client_table_routingkit_66c4b23584bbe149(Client *_swig_go_0, intgo _swig_go_1, std::vector< Point > *_swig_go_2, std::vector< Point > *_swig_go_3) {
+std::vector< unsigned int > *_wrap_Client_table_routingkit_66c4b23584bbe149(Client *_swig_go_0, intgo _swig_go_1, Point *_swig_go_2, std::vector< Point > *_swig_go_3) {
   Client *arg1 = (Client *) 0 ;
   int arg2 ;
-  std::vector< Point > arg3 ;
+  Point arg3 ;
   std::vector< Point > arg4 ;
-  std::vector< Point > *argp3 ;
+  Point *argp3 ;
   std::vector< Point > *argp4 ;
-  std::vector< float > result;
-  std::vector< float > *_swig_go_result;
+  std::vector< unsigned int > result;
+  std::vector< unsigned int > *_swig_go_result;
   
   arg1 = *(Client **)&_swig_go_0; 
   arg2 = (int)_swig_go_1; 
   
-  argp3 = (std::vector< Point > *)_swig_go_2;
+  argp3 = (Point *)_swig_go_2;
   if (argp3 == NULL) {
-    _swig_gopanic("Attempt to dereference null std::vector< Point >");
+    _swig_gopanic("Attempt to dereference null Point");
   }
-  arg3 = (std::vector< Point >)*argp3;
+  arg3 = (Point)*argp3;
   
   
   argp4 = (std::vector< Point > *)_swig_go_3;
@@ -1214,7 +1214,7 @@ std::vector< float > *_wrap_Client_table_routingkit_66c4b23584bbe149(Client *_sw
   
   
   result = (arg1)->table(arg2,arg3,arg4);
-  *(std::vector< float > **)&_swig_go_result = new std::vector< float >(result); 
+  *(std::vector< unsigned int > **)&_swig_go_result = new std::vector< unsigned int >(result); 
   return _swig_go_result;
 }
 

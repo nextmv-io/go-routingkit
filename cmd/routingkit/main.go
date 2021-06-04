@@ -39,7 +39,7 @@ func main() {
 	}
 
 	start = time.Now()
-	matrix := client.Table(points, points)
+	matrix := client.Table(points[0], points)
 	fmt.Println("Matrix request took ", time.Since(start))
 	fmt.Print(matrix)
 

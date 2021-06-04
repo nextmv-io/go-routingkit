@@ -28,25 +28,17 @@ func tempFile(dir, pattern string) (string, error) {
 
 func TestTables(t *testing.T) {
 	tests := []struct {
-		sources      [][]float64
+		source       []float64
 		destinations [][]float64
-		expected     [][]float64
+		expected     []float64
 	}{
 		{
-			sources: [][]float64{
-				{-76.587490, 39.299710},
-				{-76.590676, 39.305617},
-				{-76.580348, 39.292844},
-			},
+			source: []float64{-76.587490, 39.299710},
 			destinations: [][]float64{
 				{-76.582855, 39.309095},
 				{-76.599388, 39.302014},
 			},
-			expected: [][]float64{
-				{1496, 1259},
-				{994, 1120},
-				{1931, 2618},
-			},
+			expected: []float64{1496, 1259},
 		},
 	}
 	chFile, err := tempFile("", "routingkit-test.ch")
@@ -57,7 +49,7 @@ func TestTables(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		got := cli.Table(test.sources, test.destinations)
+		got := cli.Table(test.source, test.destinations)
 		if !reflect.DeepEqual(test.expected, got) {
 			t.Errorf("[%d] expected %v, got %v", i, test.expected, got)
 		}
