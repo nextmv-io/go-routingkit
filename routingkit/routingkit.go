@@ -57,7 +57,7 @@ func (c Client) Route(from []float64, to []float64) (float64, [][]float64) {
 	defer func() {
 		c.channel <- counter
 	}()
-	resp := c.client.Queryrequest(
+	resp := c.client.Query(
 		int(counter),
 		float32(c.snapRadius),
 		float32(from[0]),
@@ -81,7 +81,7 @@ func (c Client) Distance(from []float64, to []float64) float64 {
 	defer func() {
 		c.channel <- counter
 	}()
-	resp := c.client.Queryrequest(
+	resp := c.client.Query(
 		int(counter),
 		float32(c.snapRadius),
 		float32(from[0]),

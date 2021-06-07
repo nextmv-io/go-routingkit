@@ -113,7 +113,7 @@ extern void _wrap_QueryResponse_waypoints_set_routingkit_66c4b23584bbe149(uintpt
 extern uintptr_t _wrap_QueryResponse_waypoints_get_routingkit_66c4b23584bbe149(uintptr_t arg1);
 extern uintptr_t _wrap_new_QueryResponse_routingkit_66c4b23584bbe149(void);
 extern void _wrap_delete_QueryResponse_routingkit_66c4b23584bbe149(uintptr_t arg1);
-extern uintptr_t _wrap_Client_queryrequest_routingkit_66c4b23584bbe149(uintptr_t arg1, swig_intgo arg2, float arg3, float arg4, float arg5, float arg6, float arg7, _Bool arg8);
+extern uintptr_t _wrap_Client_query_routingkit_66c4b23584bbe149(uintptr_t arg1, swig_intgo arg2, float arg3, float arg4, float arg5, float arg6, float arg7, _Bool arg8);
 extern uintptr_t _wrap_Client_distances_routingkit_66c4b23584bbe149(uintptr_t arg1, swig_intgo arg2, uintptr_t arg3, uintptr_t arg4);
 extern void _wrap_Client_build_ch_routingkit_66c4b23584bbe149(uintptr_t arg1, swig_intgo arg2, swig_type_17 arg3, swig_type_18 arg4);
 extern void _wrap_Client_load_routingkit_66c4b23584bbe149(uintptr_t arg1, swig_intgo arg2, swig_type_19 arg3, swig_type_20 arg4);
@@ -745,7 +745,7 @@ func (p SwigcptrClient) Swigcptr() uintptr {
 func (p SwigcptrClient) SwigIsClient() {
 }
 
-func (arg1 SwigcptrClient) Queryrequest(arg2 int, arg3 float32, arg4 float32, arg5 float32, arg6 float32, arg7 float32, arg8 bool) (_swig_ret QueryResponse) {
+func (arg1 SwigcptrClient) Query(arg2 int, arg3 float32, arg4 float32, arg5 float32, arg6 float32, arg7 float32, arg8 bool) (_swig_ret QueryResponse) {
 	var swig_r QueryResponse
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2
@@ -755,7 +755,7 @@ func (arg1 SwigcptrClient) Queryrequest(arg2 int, arg3 float32, arg4 float32, ar
 	_swig_i_5 := arg6
 	_swig_i_6 := arg7
 	_swig_i_7 := arg8
-	swig_r = (QueryResponse)(SwigcptrQueryResponse(C._wrap_Client_queryrequest_routingkit_66c4b23584bbe149(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1), C.float(_swig_i_2), C.float(_swig_i_3), C.float(_swig_i_4), C.float(_swig_i_5), C.float(_swig_i_6), C._Bool(_swig_i_7))))
+	swig_r = (QueryResponse)(SwigcptrQueryResponse(C._wrap_Client_query_routingkit_66c4b23584bbe149(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1), C.float(_swig_i_2), C.float(_swig_i_3), C.float(_swig_i_4), C.float(_swig_i_5), C.float(_swig_i_6), C._Bool(_swig_i_7))))
 	return swig_r
 }
 
@@ -811,7 +811,7 @@ func DeleteClient(arg1 Client) {
 type Client interface {
 	Swigcptr() uintptr
 	SwigIsClient()
-	Queryrequest(arg2 int, arg3 float32, arg4 float32, arg5 float32, arg6 float32, arg7 float32, arg8 bool) (_swig_ret QueryResponse)
+	Query(arg2 int, arg3 float32, arg4 float32, arg5 float32, arg6 float32, arg7 float32, arg8 bool) (_swig_ret QueryResponse)
 	Distances(arg2 int, arg3 Point, arg4 PointVector) (_swig_ret UnsignedVector)
 	Build_ch(arg2 int, arg3 string, arg4 string)
 	Load(arg2 int, arg3 string, arg4 string)

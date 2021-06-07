@@ -84,7 +84,7 @@ std::vector<unsigned> Client::distances(int i, Point source, std::vector<struct 
 	return result;
 }
 
-QueryResponse Client::queryrequest(int i, float radius, float from_longitude, float from_latitude, float to_longitude, float to_latitude, bool include_waypoints)
+QueryResponse Client::query(int i, float radius, float from_longitude, float from_latitude, float to_longitude, float to_latitude, bool include_waypoints)
 {
 	auto query = [](int i, float radius, float from_longitude, float from_latitude, float to_longitude, float to_latitude, bool include_waypoints)
 	{

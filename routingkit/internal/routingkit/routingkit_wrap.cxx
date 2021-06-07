@@ -1115,7 +1115,7 @@ void _wrap_delete_QueryResponse_routingkit_66c4b23584bbe149(QueryResponse *_swig
 }
 
 
-QueryResponse *_wrap_Client_queryrequest_routingkit_66c4b23584bbe149(Client *_swig_go_0, intgo _swig_go_1, float _swig_go_2, float _swig_go_3, float _swig_go_4, float _swig_go_5, float _swig_go_6, bool _swig_go_7) {
+QueryResponse *_wrap_Client_query_routingkit_66c4b23584bbe149(Client *_swig_go_0, intgo _swig_go_1, float _swig_go_2, float _swig_go_3, float _swig_go_4, float _swig_go_5, float _swig_go_6, bool _swig_go_7) {
   Client *arg1 = (Client *) 0 ;
   int arg2 ;
   float arg3 ;
@@ -1136,7 +1136,7 @@ QueryResponse *_wrap_Client_queryrequest_routingkit_66c4b23584bbe149(Client *_sw
   arg7 = (float)_swig_go_6; 
   arg8 = (bool)_swig_go_7; 
   
-  result = (arg1)->queryrequest(arg2,arg3,arg4,arg5,arg6,arg7,arg8);
+  result = (arg1)->query(arg2,arg3,arg4,arg5,arg6,arg7,arg8);
   *(QueryResponse **)&_swig_go_result = new QueryResponse(result); 
   return _swig_go_result;
 }

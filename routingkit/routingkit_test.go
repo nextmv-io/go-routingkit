@@ -1,8 +1,11 @@
 package routingkit_test
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
+	"math/rand"
 	"os"
 	"reflect"
 	"testing"
@@ -26,6 +29,10 @@ func tempFile(dir, pattern string) (string, error) {
 	return filename, nil
 }
 
+// This is a small map file containing data for the boudning box from
+// -76.60735000000001,39.28971 to -76.57749,39.31587
+var marylandMap string = "testdata/maryland.osm.pbf"
+
 func TestDistances(t *testing.T) {
 	tests := []struct {
 		source       []float64
@@ -43,7 +50,7 @@ func TestDistances(t *testing.T) {
 	}
 	chFile, err := tempFile("", "routingkit-test.ch")
 	defer os.Remove(chFile)
-	cli, err := routingkit.NewClient("testdata/maryland.osm.pbf", chFile)
+	cli, err := routingkit.NewClient(marylandMap, chFile)
 	if err != nil {
 		t.Fatalf("creating Client: %v", err)
 	}
@@ -83,7 +90,7 @@ func TestMatrix(t *testing.T) {
 	}
 	chFile, err := tempFile("", "routingkit-test.ch")
 	defer os.Remove(chFile)
-	cli, err := routingkit.NewClient("testdata/maryland.osm.pbf", chFile)
+	cli, err := routingkit.NewClient(marylandMap, chFile)
 	if err != nil {
 		t.Fatalf("creating Client: %v", err)
 	}
@@ -162,7 +169,7 @@ func TestDistance(t *testing.T) {
 	}
 	chFile, err := tempFile("", "routingkit-test.ch")
 	defer os.Remove(chFile)
-	cli, err := routingkit.NewClient("testdata/maryland.osm.pbf", chFile)
+	cli, err := routingkit.NewClient(marylandMap, chFile)
 	if err != nil {
 		t.Fatalf("creating Client: %v", err)
 	}
@@ -182,4 +189,70 @@ func TestDistance(t *testing.T) {
 		}
 	}
 
+}
+
+var distances [][]float64
+
+func benchmarkMatrix(pointsFile string, nSources int, nDestinations int, b *testing.B) {
+	chFile, err := tempFile("", "routingkit-test.ch")
+	defer os.Remove(chFile)
+	cli, err := routingkit.NewClient(marylandMap, chFile)
+	if err != nil {
+		b.Fatalf("creating Client: %v", err)
+	}
+	cli.SetSnapRadius(100000)
+
+	f, err := os.Open(pointsFile)
+	if err != nil {
+		b.Fatal(err)
+	}
+	var data struct {
+		Points [][]float64
+	}
+	if err := json.NewDecoder(f).Decode(&data); err != nil {
+		b.Fatal(err)
+	}
+	sources := data.Points[:nSources]
+	destinations := data.Points[nSources : nSources+nDestinations]
+
+	var d [][]float64
+	for n := 0; n < b.N; n++ {
+		d = cli.Matrix(sources, destinations)
+	}
+	distances = d
+	log.Println(distances)
+}
+
+func pointInRange(low float64, high float64) float64 {
+	var mult float64 = 100000
+	lowInt := int(low * mult)
+	highInt := int(high * mult)
+	return float64(rand.Intn(highInt-lowInt)+lowInt) / mult
+}
+
+func randomPointsInBoundingBox(n int, bottomLeft [2]float64, topRight [2]float64) [][]float64 {
+	points := make([][]float64, n)
+	for i := 0; i < n; i++ {
+		points[i] = []float64{pointInRange(bottomLeft[0], topRight[0]), pointInRange(bottomLeft[1], topRight[1])}
+	}
+	return points
+}
+
+//func TestGenerateRandomPoints(t *testing.T) {
+//	points := randomPointsInBoundingBox(1000, [2]float64{-76.60735000000001, 39.28971}, [2]float64{-76.57749, 39.31587})
+//	f, err := os.OpenFile("testdata/points.json", os.O_CREATE|os.O_RDWR, 0755)
+//	if err != nil {
+//		t.Fatal(err)
+//	}
+//	p := map[string]interface{}{
+//		"points": points,
+//	}
+//	if err := json.NewEncoder(f).Encode(p); err != nil {
+//		t.Fatal(err)
+//	}
+//}
+
+func BenchmarkMatrix(b *testing.B) {
+	//func benchmarkMatrix(file string, nSources int, nDestinations int, b *testing.B) {
+	benchmarkMatrix("testdata/points.json", 100, 100, b)
 }
