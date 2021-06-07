@@ -145,14 +145,14 @@ func (c Client) Distances(source []float64, targets [][]float64) []float64 {
 		targetsVector.Set(i, t)
 	}
 
-	matrix := c.client.Distances(counter, s, targetsVector)
-	defer routingkit.DeleteUnsignedVector(matrix)
-	numRows := matrix.Size()
-	rows := make([]float64, numRows)
-	for i := 0; i < int(numRows); i++ {
-		col := matrix.Get(i)
-		rows[i] = float64(col)
+	distanceVec := c.client.Distances(counter, s, targetsVector)
+	defer routingkit.DeleteUnsignedVector(distanceVec)
+	numDistances := distanceVec.Size()
+	distances := make([]float64, numDistances)
+	for i := 0; i < int(numDistances); i++ {
+		col := distanceVec.Get(i)
+		distances[i] = float64(col)
 	}
 
-	return rows
+	return distances
 }
