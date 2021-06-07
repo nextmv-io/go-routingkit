@@ -94,6 +94,36 @@ func (c Client) Distance(from []float64, to []float64) float64 {
 	return float64(resp.GetDistance())
 }
 
+type distanceMatrixRow struct {
+	i         int
+	distances []float64
+}
+
+func (c Client) Matrix(sources [][]float64, targets [][]float64) [][]float64 {
+	matrix := make([][]float64, len(sources))
+
+	workers := make(chan struct{}, runtime.GOMAXPROCS(0))
+	results := make(chan distanceMatrixRow)
+
+	go func() {
+		for i, source := range sources {
+			workers <- struct{}{}
+			go func(i int, source []float64) {
+				distances := c.Distances(source, targets)
+				results <- distanceMatrixRow{i, distances}
+				<-workers
+			}(i, source)
+		}
+	}()
+
+	for range sources {
+		matrixRow := <-results
+		matrix[matrixRow.i] = matrixRow.distances
+	}
+
+	return matrix
+}
+
 func (c Client) Distances(source []float64, targets [][]float64) []float64 {
 	counter := <-c.channel
 	defer func() {

@@ -56,6 +56,47 @@ func TestDistances(t *testing.T) {
 	}
 }
 
+func TestMatrix(t *testing.T) {
+	tests := []struct {
+		sources      [][]float64
+		destinations [][]float64
+		expected     [][]float64
+	}{
+		{
+			sources: [][]float64{
+				{-76.587490, 39.299710},
+				{-76.594045, 39.300524},
+				{-76.586664, 39.290938},
+				{-76.598423, 39.289484},
+			},
+			destinations: [][]float64{
+				{-76.582855, 39.309095},
+				{-76.599388, 39.302014},
+			},
+			expected: [][]float64{
+				{1496, 1259},
+				{1831, 575},
+				{2372, 2224},
+				{3399, 1548},
+			},
+		},
+	}
+	chFile, err := tempFile("", "routingkit-test.ch")
+	defer os.Remove(chFile)
+	cli, err := routingkit.NewClient("testdata/maryland.osm.pbf", chFile)
+	if err != nil {
+		t.Fatalf("creating Client: %v", err)
+	}
+
+	for i, test := range tests {
+		got := cli.Matrix(test.sources, test.destinations)
+		if !reflect.DeepEqual(test.expected, got) {
+			t.Errorf("[%d] expected %v, got %v", i, test.expected, got)
+		}
+	}
+
+}
+
 func TestDistance(t *testing.T) {
 	tests := []struct {
 		source            []float64
