@@ -84,9 +84,9 @@ std::vector<unsigned> Client::distances(int i, Point source, std::vector<struct 
 	return result;
 }
 
-QueryResponse Client::queryrequest(int i, float radius, float from_longitude, float from_latitude, float to_longitude, float to_latitude)
+QueryResponse Client::queryrequest(int i, float radius, float from_longitude, float from_latitude, float to_longitude, float to_latitude, bool include_waypoints)
 {
-	auto query = [](int i, float radius, float from_longitude, float from_latitude, float to_longitude, float to_latitude)
+	auto query = [](int i, float radius, float from_longitude, float from_latitude, float to_longitude, float to_latitude, bool include_waypoints)
 	{
 		unsigned from = map.find_nearest_neighbor_within_radius(from_latitude, from_longitude, radius).id;
 		unsigned to = map.find_nearest_neighbor_within_radius(to_latitude, to_longitude, radius).id;
@@ -100,14 +100,17 @@ QueryResponse Client::queryrequest(int i, float radius, float from_longitude, fl
 		queries[i].reset().add_source(from).add_target(to).run();
 		auto distance = queries[i].get_distance();
 		response.distance = distance;
-		auto path = queries[i].get_node_path();
-		for (auto x : path)
-			response.waypoints.push_back(Point{lon : graph.longitude[x], lat : graph.latitude[x]});
+		if (include_waypoints)
+		{
+			auto path = queries[i].get_node_path();
+			for (auto x : path)
+				response.waypoints.push_back(Point{lon : graph.longitude[x], lat : graph.latitude[x]});
+		}
 
 		return response;
 	};
 
-	auto future = std::async(launch::deferred, query, i, radius, from_longitude, from_latitude, to_longitude, to_latitude);
+	auto future = std::async(launch::deferred, query, i, radius, from_longitude, from_latitude, to_longitude, to_latitude, include_waypoints);
 	auto result = future.get();
 	return result;
 }

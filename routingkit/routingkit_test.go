@@ -56,7 +56,7 @@ func TestDistances(t *testing.T) {
 	}
 }
 
-func TestRoutingKit(t *testing.T) {
+func TestDistance(t *testing.T) {
 	tests := []struct {
 		source            []float64
 		destination       []float64
@@ -128,12 +128,16 @@ func TestRoutingKit(t *testing.T) {
 
 	for i, test := range tests {
 		cli.SetSnapRadius(test.snap)
-		distance, waypoints := cli.Query(test.source, test.destination)
+		distance, waypoints := cli.Route(test.source, test.destination)
 		if test.expectedDistance != distance {
 			t.Errorf("[%d] expected distance %v, got %v", i, test.expectedDistance, distance)
 		}
 		if !reflect.DeepEqual(test.expectedWaypoints, waypoints) {
 			t.Errorf("[%d] expected waypoints %v, got %v", i, test.expectedWaypoints, waypoints)
+		}
+		distance = cli.Distance(test.source, test.destination)
+		if test.expectedDistance != distance {
+			t.Errorf("[%d] expected distance %v, got %v", i, test.expectedDistance, distance)
 		}
 	}
 

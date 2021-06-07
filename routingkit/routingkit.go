@@ -52,7 +52,7 @@ type Client struct {
 	snapRadius float64
 }
 
-func (c Client) Query(from []float64, to []float64) (float64, [][]float64) {
+func (c Client) Route(from []float64, to []float64) (float64, [][]float64) {
 	counter := <-c.channel
 	defer func() {
 		c.channel <- counter
@@ -64,6 +64,7 @@ func (c Client) Query(from []float64, to []float64) (float64, [][]float64) {
 		float32(from[1]),
 		float32(to[0]),
 		float32(to[1]),
+		true,
 	)
 	wp := resp.GetWaypoints()
 	waypoints := make([][]float64, wp.Size())
@@ -73,6 +74,24 @@ func (c Client) Query(from []float64, to []float64) (float64, [][]float64) {
 	}
 
 	return float64(resp.GetDistance()), waypoints
+}
+
+func (c Client) Distance(from []float64, to []float64) float64 {
+	counter := <-c.channel
+	defer func() {
+		c.channel <- counter
+	}()
+	resp := c.client.Queryrequest(
+		int(counter),
+		float32(c.snapRadius),
+		float32(from[0]),
+		float32(from[1]),
+		float32(to[0]),
+		float32(to[1]),
+		false,
+	)
+
+	return float64(resp.GetDistance())
 }
 
 func (c Client) Distances(source []float64, targets [][]float64) []float64 {
