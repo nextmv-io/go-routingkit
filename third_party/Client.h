@@ -18,7 +18,7 @@ class Client
 {
 public:
         QueryResponse queryrequest(int i, float radius, float from_longitude, float from_latitude, float to_longitude, float to_latitude);
-        std::vector<unsigned> table(int i, Point source, std::vector<Point> targets);
+        std::vector<unsigned> distances(int i, Point source, std::vector<Point> targets);
         void build_ch(int conc, char *pbf_file, char *ch_file);
         void load(int conc, char *pbf_file, char *ch_file);
 };

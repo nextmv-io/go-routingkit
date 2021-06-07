@@ -26,7 +26,7 @@ func tempFile(dir, pattern string) (string, error) {
 	return filename, nil
 }
 
-func TestTable(t *testing.T) {
+func TestDistances(t *testing.T) {
 	tests := []struct {
 		source       []float64
 		destinations [][]float64
@@ -49,7 +49,7 @@ func TestTable(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		got := cli.Table(test.source, test.destinations)
+		got := cli.Distances(test.source, test.destinations)
 		if !reflect.DeepEqual(test.expected, got) {
 			t.Errorf("[%d] expected %v, got %v", i, test.expected, got)
 		}

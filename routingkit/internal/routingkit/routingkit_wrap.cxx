@@ -1140,7 +1140,7 @@ QueryResponse *_wrap_Client_queryrequest_routingkit_66c4b23584bbe149(Client *_sw
 }
 
 
-std::vector< unsigned int > *_wrap_Client_table_routingkit_66c4b23584bbe149(Client *_swig_go_0, intgo _swig_go_1, Point *_swig_go_2, std::vector< Point > *_swig_go_3) {
+std::vector< unsigned int > *_wrap_Client_distances_routingkit_66c4b23584bbe149(Client *_swig_go_0, intgo _swig_go_1, Point *_swig_go_2, std::vector< Point > *_swig_go_3) {
   Client *arg1 = (Client *) 0 ;
   int arg2 ;
   Point arg3 ;
@@ -1167,7 +1167,7 @@ std::vector< unsigned int > *_wrap_Client_table_routingkit_66c4b23584bbe149(Clie
   arg4 = (std::vector< Point >)*argp4;
   
   
-  result = (arg1)->table(arg2,arg3,arg4);
+  result = (arg1)->distances(arg2,arg3,arg4);
   *(std::vector< unsigned int > **)&_swig_go_result = new std::vector< unsigned int >(result); 
   return _swig_go_result;
 }

@@ -114,7 +114,7 @@ extern uintptr_t _wrap_QueryResponse_waypoints_get_routingkit_66c4b23584bbe149(u
 extern uintptr_t _wrap_new_QueryResponse_routingkit_66c4b23584bbe149(void);
 extern void _wrap_delete_QueryResponse_routingkit_66c4b23584bbe149(uintptr_t arg1);
 extern uintptr_t _wrap_Client_queryrequest_routingkit_66c4b23584bbe149(uintptr_t arg1, swig_intgo arg2, float arg3, float arg4, float arg5, float arg6, float arg7);
-extern uintptr_t _wrap_Client_table_routingkit_66c4b23584bbe149(uintptr_t arg1, swig_intgo arg2, uintptr_t arg3, uintptr_t arg4);
+extern uintptr_t _wrap_Client_distances_routingkit_66c4b23584bbe149(uintptr_t arg1, swig_intgo arg2, uintptr_t arg3, uintptr_t arg4);
 extern void _wrap_Client_build_ch_routingkit_66c4b23584bbe149(uintptr_t arg1, swig_intgo arg2, swig_type_17 arg3, swig_type_18 arg4);
 extern void _wrap_Client_load_routingkit_66c4b23584bbe149(uintptr_t arg1, swig_intgo arg2, swig_type_19 arg3, swig_type_20 arg4);
 extern uintptr_t _wrap_new_Client_routingkit_66c4b23584bbe149(void);
@@ -758,13 +758,13 @@ func (arg1 SwigcptrClient) Queryrequest(arg2 int, arg3 float32, arg4 float32, ar
 	return swig_r
 }
 
-func (arg1 SwigcptrClient) Table(arg2 int, arg3 Point, arg4 PointVector) (_swig_ret UnsignedVector) {
+func (arg1 SwigcptrClient) Distances(arg2 int, arg3 Point, arg4 PointVector) (_swig_ret UnsignedVector) {
 	var swig_r UnsignedVector
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2
 	_swig_i_2 := arg3.Swigcptr()
 	_swig_i_3 := arg4.Swigcptr()
-	swig_r = (UnsignedVector)(SwigcptrUnsignedVector(C._wrap_Client_table_routingkit_66c4b23584bbe149(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1), C.uintptr_t(_swig_i_2), C.uintptr_t(_swig_i_3))))
+	swig_r = (UnsignedVector)(SwigcptrUnsignedVector(C._wrap_Client_distances_routingkit_66c4b23584bbe149(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1), C.uintptr_t(_swig_i_2), C.uintptr_t(_swig_i_3))))
 	return swig_r
 }
 
@@ -811,7 +811,7 @@ type Client interface {
 	Swigcptr() uintptr
 	SwigIsClient()
 	Queryrequest(arg2 int, arg3 float32, arg4 float32, arg5 float32, arg6 float32, arg7 float32) (_swig_ret QueryResponse)
-	Table(arg2 int, arg3 Point, arg4 PointVector) (_swig_ret UnsignedVector)
+	Distances(arg2 int, arg3 Point, arg4 PointVector) (_swig_ret UnsignedVector)
 	Build_ch(arg2 int, arg3 string, arg4 string)
 	Load(arg2 int, arg3 string, arg4 string)
 }

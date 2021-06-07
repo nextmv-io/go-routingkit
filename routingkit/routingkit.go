@@ -75,7 +75,7 @@ func (c Client) Query(from []float64, to []float64) (float64, [][]float64) {
 	return float64(resp.GetDistance()), waypoints
 }
 
-func (c Client) Table(source []float64, targets [][]float64) []float64 {
+func (c Client) Distances(source []float64, targets [][]float64) []float64 {
 	counter := <-c.channel
 	defer func() {
 		c.channel <- counter
@@ -96,7 +96,7 @@ func (c Client) Table(source []float64, targets [][]float64) []float64 {
 		targetsVector.Set(i, t)
 	}
 
-	matrix := c.client.Table(counter, s, targetsVector)
+	matrix := c.client.Distances(counter, s, targetsVector)
 	defer routingkit.DeleteUnsignedVector(matrix)
 	numRows := matrix.Size()
 	rows := make([]float64, numRows)

@@ -63,7 +63,7 @@ void Client::load(int conc, char *pbf_file, char *ch_file)
 	}
 }
 
-std::vector<unsigned> Client::table(int i, Point source, std::vector<struct Point> targets)
+std::vector<unsigned> Client::distances(int i, Point source, std::vector<struct Point> targets)
 {
 	auto tbl = [](int i, Point source, std::vector<struct Point> targets)
 	{
