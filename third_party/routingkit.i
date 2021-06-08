@@ -15,6 +15,7 @@ namespace std {
   %template(FloatVector) vector<float>;
   %template(PointVector) vector<Point>;
   %template(UnsignedVector) vector<unsigned>;
+  %template(LongIntVector) vector<long int>;
 }
 
 %include "Client.h"

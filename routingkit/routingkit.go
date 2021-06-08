@@ -145,8 +145,8 @@ func (c Client) Distances(source []float64, targets [][]float64) []float64 {
 		targetsVector.Set(i, t)
 	}
 
-	distanceVec := c.client.Distances(counter, s, targetsVector)
-	defer routingkit.DeleteUnsignedVector(distanceVec)
+	distanceVec := c.client.Distances(counter, float32(c.snapRadius), s, targetsVector)
+	defer routingkit.DeleteLongIntVector(distanceVec)
 	numDistances := distanceVec.Size()
 	distances := make([]float64, numDistances)
 	for i := 0; i < int(numDistances); i++ {

@@ -8,6 +8,8 @@
 #include <numeric>
 #include <thread>
 #include <future>
+#include <algorithm>
+
 using namespace RoutingKit;
 using namespace std;
 
@@ -63,23 +65,65 @@ void Client::load(int conc, char *pbf_file, char *ch_file)
 	}
 }
 
-std::vector<unsigned> Client::distances(int i, Point source, std::vector<struct Point> targets)
+std::vector<long int> Client::distances(int i, float radius, Point source, std::vector<struct Point> targets)
 {
-	auto tbl = [](int i, Point source, std::vector<struct Point> targets)
+	auto tbl = [](int i, float radius, Point source, std::vector<struct Point> targets) -> vector<long int>
 	{
+		vector<long int> results;
+		results.resize(targets.size());
+
 		vector<unsigned> target_list;
-		for (auto &target : targets)
+		vector<int> invalid_ids;
+		for (int i = 0; i < targets.size(); i++)
 		{
-			unsigned to = map.find_nearest_neighbor_within_radius(target.lat, target.lon, 1000).id;
-			target_list.push_back(to);
+			auto target = targets[i];
+			unsigned to = map.find_nearest_neighbor_within_radius(target.lat, target.lon, radius).id;
+			if (to == invalid_id)
+			{
+				invalid_ids.push_back(i);
+			}
+			else
+			{
+				target_list.push_back(to);
+			}
 		}
 		queries[i].reset().pin_targets(target_list);
 
-		unsigned from = map.find_nearest_neighbor_within_radius(source.lat, source.lon, 1000).id;
-		return queries[i].reset_source().add_source(from).run_to_pinned_targets().get_distances_to_targets();
+		unsigned from = map.find_nearest_neighbor_within_radius(source.lat, source.lon, radius).id;
+		if (from == invalid_id)
+		{
+			for (int i = 0; i < targets.size(); i++)
+			{
+				results[i] = -1;
+			}
+			return results;
+		}
+		vector<unsigned> distances = queries[i].reset_source().add_source(from).run_to_pinned_targets().get_distances_to_targets();
+
+		auto invalid_id = invalid_ids.begin();
+		auto distance = distances.begin();
+		for (int i = 0; i < targets.size(); i++)
+		{
+			if (invalid_id != invalid_ids.end() && i == *invalid_id)
+			{
+				results[i] = -1;
+				invalid_id++;
+			}
+			else if (*distance == INT_MAX)
+			{
+				results[i] = -1;
+				distance++;
+			}
+			else
+			{
+				results[i] = *distance;
+				distance++;
+			}
+		}
+		return results;
 	};
 
-	auto future = std::async(launch::deferred, tbl, i, source, targets);
+	auto future = std::async(launch::deferred, tbl, i, radius, source, targets);
 	auto result = future.get();
 	return result;
 }
@@ -90,6 +134,7 @@ QueryResponse Client::query(int i, float radius, float from_longitude, float fro
 	{
 		unsigned from = map.find_nearest_neighbor_within_radius(from_latitude, from_longitude, radius).id;
 		unsigned to = map.find_nearest_neighbor_within_radius(to_latitude, to_longitude, radius).id;
+
 		QueryResponse response;
 		if (from == invalid_id || to == invalid_id)
 		{
@@ -99,6 +144,12 @@ QueryResponse Client::query(int i, float radius, float from_longitude, float fro
 
 		queries[i].reset().add_source(from).add_target(to).run();
 		auto distance = queries[i].get_distance();
+		if (distance == INT_MAX)
+		{
+			response.distance = -1.0;
+			return response;
+		}
+
 		response.distance = distance;
 		if (include_waypoints)
 		{

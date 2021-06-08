@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"math/rand"
 	"os"
 	"reflect"
@@ -38,6 +37,7 @@ func TestDistances(t *testing.T) {
 		source       []float64
 		destinations [][]float64
 		expected     []float64
+		snap         float64
 	}{
 		{
 			source: []float64{-76.587490, 39.299710},
@@ -45,7 +45,30 @@ func TestDistances(t *testing.T) {
 				{-76.582855, 39.309095},
 				{-76.599388, 39.302014},
 			},
+			snap:     1000,
 			expected: []float64{1496, 1259},
+		},
+		{
+			// should receive -1 for invalid destinations
+			source: []float64{-76.587490, 39.299710},
+			destinations: [][]float64{
+				{-76.60548, 39.30772},
+				{-76.582855, 39.309095},
+				{-76.584897, 39.280774},
+				{-76.599388, 39.302014},
+			},
+			snap:     100,
+			expected: []float64{-1, 1496, -1, 1259},
+		},
+		{
+			// invalid source - should receive all -1
+			source: []float64{-76.60586, 39.30228},
+			destinations: [][]float64{
+				{-76.60548, 39.30772},
+				{-76.584897, 39.280774},
+			},
+			snap:     10,
+			expected: []float64{-1, -1},
 		},
 	}
 	chFile, err := tempFile("", "routingkit-test.ch")
@@ -56,6 +79,7 @@ func TestDistances(t *testing.T) {
 	}
 
 	for i, test := range tests {
+		cli.SetSnapRadius(test.snap)
 		got := cli.Distances(test.source, test.destinations)
 		if !reflect.DeepEqual(test.expected, got) {
 			t.Errorf("[%d] expected %v, got %v", i, test.expected, got)
@@ -213,14 +237,13 @@ func benchmarkMatrix(pointsFile string, nSources int, nDestinations int, b *test
 		b.Fatal(err)
 	}
 	sources := data.Points[:nSources]
-	destinations := data.Points[nSources : nSources+nDestinations]
+	destinations := data.Points[:nDestinations]
 
 	var d [][]float64
 	for n := 0; n < b.N; n++ {
 		d = cli.Matrix(sources, destinations)
 	}
 	distances = d
-	log.Println(distances)
 }
 
 func pointInRange(low float64, high float64) float64 {
@@ -253,6 +276,5 @@ func randomPointsInBoundingBox(n int, bottomLeft [2]float64, topRight [2]float64
 //}
 
 func BenchmarkMatrix(b *testing.B) {
-	//func benchmarkMatrix(file string, nSources int, nDestinations int, b *testing.B) {
 	benchmarkMatrix("testdata/points.json", 100, 100, b)
 }

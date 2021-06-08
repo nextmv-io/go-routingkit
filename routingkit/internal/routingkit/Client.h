@@ -10,7 +10,7 @@ struct Point
 
 struct QueryResponse
 {
-        float distance;
+        long int distance;
         std::vector<Point> waypoints;
 };
 
@@ -18,7 +18,7 @@ class Client
 {
 public:
         QueryResponse query(int i, float radius, float from_longitude, float from_latitude, float to_longitude, float to_latitude, bool include_waypoints);
-        std::vector<unsigned> distances(int i, Point source, std::vector<Point> targets);
+        std::vector<long int> distances(int i, float radius, Point source, std::vector<Point> targets);
         void build_ch(int conc, char *pbf_file, char *ch_file);
         void load(int conc, char *pbf_file, char *ch_file);
 };
