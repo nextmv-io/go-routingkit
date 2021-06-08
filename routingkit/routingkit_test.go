@@ -215,36 +215,12 @@ func TestDistance(t *testing.T) {
 
 }
 
+var distance int64
 var distances [][]int64
 
-func benchmarkMatrix(pointsFile string, nSources int, nDestinations int, b *testing.B) {
-	chFile, err := tempFile("", "routingkit-test.ch")
-	defer os.Remove(chFile)
-	cli, err := routingkit.NewClient(marylandMap, chFile)
-	if err != nil {
-		b.Fatalf("creating Client: %v", err)
-	}
-	cli.SetSnapRadius(100000)
-
-	f, err := os.Open(pointsFile)
-	if err != nil {
-		b.Fatal(err)
-	}
-	var data struct {
-		Points [][]float32
-	}
-	if err := json.NewDecoder(f).Decode(&data); err != nil {
-		b.Fatal(err)
-	}
-	sources := data.Points[:nSources]
-	destinations := data.Points[:nDestinations]
-
-	var d [][]int64
-	for n := 0; n < b.N; n++ {
-		d = cli.Matrix(sources, destinations)
-	}
-	distances = d
-}
+// These two functions are utilities for generating random points within a bounding box for benchmarking
+// Keeping them around even though they aren't used now. Note that even though the points will lie within
+// the bounding it box, it may not be possible to route between them if the route requires leaving the box
 
 func pointInRange(low float64, high float64) float64 {
 	var mult float64 = 100000
@@ -261,20 +237,60 @@ func randomPointsInBoundingBox(n int, bottomLeft [2]float64, topRight [2]float64
 	return points
 }
 
-//func TestGenerateRandomPoints(t *testing.T) {
-//	points := randomPointsInBoundingBox(1000, [2]float64{-76.60735000000001, 39.28971}, [2]float64{-76.57749, 39.31587})
-//	f, err := os.OpenFile("testdata/points.json", os.O_CREATE|os.O_RDWR, 0755)
-//	if err != nil {
-//		t.Fatal(err)
-//	}
-//	p := map[string]interface{}{
-//		"points": points,
-//	}
-//	if err := json.NewEncoder(f).Encode(p); err != nil {
-//		t.Fatal(err)
-//	}
-//}
+func BenchmarkDistance(b *testing.B) {
+	chFile, err := tempFile("", "routingkit-test.ch")
+	defer os.Remove(chFile)
+	cli, err := routingkit.NewClient(marylandMap, chFile)
+	if err != nil {
+		b.Fatalf("creating Client: %v", err)
+	}
+	cli.SetSnapRadius(1000)
+
+	f, err := os.Open("testdata/points.json")
+	if err != nil {
+		b.Fatal(err)
+	}
+	var data struct {
+		Points [][]float32
+	}
+	if err := json.NewDecoder(f).Decode(&data); err != nil {
+		b.Fatal(err)
+	}
+
+	b.Run("distance", func(b *testing.B) {
+		var d int64
+		for n := 0; n < b.N; n++ {
+			d = cli.Distance(data.Points[n%len(data.Points)], data.Points[(n+1)%len(data.Points)])
+		}
+		distance = d
+	})
+}
 
 func BenchmarkMatrix(b *testing.B) {
-	benchmarkMatrix("testdata/points.json", 100, 100, b)
+	chFile, err := tempFile("", "routingkit-test.ch")
+	defer os.Remove(chFile)
+	cli, err := routingkit.NewClient(marylandMap, chFile)
+	if err != nil {
+		b.Fatalf("creating Client: %v", err)
+	}
+	cli.SetSnapRadius(1000)
+
+	f, err := os.Open("testdata/points.json")
+	if err != nil {
+		b.Fatal(err)
+	}
+	var data struct {
+		Points [][]float32
+	}
+	if err := json.NewDecoder(f).Decode(&data); err != nil {
+		b.Fatal(err)
+	}
+
+	b.Run("matrix", func(b *testing.B) {
+		var d [][]int64
+		for n := 0; n < b.N; n++ {
+			d = cli.Matrix(data.Points, data.Points)
+		}
+		distances = d
+	})
 }
