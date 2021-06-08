@@ -42,17 +42,17 @@ func NewClient(mapFile, chFile string) (Client, error) {
 	}, nil
 }
 
-func (c *Client) SetSnapRadius(n float64) {
+func (c *Client) SetSnapRadius(n float32) {
 	c.snapRadius = n
 }
 
 type Client struct {
 	client     rk.Client
 	channel    chan int
-	snapRadius float64
+	snapRadius float32
 }
 
-func (c Client) Route(from []float64, to []float64) (float64, [][]float64) {
+func (c Client) Route(from []float32, to []float32) (int64, [][]float32) {
 	counter := <-c.channel
 	defer func() {
 		c.channel <- counter
@@ -67,40 +67,40 @@ func (c Client) Route(from []float64, to []float64) (float64, [][]float64) {
 		true,
 	)
 	wp := resp.GetWaypoints()
-	waypoints := make([][]float64, wp.Size())
+	waypoints := make([][]float32, wp.Size())
 	for i := 0; i < len(waypoints); i++ {
 		p := wp.Get(i)
-		waypoints[i] = []float64{float64(p.GetLon()), float64(p.GetLat())}
+		waypoints[i] = []float32{float32(p.GetLon()), float32(p.GetLat())}
 	}
 
-	return float64(resp.GetDistance()), waypoints
+	return resp.GetDistance(), waypoints
 }
 
-func (c Client) Distance(from []float64, to []float64) float64 {
+func (c Client) Distance(from []float32, to []float32) int64 {
 	counter := <-c.channel
 	defer func() {
 		c.channel <- counter
 	}()
 	resp := c.client.Query(
 		int(counter),
-		float32(c.snapRadius),
-		float32(from[0]),
-		float32(from[1]),
-		float32(to[0]),
-		float32(to[1]),
+		c.snapRadius,
+		from[0],
+		from[1],
+		to[0],
+		to[1],
 		false,
 	)
 
-	return float64(resp.GetDistance())
+	return resp.GetDistance()
 }
 
 type distanceMatrixRow struct {
 	i         int
-	distances []float64
+	distances []int64
 }
 
-func (c Client) Matrix(sources [][]float64, targets [][]float64) [][]float64 {
-	matrix := make([][]float64, len(sources))
+func (c Client) Matrix(sources [][]float32, targets [][]float32) [][]int64 {
+	matrix := make([][]int64, len(sources))
 
 	workers := make(chan struct{}, runtime.GOMAXPROCS(0))
 	results := make(chan distanceMatrixRow)
@@ -108,7 +108,7 @@ func (c Client) Matrix(sources [][]float64, targets [][]float64) [][]float64 {
 	go func() {
 		for i, source := range sources {
 			workers <- struct{}{}
-			go func(i int, source []float64) {
+			go func(i int, source []float32) {
 				distances := c.Distances(source, targets)
 				results <- distanceMatrixRow{i, distances}
 				<-workers
@@ -124,7 +124,7 @@ func (c Client) Matrix(sources [][]float64, targets [][]float64) [][]float64 {
 	return matrix
 }
 
-func (c Client) Distances(source []float64, targets [][]float64) []float64 {
+func (c Client) Distances(source []float32, targets [][]float32) []int64 {
 	counter := <-c.channel
 	defer func() {
 		c.channel <- counter
@@ -148,10 +148,10 @@ func (c Client) Distances(source []float64, targets [][]float64) []float64 {
 	distanceVec := c.client.Distances(counter, float32(c.snapRadius), s, targetsVector)
 	defer routingkit.DeleteLongIntVector(distanceVec)
 	numDistances := distanceVec.Size()
-	distances := make([]float64, numDistances)
+	distances := make([]int64, numDistances)
 	for i := 0; i < int(numDistances); i++ {
 		col := distanceVec.Get(i)
-		distances[i] = float64(col)
+		distances[i] = col
 	}
 
 	return distances

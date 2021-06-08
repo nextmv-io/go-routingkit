@@ -34,41 +34,41 @@ var marylandMap string = "testdata/maryland.osm.pbf"
 
 func TestDistances(t *testing.T) {
 	tests := []struct {
-		source       []float64
-		destinations [][]float64
-		expected     []float64
-		snap         float64
+		source       []float32
+		destinations [][]float32
+		expected     []int64
+		snap         float32
 	}{
 		{
-			source: []float64{-76.587490, 39.299710},
-			destinations: [][]float64{
+			source: []float32{-76.587490, 39.299710},
+			destinations: [][]float32{
 				{-76.582855, 39.309095},
 				{-76.599388, 39.302014},
 			},
 			snap:     1000,
-			expected: []float64{1496, 1259},
+			expected: []int64{1496, 1259},
 		},
 		{
 			// should receive -1 for invalid destinations
-			source: []float64{-76.587490, 39.299710},
-			destinations: [][]float64{
+			source: []float32{-76.587490, 39.299710},
+			destinations: [][]float32{
 				{-76.60548, 39.30772},
 				{-76.582855, 39.309095},
 				{-76.584897, 39.280774},
 				{-76.599388, 39.302014},
 			},
 			snap:     100,
-			expected: []float64{-1, 1496, -1, 1259},
+			expected: []int64{-1, 1496, -1, 1259},
 		},
 		{
 			// invalid source - should receive all -1
-			source: []float64{-76.60586, 39.30228},
-			destinations: [][]float64{
+			source: []float32{-76.60586, 39.30228},
+			destinations: [][]float32{
 				{-76.60548, 39.30772},
 				{-76.584897, 39.280774},
 			},
 			snap:     10,
-			expected: []float64{-1, -1},
+			expected: []int64{-1, -1},
 		},
 	}
 	chFile, err := tempFile("", "routingkit-test.ch")
@@ -89,22 +89,22 @@ func TestDistances(t *testing.T) {
 
 func TestMatrix(t *testing.T) {
 	tests := []struct {
-		sources      [][]float64
-		destinations [][]float64
-		expected     [][]float64
+		sources      [][]float32
+		destinations [][]float32
+		expected     [][]int64
 	}{
 		{
-			sources: [][]float64{
+			sources: [][]float32{
 				{-76.587490, 39.299710},
 				{-76.594045, 39.300524},
 				{-76.586664, 39.290938},
 				{-76.598423, 39.289484},
 			},
-			destinations: [][]float64{
+			destinations: [][]float32{
 				{-76.582855, 39.309095},
 				{-76.599388, 39.302014},
 			},
-			expected: [][]float64{
+			expected: [][]int64{
 				{1496, 1259},
 				{1831, 575},
 				{2372, 2224},
@@ -130,18 +130,18 @@ func TestMatrix(t *testing.T) {
 
 func TestDistance(t *testing.T) {
 	tests := []struct {
-		source            []float64
-		destination       []float64
-		snap              float64
-		expectedDistance  float64
-		expectedWaypoints [][]float64
+		source            []float32
+		destination       []float32
+		snap              float32
+		expectedDistance  int64
+		expectedWaypoints [][]float32
 	}{
 		{
-			source:           []float64{-76.587490, 39.299710},
-			destination:      []float64{-76.584897, 39.280774},
+			source:           []float32{-76.587490, 39.299710},
+			destination:      []float32{-76.584897, 39.280774},
 			snap:             1000,
 			expectedDistance: 1897,
-			expectedWaypoints: [][]float64{
+			expectedWaypoints: [][]float32{
 				{-76.58753204345703, 39.29970932006836},
 				{-76.58747863769531, 39.29899978637695},
 				{-76.58726501464844, 39.29899978637695},
@@ -183,12 +183,12 @@ func TestDistance(t *testing.T) {
 			},
 		},
 		{
-			source: []float64{-76.587490, 39.299710},
+			source: []float32{-76.587490, 39.299710},
 			// point is in a river so should not snap
-			destination:       []float64{-76.584897, 39.280774},
+			destination:       []float32{-76.584897, 39.280774},
 			snap:              10,
 			expectedDistance:  -1,
-			expectedWaypoints: [][]float64{},
+			expectedWaypoints: [][]float32{},
 		},
 	}
 	chFile, err := tempFile("", "routingkit-test.ch")
@@ -215,7 +215,7 @@ func TestDistance(t *testing.T) {
 
 }
 
-var distances [][]float64
+var distances [][]int64
 
 func benchmarkMatrix(pointsFile string, nSources int, nDestinations int, b *testing.B) {
 	chFile, err := tempFile("", "routingkit-test.ch")
@@ -231,7 +231,7 @@ func benchmarkMatrix(pointsFile string, nSources int, nDestinations int, b *test
 		b.Fatal(err)
 	}
 	var data struct {
-		Points [][]float64
+		Points [][]float32
 	}
 	if err := json.NewDecoder(f).Decode(&data); err != nil {
 		b.Fatal(err)
@@ -239,7 +239,7 @@ func benchmarkMatrix(pointsFile string, nSources int, nDestinations int, b *test
 	sources := data.Points[:nSources]
 	destinations := data.Points[:nDestinations]
 
-	var d [][]float64
+	var d [][]int64
 	for n := 0; n < b.N; n++ {
 		d = cli.Matrix(sources, destinations)
 	}
