@@ -99,6 +99,20 @@ type distanceMatrixRow struct {
 	distances []int64
 }
 
+func (c Client) Nearest(point []float32) []float32 {
+	counter := <-c.channel
+	defer func() {
+		c.channel <- counter
+	}()
+	p := rk.NewPoint()
+	defer routingkit.DeletePoint(p)
+	p.SetLon(float32(point[0]))
+	p.SetLat(float32(point[1]))
+	res := c.client.Nearest(counter, c.snapRadius, p)
+	defer rk.DeletePoint(res)
+	return []float32{res.GetLon(), res.GetLat()}
+}
+
 func (c Client) Matrix(sources [][]float32, targets [][]float32) [][]int64 {
 	matrix := make([][]int64, len(sources))
 

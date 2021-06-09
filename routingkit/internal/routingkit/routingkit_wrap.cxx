@@ -1356,6 +1356,32 @@ std::vector< long > *_wrap_Client_distances_routingkit_217e377248333111(Client *
 }
 
 
+Point *_wrap_Client_nearest_routingkit_217e377248333111(Client *_swig_go_0, intgo _swig_go_1, float _swig_go_2, Point *_swig_go_3) {
+  Client *arg1 = (Client *) 0 ;
+  int arg2 ;
+  float arg3 ;
+  Point arg4 ;
+  Point *argp4 ;
+  Point result;
+  Point *_swig_go_result;
+  
+  arg1 = *(Client **)&_swig_go_0; 
+  arg2 = (int)_swig_go_1; 
+  arg3 = (float)_swig_go_2; 
+  
+  argp4 = (Point *)_swig_go_3;
+  if (argp4 == NULL) {
+    _swig_gopanic("Attempt to dereference null Point");
+  }
+  arg4 = (Point)*argp4;
+  
+  
+  result = (arg1)->nearest(arg2,arg3,arg4);
+  *(Point **)&_swig_go_result = new Point(result); 
+  return _swig_go_result;
+}
+
+
 void _wrap_Client_build_ch_routingkit_217e377248333111(Client *_swig_go_0, intgo _swig_go_1, _gostring_ _swig_go_2, _gostring_ _swig_go_3) {
   Client *arg1 = (Client *) 0 ;
   int arg2 ;

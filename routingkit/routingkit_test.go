@@ -32,6 +32,31 @@ func tempFile(dir, pattern string) (string, error) {
 // -76.60735000000001,39.28971 to -76.57749,39.31587
 var marylandMap string = "testdata/maryland.osm.pbf"
 
+func TestNearest(t *testing.T) {
+	tests := []struct {
+		point    []float32
+		expected []float32
+	}{
+		{
+			point:    []float32{-76.587490, 39.299710},
+			expected: []float32{-76.58753, 39.29971},
+		},
+	}
+
+	chFile, err := tempFile("", "routingkit-test.ch")
+	defer os.Remove(chFile)
+	cli, err := routingkit.NewClient(marylandMap, chFile)
+	if err != nil {
+		t.Fatalf("creating Client: %v", err)
+	}
+	for i, test := range tests {
+		got := cli.Nearest(test.point)
+		if !reflect.DeepEqual(got, test.expected) {
+			t.Errorf("[%d] expected %v, got %v", i, test.expected, got)
+		}
+	}
+}
+
 func TestDistances(t *testing.T) {
 	tests := []struct {
 		source       []float32
