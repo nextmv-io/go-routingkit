@@ -65,17 +65,17 @@ void Client::load(int conc, char *pbf_file, char *ch_file)
 	}
 }
 
-Point Client::nearest(int i, float radius, Point p)
+Point *Client::nearest(int i, float radius, float lon, float lat)
 {
-	auto n = [i, p, radius]()
+	auto n = [i, lon, lat, radius]() -> Point *
 	{
-		unsigned neighbor = map.find_nearest_neighbor_within_radius(p.lat, p.lon, radius).id;
-		return Point{lon : graph.longitude[neighbor], lat : graph.latitude[neighbor]};
+		unsigned neighbor = map.find_nearest_neighbor_within_radius(lat, lon, radius).id;
+		if (neighbor == invalid_id)
+			return NULL;
+		return new Point({graph.longitude[neighbor], graph.latitude[neighbor]});
 	};
 
-	auto future = async(launch::deferred, n);
-	auto result = future.get();
-	return result;
+	return async(launch::deferred, n).get();
 }
 
 std::vector<long int> Client::distances(int i, float radius, Point source, std::vector<struct Point> targets)

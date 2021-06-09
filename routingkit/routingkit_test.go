@@ -34,12 +34,22 @@ var marylandMap string = "testdata/maryland.osm.pbf"
 
 func TestNearest(t *testing.T) {
 	tests := []struct {
-		point    []float32
-		expected []float32
+		point        []float32
+		snap         float32
+		expected     []float32
+		expectedSnap bool
 	}{
 		{
-			point:    []float32{-76.587490, 39.299710},
-			expected: []float32{-76.58753, 39.29971},
+			point:        []float32{-76.587490, 39.299710},
+			snap:         1000,
+			expected:     []float32{-76.58753, 39.29971},
+			expectedSnap: true,
+		},
+		{
+			point:        []float32{-76.584897, 39.280774},
+			snap:         10,
+			expected:     nil,
+			expectedSnap: false,
 		},
 	}
 
@@ -50,7 +60,11 @@ func TestNearest(t *testing.T) {
 		t.Fatalf("creating Client: %v", err)
 	}
 	for i, test := range tests {
-		got := cli.Nearest(test.point)
+		cli.SetSnapRadius(test.snap)
+		got, ok := cli.Nearest(test.point)
+		if ok != test.expectedSnap {
+			t.Errorf("[%d] expected snap=%t, snapped=%t", i, test.expectedSnap, ok)
+		}
 		if !reflect.DeepEqual(got, test.expected) {
 			t.Errorf("[%d] expected %v, got %v", i, test.expected, got)
 		}
