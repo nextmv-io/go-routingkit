@@ -1223,26 +1223,26 @@ void _wrap_delete_Point_routingkit_217e377248333111(Point *_swig_go_0) {
 }
 
 
-void _wrap_QueryResponse_distance_set_routingkit_217e377248333111(QueryResponse *_swig_go_0, long long _swig_go_1) {
+void _wrap_QueryResponse_distance_set_routingkit_217e377248333111(QueryResponse *_swig_go_0, intgo _swig_go_1) {
   QueryResponse *arg1 = (QueryResponse *) 0 ;
-  long arg2 ;
+  unsigned int arg2 ;
   
   arg1 = *(QueryResponse **)&_swig_go_0; 
-  arg2 = (long)_swig_go_1; 
+  arg2 = (unsigned int)_swig_go_1; 
   
   if (arg1) (arg1)->distance = arg2;
   
 }
 
 
-long long _wrap_QueryResponse_distance_get_routingkit_217e377248333111(QueryResponse *_swig_go_0) {
+intgo _wrap_QueryResponse_distance_get_routingkit_217e377248333111(QueryResponse *_swig_go_0) {
   QueryResponse *arg1 = (QueryResponse *) 0 ;
-  long result;
-  long long _swig_go_result;
+  unsigned int result;
+  intgo _swig_go_result;
   
   arg1 = *(QueryResponse **)&_swig_go_0; 
   
-  result = (long) ((arg1)->distance);
+  result = (unsigned int) ((arg1)->distance);
   _swig_go_result = result; 
   return _swig_go_result;
 }
@@ -1294,6 +1294,17 @@ void _wrap_delete_QueryResponse_routingkit_217e377248333111(QueryResponse *_swig
 }
 
 
+intgo _wrap_max_distance_get_routingkit_217e377248333111() {
+  unsigned int result;
+  intgo _swig_go_result;
+  
+  
+  result = (unsigned int)(unsigned int)RoutingKit::max_distance;
+  _swig_go_result = result; 
+  return _swig_go_result;
+}
+
+
 QueryResponse *_wrap_Client_query_routingkit_217e377248333111(Client *_swig_go_0, intgo _swig_go_1, float _swig_go_2, float _swig_go_3, float _swig_go_4, float _swig_go_5, float _swig_go_6, bool _swig_go_7) {
   Client *arg1 = (Client *) 0 ;
   int arg2 ;
@@ -1321,7 +1332,7 @@ QueryResponse *_wrap_Client_query_routingkit_217e377248333111(Client *_swig_go_0
 }
 
 
-std::vector< long > *_wrap_Client_distances_routingkit_217e377248333111(Client *_swig_go_0, intgo _swig_go_1, float _swig_go_2, Point *_swig_go_3, std::vector< Point > *_swig_go_4) {
+std::vector< unsigned int > *_wrap_Client_distances_routingkit_217e377248333111(Client *_swig_go_0, intgo _swig_go_1, float _swig_go_2, Point *_swig_go_3, std::vector< Point > *_swig_go_4) {
   Client *arg1 = (Client *) 0 ;
   int arg2 ;
   float arg3 ;
@@ -1329,8 +1340,8 @@ std::vector< long > *_wrap_Client_distances_routingkit_217e377248333111(Client *
   std::vector< Point > arg5 ;
   Point *argp4 ;
   std::vector< Point > *argp5 ;
-  std::vector< long > result;
-  std::vector< long > *_swig_go_result;
+  std::vector< unsigned int > result;
+  std::vector< unsigned int > *_swig_go_result;
   
   arg1 = *(Client **)&_swig_go_0; 
   arg2 = (int)_swig_go_1; 
@@ -1351,7 +1362,7 @@ std::vector< long > *_wrap_Client_distances_routingkit_217e377248333111(Client *
   
   
   result = (arg1)->distances(arg2,arg3,arg4,arg5);
-  *(std::vector< long > **)&_swig_go_result = new std::vector< long >(result); 
+  *(std::vector< unsigned int > **)&_swig_go_result = new std::vector< unsigned int >(result); 
   return _swig_go_result;
 }
 

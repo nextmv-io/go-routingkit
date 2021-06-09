@@ -18,6 +18,11 @@ static SimpleOSMCarRoutingGraph graph;
 static GeoPositionToNode map;
 static std::vector<ContractionHierarchyQuery> queries;
 
+namespace RoutingKit
+{
+	const unsigned max_distance = RoutingKit::inf_weight;
+}
+
 void Client::build_ch(int conc, char *pbf_file, char *ch_file)
 {
 	// Load a car routing graph from OpenStreetMap-based data
@@ -78,11 +83,11 @@ Point *Client::nearest(int i, float radius, float lon, float lat)
 	return async(launch::deferred, n).get();
 }
 
-std::vector<long int> Client::distances(int i, float radius, Point source, std::vector<struct Point> targets)
+std::vector<unsigned> Client::distances(int i, float radius, Point source, std::vector<struct Point> targets)
 {
-	auto tbl = [](int i, float radius, Point source, std::vector<struct Point> targets) -> vector<long int>
+	auto tbl = [](int i, float radius, Point source, std::vector<struct Point> targets) -> vector<unsigned int>
 	{
-		vector<long int> results;
+		vector<unsigned> results;
 		results.resize(targets.size());
 
 		vector<unsigned> target_list;
@@ -107,7 +112,7 @@ std::vector<long int> Client::distances(int i, float radius, Point source, std::
 		{
 			for (int i = 0; i < targets.size(); i++)
 			{
-				results[i] = -1;
+				results[i] = RoutingKit::inf_weight;
 			}
 			return results;
 		}
@@ -119,13 +124,8 @@ std::vector<long int> Client::distances(int i, float radius, Point source, std::
 		{
 			if (invalid_id != invalid_ids.end() && i == *invalid_id)
 			{
-				results[i] = -1;
+				results[i] = RoutingKit::inf_weight;
 				invalid_id++;
-			}
-			else if (*distance == INT_MAX)
-			{
-				results[i] = -1;
-				distance++;
 			}
 			else
 			{
@@ -151,17 +151,12 @@ QueryResponse Client::query(int i, float radius, float from_longitude, float fro
 		QueryResponse response;
 		if (from == invalid_id || to == invalid_id)
 		{
-			response.distance = -1.0;
+			response.distance = RoutingKit::inf_weight;
 			return response;
 		}
 
 		queries[i].reset().add_source(from).add_target(to).run();
 		auto distance = queries[i].get_distance();
-		if (distance == INT_MAX)
-		{
-			response.distance = -1.0;
-			return response;
-		}
 
 		response.distance = distance;
 		if (include_waypoints)

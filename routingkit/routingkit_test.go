@@ -75,7 +75,7 @@ func TestDistances(t *testing.T) {
 	tests := []struct {
 		source       []float32
 		destinations [][]float32
-		expected     []int64
+		expected     []uint32
 		snap         float32
 	}{
 		{
@@ -85,10 +85,10 @@ func TestDistances(t *testing.T) {
 				{-76.599388, 39.302014},
 			},
 			snap:     1000,
-			expected: []int64{1496, 1259},
+			expected: []uint32{1496, 1259},
 		},
 		{
-			// should receive -1 for invalid destinations
+			// should receive MaxDistance for invalid destinations
 			source: []float32{-76.587490, 39.299710},
 			destinations: [][]float32{
 				{-76.60548, 39.30772},
@@ -97,17 +97,17 @@ func TestDistances(t *testing.T) {
 				{-76.599388, 39.302014},
 			},
 			snap:     100,
-			expected: []int64{-1, 1496, -1, 1259},
+			expected: []uint32{routingkit.MaxDistance, 1496, routingkit.MaxDistance, 1259},
 		},
 		{
-			// invalid source - should receive all -1
+			// invalid source - should receive all MaxDistance
 			source: []float32{-76.60586, 39.30228},
 			destinations: [][]float32{
 				{-76.60548, 39.30772},
 				{-76.584897, 39.280774},
 			},
 			snap:     10,
-			expected: []int64{-1, -1},
+			expected: []uint32{routingkit.MaxDistance, routingkit.MaxDistance},
 		},
 	}
 	chFile, err := tempFile("", "routingkit-test.ch")
@@ -130,7 +130,7 @@ func TestMatrix(t *testing.T) {
 	tests := []struct {
 		sources      [][]float32
 		destinations [][]float32
-		expected     [][]int64
+		expected     [][]uint32
 	}{
 		{
 			sources: [][]float32{
@@ -143,7 +143,7 @@ func TestMatrix(t *testing.T) {
 				{-76.582855, 39.309095},
 				{-76.599388, 39.302014},
 			},
-			expected: [][]int64{
+			expected: [][]uint32{
 				{1496, 1259},
 				{1831, 575},
 				{2372, 2224},
@@ -172,7 +172,7 @@ func TestDistance(t *testing.T) {
 		source            []float32
 		destination       []float32
 		snap              float32
-		expectedDistance  int64
+		expectedDistance  uint32
 		expectedWaypoints [][]float32
 	}{
 		{
@@ -226,7 +226,7 @@ func TestDistance(t *testing.T) {
 			// point is in a river so should not snap
 			destination:       []float32{-76.584897, 39.280774},
 			snap:              10,
-			expectedDistance:  -1,
+			expectedDistance:  routingkit.MaxDistance,
 			expectedWaypoints: [][]float32{},
 		},
 	}
@@ -254,8 +254,8 @@ func TestDistance(t *testing.T) {
 
 }
 
-var distance int64
-var distances [][]int64
+var distance uint32
+var distances [][]uint32
 
 // These two functions are utilities for generating random points within a bounding box for benchmarking
 // Keeping them around even though they aren't used now. Note that even though the points will lie within
@@ -297,7 +297,7 @@ func BenchmarkDistance(b *testing.B) {
 	}
 
 	b.Run("distance", func(b *testing.B) {
-		var d int64
+		var d uint32
 		for n := 0; n < b.N; n++ {
 			d = cli.Distance(data.Points[n%len(data.Points)], data.Points[(n+1)%len(data.Points)])
 		}
@@ -326,7 +326,7 @@ func BenchmarkMatrix(b *testing.B) {
 	}
 
 	b.Run("matrix", func(b *testing.B) {
-		var d [][]int64
+		var d [][]uint32
 		for n := 0; n < b.N; n++ {
 			d = cli.Matrix(data.Points, data.Points)
 		}

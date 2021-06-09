@@ -14,6 +14,12 @@ func finalizer(client *rk.Client) {
 	routingkit.DeleteClient(*client)
 }
 
+var MaxDistance uint32
+
+func init() {
+	MaxDistance = uint32(routingkit.GetMax_distance())
+}
+
 func NewClient(mapFile, chFile string) (Client, error) {
 	if _, err := os.Stat(mapFile); os.IsNotExist(err) {
 		return Client{}, errors.New(fmt.Sprintf("could not find map file at %v", mapFile))
@@ -52,7 +58,7 @@ type Client struct {
 	snapRadius float32
 }
 
-func (c Client) Route(from []float32, to []float32) (int64, [][]float32) {
+func (c Client) Route(from []float32, to []float32) (uint32, [][]float32) {
 	counter := <-c.channel
 	defer func() {
 		c.channel <- counter
@@ -73,10 +79,10 @@ func (c Client) Route(from []float32, to []float32) (int64, [][]float32) {
 		waypoints[i] = []float32{float32(p.GetLon()), float32(p.GetLat())}
 	}
 
-	return resp.GetDistance(), waypoints
+	return uint32(resp.GetDistance()), waypoints
 }
 
-func (c Client) Distance(from []float32, to []float32) int64 {
+func (c Client) Distance(from []float32, to []float32) uint32 {
 	counter := <-c.channel
 	defer func() {
 		c.channel <- counter
@@ -91,12 +97,12 @@ func (c Client) Distance(from []float32, to []float32) int64 {
 		false,
 	)
 
-	return resp.GetDistance()
+	return uint32(resp.GetDistance())
 }
 
 type distanceMatrixRow struct {
 	i         int
-	distances []int64
+	distances []uint32
 }
 
 func (c Client) Nearest(point []float32) ([]float32, bool) {
@@ -112,8 +118,8 @@ func (c Client) Nearest(point []float32) ([]float32, bool) {
 	return []float32{res.GetLon(), res.GetLat()}, true
 }
 
-func (c Client) Matrix(sources [][]float32, targets [][]float32) [][]int64 {
-	matrix := make([][]int64, len(sources))
+func (c Client) Matrix(sources [][]float32, targets [][]float32) [][]uint32 {
+	matrix := make([][]uint32, len(sources))
 
 	workers := make(chan struct{}, runtime.GOMAXPROCS(0))
 	results := make(chan distanceMatrixRow)
@@ -137,7 +143,7 @@ func (c Client) Matrix(sources [][]float32, targets [][]float32) [][]int64 {
 	return matrix
 }
 
-func (c Client) Distances(source []float32, targets [][]float32) []int64 {
+func (c Client) Distances(source []float32, targets [][]float32) []uint32 {
 	counter := <-c.channel
 	defer func() {
 		c.channel <- counter
@@ -159,11 +165,11 @@ func (c Client) Distances(source []float32, targets [][]float32) []int64 {
 	}
 
 	distanceVec := c.client.Distances(counter, float32(c.snapRadius), s, targetsVector)
-	defer routingkit.DeleteLongIntVector(distanceVec)
+	defer routingkit.DeleteUnsignedVector(distanceVec)
 	numDistances := distanceVec.Size()
-	distances := make([]int64, numDistances)
+	distances := make([]uint32, numDistances)
 	for i := 0; i < int(numDistances); i++ {
-		col := distanceVec.Get(i)
+		col := uint32(distanceVec.Get(i))
 		distances[i] = col
 	}
 

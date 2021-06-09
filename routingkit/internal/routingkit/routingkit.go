@@ -54,12 +54,10 @@ typedef long long swig_type_20;
 typedef long long swig_type_21;
 typedef long long swig_type_22;
 typedef long long swig_type_23;
-typedef long long swig_type_24;
-typedef long long swig_type_25;
+typedef _gostring_ swig_type_24;
+typedef _gostring_ swig_type_25;
 typedef _gostring_ swig_type_26;
 typedef _gostring_ swig_type_27;
-typedef _gostring_ swig_type_28;
-typedef _gostring_ swig_type_29;
 extern void _wrap_Swig_free_routingkit_217e377248333111(uintptr_t arg1);
 extern uintptr_t _wrap_Swig_malloc_routingkit_217e377248333111(swig_intgo arg1);
 extern uintptr_t _wrap_new_IntVector__SWIG_0_routingkit_217e377248333111(void);
@@ -128,17 +126,18 @@ extern void _wrap_Point_lat_set_routingkit_217e377248333111(uintptr_t arg1, floa
 extern float _wrap_Point_lat_get_routingkit_217e377248333111(uintptr_t arg1);
 extern uintptr_t _wrap_new_Point_routingkit_217e377248333111(void);
 extern void _wrap_delete_Point_routingkit_217e377248333111(uintptr_t arg1);
-extern void _wrap_QueryResponse_distance_set_routingkit_217e377248333111(uintptr_t arg1, swig_type_24 arg2);
-extern swig_type_25 _wrap_QueryResponse_distance_get_routingkit_217e377248333111(uintptr_t arg1);
+extern void _wrap_QueryResponse_distance_set_routingkit_217e377248333111(uintptr_t arg1, swig_intgo arg2);
+extern swig_intgo _wrap_QueryResponse_distance_get_routingkit_217e377248333111(uintptr_t arg1);
 extern void _wrap_QueryResponse_waypoints_set_routingkit_217e377248333111(uintptr_t arg1, uintptr_t arg2);
 extern uintptr_t _wrap_QueryResponse_waypoints_get_routingkit_217e377248333111(uintptr_t arg1);
 extern uintptr_t _wrap_new_QueryResponse_routingkit_217e377248333111(void);
 extern void _wrap_delete_QueryResponse_routingkit_217e377248333111(uintptr_t arg1);
+extern swig_intgo _wrap_max_distance_get_routingkit_217e377248333111(void);
 extern uintptr_t _wrap_Client_query_routingkit_217e377248333111(uintptr_t arg1, swig_intgo arg2, float arg3, float arg4, float arg5, float arg6, float arg7, _Bool arg8);
 extern uintptr_t _wrap_Client_distances_routingkit_217e377248333111(uintptr_t arg1, swig_intgo arg2, float arg3, uintptr_t arg4, uintptr_t arg5);
 extern uintptr_t _wrap_Client_nearest_routingkit_217e377248333111(uintptr_t arg1, swig_intgo arg2, float arg3, float arg4, float arg5);
-extern void _wrap_Client_build_ch_routingkit_217e377248333111(uintptr_t arg1, swig_intgo arg2, swig_type_26 arg3, swig_type_27 arg4);
-extern void _wrap_Client_load_routingkit_217e377248333111(uintptr_t arg1, swig_intgo arg2, swig_type_28 arg3, swig_type_29 arg4);
+extern void _wrap_Client_build_ch_routingkit_217e377248333111(uintptr_t arg1, swig_intgo arg2, swig_type_24 arg3, swig_type_25 arg4);
+extern void _wrap_Client_load_routingkit_217e377248333111(uintptr_t arg1, swig_intgo arg2, swig_type_26 arg3, swig_type_27 arg4);
 extern uintptr_t _wrap_new_Client_routingkit_217e377248333111(void);
 extern void _wrap_delete_Client_routingkit_217e377248333111(uintptr_t arg1);
 #undef intgo
@@ -830,16 +829,16 @@ func (p SwigcptrQueryResponse) Swigcptr() uintptr {
 func (p SwigcptrQueryResponse) SwigIsQueryResponse() {
 }
 
-func (arg1 SwigcptrQueryResponse) SetDistance(arg2 int64) {
+func (arg1 SwigcptrQueryResponse) SetDistance(arg2 uint) {
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2
-	C._wrap_QueryResponse_distance_set_routingkit_217e377248333111(C.uintptr_t(_swig_i_0), C.swig_type_24(_swig_i_1))
+	C._wrap_QueryResponse_distance_set_routingkit_217e377248333111(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1))
 }
 
-func (arg1 SwigcptrQueryResponse) GetDistance() (_swig_ret int64) {
-	var swig_r int64
+func (arg1 SwigcptrQueryResponse) GetDistance() (_swig_ret uint) {
+	var swig_r uint
 	_swig_i_0 := arg1
-	swig_r = (int64)(C._wrap_QueryResponse_distance_get_routingkit_217e377248333111(C.uintptr_t(_swig_i_0)))
+	swig_r = (uint)(C._wrap_QueryResponse_distance_get_routingkit_217e377248333111(C.uintptr_t(_swig_i_0)))
 	return swig_r
 }
 
@@ -870,10 +869,16 @@ func DeleteQueryResponse(arg1 QueryResponse) {
 type QueryResponse interface {
 	Swigcptr() uintptr
 	SwigIsQueryResponse()
-	SetDistance(arg2 int64)
-	GetDistance() (_swig_ret int64)
+	SetDistance(arg2 uint)
+	GetDistance() (_swig_ret uint)
 	SetWaypoints(arg2 PointVector)
 	GetWaypoints() (_swig_ret PointVector)
+}
+
+func GetMax_distance() (_swig_ret uint) {
+	var swig_r uint
+	swig_r = (uint)(C._wrap_max_distance_get_routingkit_217e377248333111())
+	return swig_r
 }
 
 type SwigcptrClient uintptr
@@ -899,14 +904,14 @@ func (arg1 SwigcptrClient) Query(arg2 int, arg3 float32, arg4 float32, arg5 floa
 	return swig_r
 }
 
-func (arg1 SwigcptrClient) Distances(arg2 int, arg3 float32, arg4 Point, arg5 PointVector) (_swig_ret LongIntVector) {
-	var swig_r LongIntVector
+func (arg1 SwigcptrClient) Distances(arg2 int, arg3 float32, arg4 Point, arg5 PointVector) (_swig_ret UnsignedVector) {
+	var swig_r UnsignedVector
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2
 	_swig_i_2 := arg3
 	_swig_i_3 := arg4.Swigcptr()
 	_swig_i_4 := arg5.Swigcptr()
-	swig_r = (LongIntVector)(SwigcptrLongIntVector(C._wrap_Client_distances_routingkit_217e377248333111(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1), C.float(_swig_i_2), C.uintptr_t(_swig_i_3), C.uintptr_t(_swig_i_4))))
+	swig_r = (UnsignedVector)(SwigcptrUnsignedVector(C._wrap_Client_distances_routingkit_217e377248333111(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1), C.float(_swig_i_2), C.uintptr_t(_swig_i_3), C.uintptr_t(_swig_i_4))))
 	return swig_r
 }
 
@@ -926,7 +931,7 @@ func (arg1 SwigcptrClient) Build_ch(arg2 int, arg3 string, arg4 string) {
 	_swig_i_1 := arg2
 	_swig_i_2 := arg3
 	_swig_i_3 := arg4
-	C._wrap_Client_build_ch_routingkit_217e377248333111(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1), *(*C.swig_type_26)(unsafe.Pointer(&_swig_i_2)), *(*C.swig_type_27)(unsafe.Pointer(&_swig_i_3)))
+	C._wrap_Client_build_ch_routingkit_217e377248333111(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1), *(*C.swig_type_24)(unsafe.Pointer(&_swig_i_2)), *(*C.swig_type_25)(unsafe.Pointer(&_swig_i_3)))
 	if Swig_escape_always_false {
 		Swig_escape_val = arg3
 	}
@@ -940,7 +945,7 @@ func (arg1 SwigcptrClient) Load(arg2 int, arg3 string, arg4 string) {
 	_swig_i_1 := arg2
 	_swig_i_2 := arg3
 	_swig_i_3 := arg4
-	C._wrap_Client_load_routingkit_217e377248333111(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1), *(*C.swig_type_28)(unsafe.Pointer(&_swig_i_2)), *(*C.swig_type_29)(unsafe.Pointer(&_swig_i_3)))
+	C._wrap_Client_load_routingkit_217e377248333111(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1), *(*C.swig_type_26)(unsafe.Pointer(&_swig_i_2)), *(*C.swig_type_27)(unsafe.Pointer(&_swig_i_3)))
 	if Swig_escape_always_false {
 		Swig_escape_val = arg3
 	}
@@ -964,7 +969,7 @@ type Client interface {
 	Swigcptr() uintptr
 	SwigIsClient()
 	Query(arg2 int, arg3 float32, arg4 float32, arg5 float32, arg6 float32, arg7 float32, arg8 bool) (_swig_ret QueryResponse)
-	Distances(arg2 int, arg3 float32, arg4 Point, arg5 PointVector) (_swig_ret LongIntVector)
+	Distances(arg2 int, arg3 float32, arg4 Point, arg5 PointVector) (_swig_ret UnsignedVector)
 	Nearest(arg2 int, arg3 float32, arg4 float32, arg5 float32) (_swig_ret Point)
 	Build_ch(arg2 int, arg3 string, arg4 string)
 	Load(arg2 int, arg3 string, arg4 string)
