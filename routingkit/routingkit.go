@@ -14,12 +14,15 @@ func finalizer(client *rk.Client) {
 	routingkit.DeleteClient(*client)
 }
 
+// MaxDistance represents the maximum possible route distance.
 var MaxDistance uint32
 
 func init() {
 	MaxDistance = uint32(routingkit.GetMax_distance())
 }
 
+// NewClient initializes a routingkit.Client using the provided .osm.pbf file and .ch
+// file. The .ch file will be created if it does not already exist.
 func NewClient(mapFile, chFile string) (Client, error) {
 	if _, err := os.Stat(mapFile); os.IsNotExist(err) {
 		return Client{}, errors.New(fmt.Sprintf("could not find map file at %v", mapFile))
@@ -48,16 +51,21 @@ func NewClient(mapFile, chFile string) (Client, error) {
 	}, nil
 }
 
+// SetSnapRadius updates Client so that all queries will snap points to the nearest
+// street network point within the given radius in meters.
 func (c *Client) SetSnapRadius(n float32) {
 	c.snapRadius = n
 }
 
+// Client allows routing queries to be executed against a particular region.
 type Client struct {
 	client     rk.Client
 	channel    chan int
 	snapRadius float32
 }
 
+// Route finds the fastest route between the two points, returning the total route
+// distance and the waypoints describing the route.
 func (c Client) Route(from []float32, to []float32) (uint32, [][]float32) {
 	counter := <-c.channel
 	defer func() {
@@ -82,6 +90,7 @@ func (c Client) Route(from []float32, to []float32) (uint32, [][]float32) {
 	return uint32(resp.GetDistance()), waypoints
 }
 
+// Distance returns the length of the shortest possible route between the points
 func (c Client) Distance(from []float32, to []float32) uint32 {
 	counter := <-c.channel
 	defer func() {
@@ -105,6 +114,8 @@ type distanceMatrixRow struct {
 	distances []uint32
 }
 
+// Nearest returns the nearest point in the road network within the radius configured on
+// the Client. The second argument will be false if no point could be found.
 func (c Client) Nearest(point []float32) ([]float32, bool) {
 	counter := <-c.channel
 	defer func() {
@@ -118,6 +129,8 @@ func (c Client) Nearest(point []float32) ([]float32, bool) {
 	return []float32{res.GetLon(), res.GetLat()}, true
 }
 
+// Matrix creates a matrix representing the minimum distances from the points in
+// sources to the points in targets.
 func (c Client) Matrix(sources [][]float32, targets [][]float32) [][]uint32 {
 	matrix := make([][]uint32, len(sources))
 
@@ -143,6 +156,8 @@ func (c Client) Matrix(sources [][]float32, targets [][]float32) [][]uint32 {
 	return matrix
 }
 
+// Distances returns a slice containing the minimum distances from the source to the
+// points in targets.
 func (c Client) Distances(source []float32, targets [][]float32) []uint32 {
 	counter := <-c.channel
 	defer func() {
