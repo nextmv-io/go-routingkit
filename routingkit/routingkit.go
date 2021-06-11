@@ -21,11 +21,11 @@ func init() {
 	MaxDistance = uint32(routingkit.GetMax_distance())
 }
 
-// NewClient initializes a routingkit.Client using the provided .osm.pbf file and .ch
-// file. The .ch file will be created if it does not already exist.
-func NewClient(mapFile, chFile string) (Client, error) {
+// NewDistanceClient initializes a DistanceClient using the provided .osm.pbf file and
+// .ch file. The .ch file will be created if it does not already exist.
+func NewDistanceClient(mapFile, chFile string) (DistanceClient, error) {
 	if _, err := os.Stat(mapFile); os.IsNotExist(err) {
-		return Client{}, errors.New(fmt.Sprintf("could not find map file at %v", mapFile))
+		return DistanceClient{}, errors.New(fmt.Sprintf("could not find map file at %v", mapFile))
 	}
 
 	c := rk.NewClient()
@@ -44,21 +44,26 @@ func NewClient(mapFile, chFile string) (Client, error) {
 		channel <- i
 	}
 
-	return Client{
-		client:     c,
-		channel:    channel,
-		snapRadius: 1000,
-	}, nil
+	return DistanceClient{
+		client: client{
+			client:     c,
+			channel:    channel,
+			snapRadius: 1000,
+		}}, nil
 }
 
 // SetSnapRadius updates Client so that all queries will snap points to the nearest
 // street network point within the given radius in meters.
-func (c *Client) SetSnapRadius(n float32) {
+func (c *client) SetSnapRadius(n float32) {
 	c.snapRadius = n
 }
 
-// Client allows routing queries to be executed against a particular region.
-type Client struct {
+type DistanceClient struct {
+	client
+}
+
+// client allows routing queries to be executed against a particular region.
+type client struct {
 	client     rk.Client
 	channel    chan int
 	snapRadius float32
@@ -66,7 +71,7 @@ type Client struct {
 
 // Route finds the fastest route between the two points, returning the total route
 // distance and the waypoints describing the route.
-func (c Client) Route(from []float32, to []float32) (uint32, [][]float32) {
+func (c client) Route(from []float32, to []float32) (uint32, [][]float32) {
 	counter := <-c.channel
 	defer func() {
 		c.channel <- counter
@@ -80,6 +85,7 @@ func (c Client) Route(from []float32, to []float32) (uint32, [][]float32) {
 		float32(to[1]),
 		true,
 	)
+	defer rk.DeleteQueryResponse(resp)
 	wp := resp.GetWaypoints()
 	waypoints := make([][]float32, wp.Size())
 	for i := 0; i < len(waypoints); i++ {
@@ -91,7 +97,7 @@ func (c Client) Route(from []float32, to []float32) (uint32, [][]float32) {
 }
 
 // Distance returns the length of the shortest possible route between the points
-func (c Client) Distance(from []float32, to []float32) uint32 {
+func (c client) Distance(from []float32, to []float32) uint32 {
 	counter := <-c.channel
 	defer func() {
 		c.channel <- counter
@@ -105,6 +111,7 @@ func (c Client) Distance(from []float32, to []float32) uint32 {
 		to[1],
 		false,
 	)
+	defer rk.DeleteQueryResponse(resp)
 
 	return uint32(resp.GetDistance())
 }
@@ -116,7 +123,7 @@ type distanceMatrixRow struct {
 
 // Nearest returns the nearest point in the road network within the radius configured on
 // the Client. The second argument will be false if no point could be found.
-func (c Client) Nearest(point []float32) ([]float32, bool) {
+func (c client) Nearest(point []float32) ([]float32, bool) {
 	counter := <-c.channel
 	defer func() {
 		c.channel <- counter
@@ -131,7 +138,7 @@ func (c Client) Nearest(point []float32) ([]float32, bool) {
 
 // Matrix creates a matrix representing the minimum distances from the points in
 // sources to the points in targets.
-func (c Client) Matrix(sources [][]float32, targets [][]float32) [][]uint32 {
+func (c client) Matrix(sources [][]float32, targets [][]float32) [][]uint32 {
 	matrix := make([][]uint32, len(sources))
 
 	workers := make(chan struct{}, runtime.GOMAXPROCS(0))
@@ -158,7 +165,7 @@ func (c Client) Matrix(sources [][]float32, targets [][]float32) [][]uint32 {
 
 // Distances returns a slice containing the minimum distances from the source to the
 // points in targets.
-func (c Client) Distances(source []float32, targets [][]float32) []uint32 {
+func (c client) Distances(source []float32, targets [][]float32) []uint32 {
 	counter := <-c.channel
 	defer func() {
 		c.channel <- counter

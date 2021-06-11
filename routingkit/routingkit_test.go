@@ -55,7 +55,7 @@ func TestNearest(t *testing.T) {
 
 	chFile, err := tempFile("", "routingkit-test.ch")
 	defer os.Remove(chFile)
-	cli, err := routingkit.NewClient(marylandMap, chFile)
+	cli, err := routingkit.NewDistanceClient(marylandMap, chFile)
 	if err != nil {
 		t.Fatalf("creating Client: %v", err)
 	}
@@ -112,7 +112,7 @@ func TestDistances(t *testing.T) {
 	}
 	chFile, err := tempFile("", "routingkit-test.ch")
 	defer os.Remove(chFile)
-	cli, err := routingkit.NewClient(marylandMap, chFile)
+	cli, err := routingkit.NewDistanceClient(marylandMap, chFile)
 	if err != nil {
 		t.Fatalf("creating Client: %v", err)
 	}
@@ -153,7 +153,7 @@ func TestMatrix(t *testing.T) {
 	}
 	chFile, err := tempFile("", "routingkit-test.ch")
 	defer os.Remove(chFile)
-	cli, err := routingkit.NewClient(marylandMap, chFile)
+	cli, err := routingkit.NewDistanceClient(marylandMap, chFile)
 	if err != nil {
 		t.Fatalf("creating Client: %v", err)
 	}
@@ -232,7 +232,7 @@ func TestDistance(t *testing.T) {
 	}
 	chFile, err := tempFile("", "routingkit-test.ch")
 	defer os.Remove(chFile)
-	cli, err := routingkit.NewClient(marylandMap, chFile)
+	cli, err := routingkit.NewDistanceClient(marylandMap, chFile)
 	if err != nil {
 		t.Fatalf("creating Client: %v", err)
 	}
@@ -279,7 +279,7 @@ func randomPointsInBoundingBox(n int, bottomLeft [2]float64, topRight [2]float64
 func BenchmarkDistance(b *testing.B) {
 	chFile, err := tempFile("", "routingkit-test.ch")
 	defer os.Remove(chFile)
-	cli, err := routingkit.NewClient(marylandMap, chFile)
+	cli, err := routingkit.NewDistanceClient(marylandMap, chFile)
 	if err != nil {
 		b.Fatalf("creating Client: %v", err)
 	}
@@ -308,7 +308,7 @@ func BenchmarkDistance(b *testing.B) {
 func BenchmarkMatrix(b *testing.B) {
 	chFile, err := tempFile("", "routingkit-test.ch")
 	defer os.Remove(chFile)
-	cli, err := routingkit.NewClient(marylandMap, chFile)
+	cli, err := routingkit.NewDistanceClient(marylandMap, chFile)
 	if err != nil {
 		b.Fatalf("creating Client: %v", err)
 	}
