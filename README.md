@@ -34,7 +34,7 @@ The simplest query finds the distance between two points:
 distance := cli.Distance([]float32{-75.1785585,39.9532349}, []float32{-75.1650723,39.9515036})
 ```
 
-The `Route` query returns not only the distance between two points, but also a series of waypoints representing turn-by-turn directions from the starting point to the destination.
+The `Route` query returns not only the distance between two points, but also a series of waypoints along the path from the starting point to the destination.
 
 ```go
 distance, waypoints := cli.Route([]float32{-75.1785585,39.9532349}, []float32{-75.1650723,39.9515036})
