@@ -17,27 +17,27 @@ func finalizer(client *rk.Client) {
 // MaxDistance represents the maximum possible route distance.
 var MaxDistance uint32
 
+type TravelProfile routingkit.GoRoutingKitTravel_profile
+
+var CarTravelProfile, BikeTravelProfile, PedestrianTravelProfile TravelProfile
+
 func init() {
 	MaxDistance = uint32(routingkit.GetMax_distance())
+	CarTravelProfile = TravelProfile(routingkit.Car)
+	BikeTravelProfile = TravelProfile(routingkit.Bike)
+	PedestrianTravelProfile = TravelProfile(routingkit.Pedestrian)
 }
 
 // NewDistanceClient initializes a DistanceClient using the provided .osm.pbf file and
 // .ch file. The .ch file will be created if it does not already exist.
-func NewDistanceClient(mapFile, chFile string) (DistanceClient, error) {
+func NewDistanceClient(mapFile, chFile string, profile TravelProfile) (DistanceClient, error) {
 	if _, err := os.Stat(mapFile); os.IsNotExist(err) {
 		return DistanceClient{}, errors.New(fmt.Sprintf("could not find map file at %v", mapFile))
 	}
 
-	c := rk.NewClient()
-	runtime.SetFinalizer(&c, finalizer)
-
 	concurrentQueries := runtime.GOMAXPROCS(0)
-
-	if _, err := os.Stat(chFile); os.IsNotExist(err) {
-		c.Build_ch(concurrentQueries, mapFile, chFile)
-	} else {
-		c.Load(concurrentQueries, mapFile, chFile)
-	}
+	c := rk.NewClient(concurrentQueries, mapFile, chFile, routingkit.GoRoutingKitTravel_profile(profile))
+	runtime.SetFinalizer(&c, finalizer)
 
 	channel := make(chan int, concurrentQueries)
 	for i := 0; i < concurrentQueries; i++ {

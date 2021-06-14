@@ -1,10 +1,11 @@
 %module routingkit
-%{
-#include "Client.h"
-%}
-
 %insert(cgo_comment_typedefs) %{
 #cgo LDFLAGS: ${SRCDIR}/libroutingkit.a
+#cgo CPPFLAGS: -I${SRCDIR}/../../../third_party/RoutingKit/include/
+%}
+
+%{
+#include "Client.h"
 %}
 
 %include <typemaps.i>

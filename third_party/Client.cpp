@@ -1,46 +1,93 @@
-#include "Client.h"
 #include <routingkit/osm_simple.h>
 #include <routingkit/contraction_hierarchy.h>
 #include <routingkit/inverse_vector.h>
 #include <routingkit/timer.h>
 #include <routingkit/geo_position_to_node.h>
+#include "Client.h"
+#include <fstream>
 #include <iostream>
 #include <numeric>
 #include <thread>
 #include <future>
-#include <algorithm>
 
 using namespace RoutingKit;
+using namespace GoRoutingKit;
 using namespace std;
 
-static ContractionHierarchy ch;
-static SimpleOSMCarRoutingGraph graph;
-static GeoPositionToNode map;
-static std::vector<ContractionHierarchyQuery> queries;
-
-namespace RoutingKit
+namespace GoRoutingKit
 {
 	const unsigned max_distance = RoutingKit::inf_weight;
 }
 
-void Client::build_ch(int conc, char *pbf_file, char *ch_file)
+bool file_exists(char *file)
 {
+	ifstream f;
+	f.open(file);
+	return !!f;
+}
+
+Client::Client(int conc, char *pbf_file, char *ch_file, travel_profile prof)
+{
+	vector<unsigned int> tail;
+	profile = prof;
+
+	bool ch_exists = file_exists(ch_file);
+
 	// Load a car routing graph from OpenStreetMap-based data
-	graph = simple_load_osm_car_routing_graph_from_pbf(pbf_file);
-	auto tail = invert_inverse_vector(graph.first_out);
-
-	// Build the shortest path index
-	ch = ContractionHierarchy::build(
-		graph.node_count(),
-		tail, graph.head,
-		graph.geo_distance);
-
-	// Store contraction hierarchy
-	ch.save_file(ch_file);
-
-	// Build the index to quickly map latitudes and longitudes
-	GeoPositionToNode map_geo_position(graph.latitude, graph.longitude);
-	map = map_geo_position;
+	switch (profile)
+	{
+	case car:
+		car_graph = simple_load_osm_car_routing_graph_from_pbf(pbf_file);
+		tail = invert_inverse_vector(car_graph.first_out);
+		if (ch_exists)
+		{
+			ch = ContractionHierarchy::load_file(ch_file);
+		}
+		else
+		{
+			ch = ContractionHierarchy::build(
+			    car_graph.node_count(),
+			    tail, car_graph.head,
+			    car_graph.geo_distance);
+			ch.save_file(ch_file);
+		}
+		map = GeoPositionToNode{car_graph.latitude, car_graph.longitude};
+		break;
+	case pedestrian:
+		pedestrian_graph = simple_load_osm_pedestrian_routing_graph_from_pbf(pbf_file);
+		tail = invert_inverse_vector(pedestrian_graph.first_out);
+		if (ch_exists)
+		{
+			ch = ContractionHierarchy::load_file(ch_file);
+		}
+		else
+		{
+			ch = ContractionHierarchy::build(
+			    pedestrian_graph.node_count(),
+			    tail, pedestrian_graph.head,
+			    pedestrian_graph.geo_distance);
+			ch.save_file(ch_file);
+		}
+		map = GeoPositionToNode{pedestrian_graph.latitude, pedestrian_graph.longitude};
+		break;
+	case bike:
+		bike_graph = simple_load_osm_bicycle_routing_graph_from_pbf(pbf_file);
+		tail = invert_inverse_vector(bike_graph.first_out);
+		if (ch_exists)
+		{
+			ch = ContractionHierarchy::load_file(ch_file);
+		}
+		else
+		{
+			ch = ContractionHierarchy::build(
+			    bike_graph.node_count(),
+			    tail, bike_graph.head,
+			    bike_graph.geo_distance);
+			ch.save_file(ch_file);
+		}
+		map = GeoPositionToNode{bike_graph.latitude, bike_graph.longitude};
+		break;
+	}
 
 	// Besides the CH itself we need a query object.
 	for (int i = 0; i < conc; i++)
@@ -50,34 +97,41 @@ void Client::build_ch(int conc, char *pbf_file, char *ch_file)
 	}
 }
 
-void Client::load(int conc, char *pbf_file, char *ch_file)
+Point Client::point(int i)
 {
-	// Load a car routing graph from OpenStreetMap-based data
-	graph = simple_load_osm_car_routing_graph_from_pbf(pbf_file);
-
-	// Load corresponding contraction hierarchy
-	ch = ContractionHierarchy::load_file(ch_file);
-
-	// Build the index to quickly map latitudes and longitudes
-	GeoPositionToNode map_geo_position(graph.latitude, graph.longitude);
-	map = map_geo_position;
-
-	// Besides the CH itself we need a query object.
-	for (int i = 0; i < conc; i++)
+	switch (profile)
 	{
-		ContractionHierarchyQuery ch_query(ch);
-		queries.push_back(ch_query);
-	}
+	case car:
+		return Point{
+			lon :
+			    car_graph.longitude[i],
+			lat : car_graph.latitude[i]
+		};
+	case pedestrian:
+		return Point{
+			lon :
+			    pedestrian_graph.longitude[i],
+			lat : pedestrian_graph.latitude[i]
+		};
+	case bike:
+		return Point{
+			lon :
+			    bike_graph.longitude[i],
+			lat : bike_graph.latitude[i]
+		};
+	};
+	return Point{};
 }
 
 Point *Client::nearest(int i, float radius, float lon, float lat)
 {
-	auto n = [i, lon, lat, radius]() -> Point *
+	auto n = [this, i, lon, lat, radius]() -> Point *
 	{
 		unsigned neighbor = map.find_nearest_neighbor_within_radius(lat, lon, radius).id;
 		if (neighbor == invalid_id)
 			return NULL;
-		return new Point({graph.longitude[neighbor], graph.latitude[neighbor]});
+		Point p = point(neighbor);
+		return new Point(p);
 	};
 
 	return async(launch::deferred, n).get();
@@ -85,7 +139,7 @@ Point *Client::nearest(int i, float radius, float lon, float lat)
 
 std::vector<unsigned> Client::distances(int i, float radius, Point source, std::vector<struct Point> targets)
 {
-	auto tbl = [](int i, float radius, Point source, std::vector<struct Point> targets) -> vector<unsigned int>
+	auto tbl = [this, i, radius, source, targets]() -> vector<unsigned int>
 	{
 		vector<unsigned> results;
 		results.resize(targets.size());
@@ -105,6 +159,7 @@ std::vector<unsigned> Client::distances(int i, float radius, Point source, std::
 				target_list.push_back(to);
 			}
 		}
+
 		queries[i].reset().pin_targets(target_list);
 
 		unsigned from = map.find_nearest_neighbor_within_radius(source.lat, source.lon, radius).id;
@@ -136,14 +191,14 @@ std::vector<unsigned> Client::distances(int i, float radius, Point source, std::
 		return results;
 	};
 
-	auto future = std::async(launch::deferred, tbl, i, radius, source, targets);
+	auto future = async(launch::deferred, tbl);
 	auto result = future.get();
 	return result;
 }
 
 QueryResponse Client::query(int i, float radius, float from_longitude, float from_latitude, float to_longitude, float to_latitude, bool include_waypoints)
 {
-	auto query = [](int i, float radius, float from_longitude, float from_latitude, float to_longitude, float to_latitude, bool include_waypoints)
+	auto query = [this, i, radius, from_longitude, from_latitude, to_longitude, to_latitude, include_waypoints]()
 	{
 		unsigned from = map.find_nearest_neighbor_within_radius(from_latitude, from_longitude, radius).id;
 		unsigned to = map.find_nearest_neighbor_within_radius(to_latitude, to_longitude, radius).id;
@@ -163,13 +218,13 @@ QueryResponse Client::query(int i, float radius, float from_longitude, float fro
 		{
 			auto path = queries[i].get_node_path();
 			for (auto x : path)
-				response.waypoints.push_back(Point{lon : graph.longitude[x], lat : graph.latitude[x]});
+				response.waypoints.push_back(point(x));
 		}
 
 		return response;
 	};
 
-	auto future = std::async(launch::deferred, query, i, radius, from_longitude, from_latitude, to_longitude, to_latitude, include_waypoints);
+	auto future = std::async(launch::deferred, query);
 	auto result = future.get();
 	return result;
 }
