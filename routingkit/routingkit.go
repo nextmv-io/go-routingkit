@@ -227,12 +227,13 @@ func NewTravelTimeClient(mapFile, chFile string) (TravelTimeClient, error) {
 }
 
 // Route finds the fastest route between the two points, returning the total route
-// travel time and the waypoints describing the route.
+// travel time by car and the waypoints describing the route.
 func (c TravelTimeClient) Route(from []float32, to []float32) (uint32, [][]float32) {
 	return c.client.Route(from, to)
 }
 
-// TravelTime returns the travel time of the shortest possible route between the points
+// TravelTime returns the travel time by car for the shortest possible route between
+// the points
 func (c TravelTimeClient) TravelTime(from []float32, to []float32) uint32 {
 	return c.client.Distance(from, to)
 }
@@ -243,14 +244,14 @@ func (c TravelTimeClient) Nearest(point []float32) ([]float32, bool) {
 	return c.client.Nearest(point)
 }
 
-// Matrix creates a matrix representing the minimum travel times from the points in
-// sources to the points in targets.
+// Matrix creates a matrix representing the minimum travel times (by car) from the
+// points in sources to the points in targets.
 func (c TravelTimeClient) Matrix(sources [][]float32, targets [][]float32) [][]uint32 {
 	return c.client.Matrix(sources, targets)
 }
 
-// TravelTimes returns a slice containing the minimum travel times from the source to the
-// points in targets.
+// TravelTimes returns a slice containing the minimum car travel times from the source
+// to the points in targets.
 func (c TravelTimeClient) TravelTimes(source []float32, targets [][]float32) []uint32 {
 	return c.client.Distances(source, targets)
 }
