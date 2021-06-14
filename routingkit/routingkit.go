@@ -36,7 +36,7 @@ func NewDistanceClient(mapFile, chFile string, profile TravelProfile) (DistanceC
 	}
 
 	concurrentQueries := runtime.GOMAXPROCS(0)
-	c := rk.NewClient(concurrentQueries, mapFile, chFile, routingkit.GoRoutingKitTravel_profile(profile))
+	c := rk.NewClient(concurrentQueries, mapFile, chFile, routingkit.GoRoutingKitTravel_profile(profile), false)
 	runtime.SetFinalizer(&c, finalizer)
 
 	channel := make(chan int, concurrentQueries)
@@ -196,4 +196,67 @@ func (c client) Distances(source []float32, targets [][]float32) []uint32 {
 	}
 
 	return distances
+}
+
+type TravelTimeClient struct {
+	client client
+}
+
+// NewTravelTimeClient initializes a TravelTimeClient using the provided .osm.pbf file and
+// .ch file. The .ch file will be created if it does not already exist.
+func NewTravelTimeClient(mapFile, chFile string) (TravelTimeClient, error) {
+	if _, err := os.Stat(mapFile); os.IsNotExist(err) {
+		return TravelTimeClient{}, errors.New(fmt.Sprintf("could not find map file at %v", mapFile))
+	}
+
+	concurrentQueries := runtime.GOMAXPROCS(0)
+	c := rk.NewClient(concurrentQueries, mapFile, chFile, routingkit.Car, true)
+	runtime.SetFinalizer(&c, finalizer)
+
+	channel := make(chan int, concurrentQueries)
+	for i := 0; i < concurrentQueries; i++ {
+		channel <- i
+	}
+
+	return TravelTimeClient{
+		client: client{
+			client:     c,
+			channel:    channel,
+			snapRadius: 1000,
+		}}, nil
+}
+
+// Route finds the fastest route between the two points, returning the total route
+// travel time and the waypoints describing the route.
+func (c TravelTimeClient) Route(from []float32, to []float32) (uint32, [][]float32) {
+	return c.client.Route(from, to)
+}
+
+// TravelTime returns the travel time of the shortest possible route between the points
+func (c TravelTimeClient) TravelTime(from []float32, to []float32) uint32 {
+	return c.client.Distance(from, to)
+}
+
+// Nearest returns the nearest point in the road network within the radius configured on
+// the Client. The second argument will be false if no point could be found.
+func (c TravelTimeClient) Nearest(point []float32) ([]float32, bool) {
+	return c.client.Nearest(point)
+}
+
+// Matrix creates a matrix representing the minimum travel times from the points in
+// sources to the points in targets.
+func (c TravelTimeClient) Matrix(sources [][]float32, targets [][]float32) [][]uint32 {
+	return c.client.Matrix(sources, targets)
+}
+
+// TravelTimes returns a slice containing the minimum travel times from the source to the
+// points in targets.
+func (c TravelTimeClient) TravelTimes(source []float32, targets [][]float32) []uint32 {
+	return c.client.Distances(source, targets)
+}
+
+// SetSnapRadius updates Client so that all queries will snap points to the nearest
+// street network point within the given radius in meters.
+func (c *TravelTimeClient) SetSnapRadius(n float32) {
+	c.client.SetSnapRadius(n)
 }
