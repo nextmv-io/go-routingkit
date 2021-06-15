@@ -233,7 +233,7 @@ func (c TravelTimeClient) Route(from []float32, to []float32) (uint32, [][]float
 }
 
 // TravelTime returns the travel time by car for the shortest possible route between
-// the points
+// the points.
 func (c TravelTimeClient) TravelTime(from []float32, to []float32) uint32 {
 	return c.client.Distance(from, to)
 }
