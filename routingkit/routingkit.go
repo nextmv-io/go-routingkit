@@ -10,10 +10,6 @@ import (
 	rk "github.com/nextmv-io/go-routingkit/routingkit/internal/routingkit"
 )
 
-func finalizer(client *rk.Client) {
-	routingkit.DeleteClient(*client)
-}
-
 // MaxDistance represents the maximum possible route distance.
 var MaxDistance uint32
 
@@ -29,7 +25,8 @@ func init() {
 }
 
 // NewDistanceClient initializes a DistanceClient using the provided .osm.pbf file and
-// .ch file. The .ch file will be created if it does not already exist.
+// .ch file. The .ch file will be created if it does not already exist. It is the caller's
+// responsibility to call Delete on the client when it is no longer needed.
 func NewDistanceClient(mapFile, chFile string, profile TravelProfile) (DistanceClient, error) {
 	if _, err := os.Stat(mapFile); os.IsNotExist(err) {
 		return DistanceClient{}, errors.New(fmt.Sprintf("could not find map file at %v", mapFile))
@@ -37,7 +34,6 @@ func NewDistanceClient(mapFile, chFile string, profile TravelProfile) (DistanceC
 
 	concurrentQueries := runtime.GOMAXPROCS(0)
 	c := rk.NewClient(concurrentQueries, mapFile, chFile, routingkit.GoRoutingKitTravel_profile(profile), false)
-	runtime.SetFinalizer(&c, finalizer)
 
 	channel := make(chan int, concurrentQueries)
 	for i := 0; i < concurrentQueries; i++ {
@@ -50,6 +46,11 @@ func NewDistanceClient(mapFile, chFile string, profile TravelProfile) (DistanceC
 			channel:    channel,
 			snapRadius: 1000,
 		}}, nil
+}
+
+// Delete deletes the client, releasing memory allocated for C++ routing data structures
+func (c *client) Delete() {
+	routingkit.DeleteClient(c.client)
 }
 
 // SetSnapRadius updates Client so that all queries will snap points to the nearest
@@ -203,7 +204,8 @@ type TravelTimeClient struct {
 }
 
 // NewTravelTimeClient initializes a TravelTimeClient using the provided .osm.pbf file and
-// .ch file. The .ch file will be created if it does not already exist.
+// .ch file. The .ch file will be created if it does not already exist. It is the caller's
+// responsibility to call Delete on the client when it is no longer needed.
 func NewTravelTimeClient(mapFile, chFile string) (TravelTimeClient, error) {
 	if _, err := os.Stat(mapFile); os.IsNotExist(err) {
 		return TravelTimeClient{}, errors.New(fmt.Sprintf("could not find map file at %v", mapFile))
@@ -211,7 +213,6 @@ func NewTravelTimeClient(mapFile, chFile string) (TravelTimeClient, error) {
 
 	concurrentQueries := runtime.GOMAXPROCS(0)
 	c := rk.NewClient(concurrentQueries, mapFile, chFile, routingkit.Car, true)
-	runtime.SetFinalizer(&c, finalizer)
 
 	channel := make(chan int, concurrentQueries)
 	for i := 0; i < concurrentQueries; i++ {
