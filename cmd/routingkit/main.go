@@ -100,13 +100,13 @@ func parseFlags() (params parameters) {
 		&in,
 		"input",
 		"",
-		"path to input file",
+		"path to input file. default is stdin.",
 	)
 	flag.StringVar(
 		&out,
 		"output",
 		"",
-		"path to output file",
+		"path to output file. default is stdout.",
 	)
 	flag.StringVar(
 		&params.mapFile,
@@ -123,13 +123,13 @@ func parseFlags() (params parameters) {
 	flag.StringVar(
 		&profile,
 		"profile",
-		"car",
+		profileEnum.CAR,
 		"car|bike|pedestrian - bike and pedestrian only work with measure=distance",
 	)
 	flag.StringVar(
 		&params.measure,
 		"measure",
-		"distance",
+		measureEnum.DISTANCE,
 		"distance|traveltime",
 	)
 	flag.Parse()
