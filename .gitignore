@@ -14,12 +14,6 @@
 # Dependency directories (remove the comment below to include it)
 # vendor/
 
-# osm pbf files
-*.pbf
-
-# contraction hierarchies
-*.ch
-
 .vscode/
 
 go.sum
@@ -32,3 +26,5 @@ cmd/routingkit/routingkit
 
 # Temporary directories
 third_party/RoutingKit/
+
+Client.o
