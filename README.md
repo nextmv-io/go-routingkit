@@ -2,13 +2,18 @@
 
 Go-routingkit is a Go wrapper around the [RoutingKit](https://github.com/RoutingKit/RoutingKit) C++ library. It answers queries about the shortest path between points found within a road network.
 
-## Install
+## Installing and Building
 
 ```go
 go get -u github.com/nextmv-io/go-routingkit
 ```
 
 Go-routingkit is currently only supported on Linux.
+
+Go-routingkit relies on cgo, and its C dependencies are statically linked to increase portability. However, this requires packages that import go-routingkit to do two things when running `go build`:
+
+- The `netgo` build tag should be passed to avoid linking with native networking libraries: `go build -tags netgo`.
+- When compiled, go-routingkit will pass two arguments to the linker that must be approved by the system doing the build. This is done by setting the environment variable `CGO_LDFLAGS_ALLOW="-Wl,--whole-archive|-Wl,--no-whole-archive"` (or by modifying your existing `CGO_LDFLAGS_ALLOW` environment variable to include these tags).
 
 ## Usage
 

@@ -1,6 +1,6 @@
 %module routingkit
 %insert(cgo_comment_typedefs) %{
-#cgo LDFLAGS: ${SRCDIR}/libroutingkit.a
+#cgo LDFLAGS: ${SRCDIR}/libroutingkit.a -static -Wl,--whole-archive -lpthread -Wl,--no-whole-archive
 #cgo CPPFLAGS: -I${SRCDIR}/../../../third_party/RoutingKit/include/
 %}
 
