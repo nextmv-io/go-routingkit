@@ -11,4 +11,5 @@ rm -r temp
 swig -go -cgo -c++ -IRoutingKit/include/routingkit -intgosize 64 -O routingkit.i
 mv routingkit_wrap.cxx routingkit.go libroutingkit.a ../routingkit/internal/routingkit/
 cp Client.h ../routingkit/internal/routingkit/
+cp -r RoutingKit/include ./include
 popd
