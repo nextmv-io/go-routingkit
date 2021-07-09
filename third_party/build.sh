@@ -23,7 +23,7 @@ case $GOOS in
 		ar -x /usr/lib/x86_64-linux-gnu/libz.a
 	;;
 	darwin)
-		ar -x /usr/local/opt/zlib/lib/libz.a
+		ar -x /opt/homebrew/opt/zlib/lib/libz.a
 	;;
 esac
 
@@ -38,7 +38,7 @@ case $GOOS in
 		mv routingkit.go ../routingkit/internal/routingkit/routingkit_linux.go
 	;;
 	darwin)
-		swig -go -cgo -c++ -IRoutingKit/include/routingkit -intgosize 64 -O routingkit_darwing.i
+		swig -go -cgo -c++ -IRoutingKit/include/routingkit -intgosize 64 -O routingkit_darwin.i
 		mv routingkit_darwin_wrap.cxx libroutingkit.a ../routingkit/internal/routingkit/
 		mv routingkit.go ../routingkit/internal/routingkit/routingkit_darwin.go
 	;;

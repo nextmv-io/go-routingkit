@@ -1,7 +1,8 @@
 %module routingkit
 %insert(cgo_comment_typedefs) %{
 #cgo LDFLAGS: ${SRCDIR}/libroutingkit.a
-#cgo CPPFLAGS: -I${SRCDIR}/../../../routingkit/internal/routingkit/include -stdlib=libc++
+#cgo CPPFLAGS: -I${SRCDIR}/../../../routingkit/internal/routingkit/include
+#cgo CXXFLAGS: -stdlib=libc++ -std=c++11
 %}
 
 %{
