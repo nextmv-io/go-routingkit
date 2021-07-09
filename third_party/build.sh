@@ -26,7 +26,7 @@ case $GOOS in
 		ar -x /usr/lib/x86_64-linux-gnu/libz.a
 	;;
 	darwin)
-		ar -x "$(brew --prefix libz)/lib/libz.a"
+		ar -x "$(brew --prefix zlib)/lib/libz.a"
 	;;
 esac
 
