@@ -19,12 +19,14 @@ esac
 mkdir temp
 cd temp
 
+
+
 case $GOOS in
 	linux)
 		ar -x /usr/lib/x86_64-linux-gnu/libz.a
 	;;
 	darwin)
-		ar -x /usr/local/opt/zlib/lib/libz.a
+		ar -x "$(brew --prefix libz)/lib/libz.a"
 	;;
 esac
 
