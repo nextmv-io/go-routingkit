@@ -1,6 +1,6 @@
 %module routingkit
 %insert(cgo_comment_typedefs) %{
-#cgo LDFLAGS: ${SRCDIR}/libroutingkit.a
+#cgo LDFLAGS: ${SRCDIR}/libroutingkit_darwin_amd64.a
 #cgo CPPFLAGS: -I${SRCDIR}/../../../routingkit/internal/routingkit/include -stdlib=libc++
 %}
 
