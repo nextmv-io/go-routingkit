@@ -8,7 +8,7 @@
  * interface file instead.
  * ----------------------------------------------------------------------------- */
 
-// source: routingkit.i
+// source: routingkit_linux.i
 
 package routingkit
 
