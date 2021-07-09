@@ -2,13 +2,18 @@
 
 Go-routingkit is a Go wrapper around the [RoutingKit](https://github.com/RoutingKit/RoutingKit) C++ library. It answers queries about the shortest path between points found within a road network.
 
-## Install
+## Installing and Building
 
 ```go
 go get -u github.com/nextmv-io/go-routingkit
 ```
 
 Go-routingkit is currently only supported on Linux.
+
+Go-routingkit relies on cgo, and its C dependencies are statically linked to increase portability. However, this requires packages that import go-routingkit to do two things when running `go build`:
+
+- The `netgo` build tag should be passed to avoid linking with native networking libraries: `go build -tags netgo`.
+- When compiled, go-routingkit will pass two arguments to the linker that must be approved by the system doing the build. This is done by setting the environment variable `CGO_LDFLAGS_ALLOW="-Wl,--whole-archive|-Wl,--no-whole-archive"` (or by modifying your existing `CGO_LDFLAGS_ALLOW` environment variable to include these tags).
 
 ## Usage
 
@@ -29,7 +34,7 @@ The contraction hierarchy (.ch) file contains indices that allow routing queries
 
 ### Distance and Travel Time Queries
 
-`routingkit.DistanceClient` and `rooutingkit.TravelTimeClient` allow a few different types of queries for the shortest paths between points. Points are represented as `[]float32`s where the first element is the longitude and the second is the latitude. Distances are represented as `uint32`s, representing distance in meters for `DistanceClient` and in milliseconds for `TravelTimeClient`.
+`routingkit.DistanceClient` and `routingkit.TravelTimeClient` allow a few different types of queries for the shortest paths between points. Points are represented as `[]float32`s where the first element is the longitude and the second is the latitude. Distances are represented as `uint32`s, representing distance in meters for `DistanceClient` and in milliseconds for `TravelTimeClient`.
 
 The simplest query finds the distance between two points:
 
@@ -48,15 +53,27 @@ time, waypoints := timeCli.Route([]float32{-75.1785585,39.9532349}, []float32{-7
 The `Distances` and `TravelTimes` methods perform a vectorized query for distances or travel times from a source to multiple destinations.
 
 ```go
-distances := distanceCli.Distances([]float32{-75.1785585,39.9532349}, [][]float32{{-75.1650723,39.9515036}, {-75.1524708,39.9496144}},)
-times := timeCli.TravelTimes([]float32{-75.1785585,39.9532349}, [][]float32{{-75.1650723,39.9515036}, {-75.1524708,39.9496144}},)
+distances := distanceCli.Distances(
+    []float32{-75.1785585,39.9532349},
+    [][]float32{{-75.1650723,39.9515036}, {-75.1524708,39.9496144}},
+)
+times := timeCli.TravelTimes(
+    []float32{-75.1785585,39.9532349},
+    [][]float32{{-75.1650723,39.9515036}, {-75.1524708,39.9496144}},
+)
 ```
 
 And `Matrix` creates a matrix containing distances (or travel times) from multiple source points to multiple destination points.
 
 ```go
-matrix := distanceCli.Matrix([][]float32{{-75.1785585,39.9532349}, {-75.2135608,39.9610131}}, [][]float32{{-75.1650723,39.9515036}, {-75.1524708,39.9496144}})
-matrix := timeCli.Matrix([][]float32{{-75.1785585,39.9532349}, {-75.2135608,39.9610131}}, [][]float32{{-75.1650723,39.9515036}, {-75.1524708,39.9496144}})
+matrix := distanceCli.Matrix(
+    [][]float32{{-75.1785585,39.9532349}, {-75.2135608,39.9610131}},
+    [][]float32{{-75.1650723,39.9515036}, {-75.1524708,39.9496144}},
+)
+matrix := timeCli.Matrix(
+    [][]float32{{-75.1785585,39.9532349}, {-75.2135608,39.9610131}},
+    [][]float32{{-75.1650723,39.9515036}, {-75.1524708,39.9496144}},
+)
 ```
 
 ### Snap Radius

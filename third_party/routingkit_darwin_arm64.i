@@ -1,7 +1,8 @@
 %module routingkit
 %insert(cgo_comment_typedefs) %{
-#cgo LDFLAGS: ${SRCDIR}/libroutingkit.a
-#cgo CPPFLAGS: -I${SRCDIR}/../../../third_party/RoutingKit/include/
+#cgo LDFLAGS: ${SRCDIR}/libroutingkit_darwin_arm64.a
+#cgo CPPFLAGS: -I${SRCDIR}/../../../routingkit/internal/routingkit/include
+#cgo CXXFLAGS: -std=c++11
 %}
 
 %{
@@ -20,3 +21,4 @@ namespace std {
 }
 
 %include "Client.h"
+
