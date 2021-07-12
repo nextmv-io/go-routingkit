@@ -18,11 +18,6 @@ jobs:
       - name: git clone
         uses: actions/checkout@v2
 
-      # Build the module
-      - name: go build
-        run: go build -race -v ./...
-        working-directory: ${{env.working-directory}}
-
       # Run the tests
       - name: go test
         run: go test -v -cover -race ./...
