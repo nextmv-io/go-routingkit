@@ -1,0 +1,24 @@
+name: go-routingkit test
+on: [push]
+
+jobs:
+  build:
+    name: go-routingkit test
+    runs-on: ubuntu-latest
+    env:
+      working-directory: ./routingkit
+    steps:
+      - name: set up go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.13
+        id: go
+
+      # Clone the repo
+      - name: git clone
+        uses: actions/checkout@v2
+
+      # Run the tests
+      - name: go test
+        run: go test -v -cover -race ./...
+        working-directory: ${{env.working-directory}}
