@@ -25,5 +25,5 @@ jobs:
 
       # Run the tests
       - name: go test
-        run: go test -cover -race ./...
+        run: go test -v -cover -race ./...
         working-directory: ${{env.working-directory}}
