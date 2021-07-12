@@ -5,8 +5,6 @@ jobs:
   build:
     name: go-routingkit test
     runs-on: ubuntu-latest
-    env:
-      working-directory: ./routingkit
     steps:
       - name: set up go
         uses: actions/setup-go@v2
@@ -18,7 +16,10 @@ jobs:
       - name: git clone
         uses: actions/checkout@v2
 
+      # Build the everything
+      - name: go build
+        run: go build -v ./...
+
       # Run the tests
       - name: go test
         run: go test -v -cover -race ./...
-        working-directory: ${{env.working-directory}}
