@@ -1,8 +1,42 @@
-# routingkit binary
+# go-routingkit standalone
 
 `routingkit` allows the usage of go-routingkit as a standalone executable.
 
+## Example
+
+1. Download an _.osm.pbf_ file for Maryland from [Geofabrik](http://download.geofabrik.de/):
+
+    ```bash
+    wget -P "data/" "http://download.geofabrik.de/north-america/us/maryland-latest.osm.pbf"
+    ```
+
+1. Execute the sample request from `data/maryland-points.json`
+
+    ```bash
+    go run . \
+        -map "data/maryland-latest.osm.pbf" \
+        -ch "data/maryland-latest.ch" \
+        -input "data/maryland-points.json" \
+        -measure "distance"
+    ```
+
+Note that [contraction hierarchies][ch] are built and saved to the _.ch_ file,
+if the file is not yet present. This process takes a while. Subsequent calls
+(with a _.ch_ file present) will be faster.
+
 ## Usage
+
+Usage of _standalone go-routingkit_ is described below.
+
+### Build
+
+Build a binary by simply invoking
+
+```bash
+go build
+```
+
+### Arguments
 
 ```go
 Usage of ./routingkit:
@@ -21,27 +55,85 @@ Usage of ./routingkit:
         (default "car")
 ```
 
-Here is a sample input:
+### Input / output
+
+Find a sample `--input` below. Each request is given as a tuple of two locations
+defining the `from` and `to` part of the trip. The position of the location is
+given as longitude (`lon`) and latitude (`lat`).
 
 ```json
 {
     "tuples": [
         {
-            "from":[-76.73266990511583, 38.88656521737339],
-            "to":[-77.0950991, 38.98064919999999]
+            "from": { "lon": -76.733, "lat": 38.887 },
+            "to": { "lon": -77.095, "lat": 38.981 }
         },
         {
-            "from":[-76.8233293, 39.2142304],
-            "to":[-76.738197, 39.392148]
+            "from": { "lon": -76.888, "lat": 38.951 },
+            "to": { "lon": -76.868, "lat": 38.938 }
         },
         {
-            "from":[-76.6977902, 39.0648349],
-            "to":[-77.029122, 39.0220273]
+            "from": { "lon": -76.698, "lat": 39.065 },
+            "to": { "lon": -77.029, "lat": 39.022 }
         },
         {
-            "from":[-76.8875218, 39.2067232],
-            "to":[-76.4852039, 39.3641577]
+            "from": { "lon": -76.888, "lat": 39.207 },
+            "to": { "lon": -76.485, "lat": 39.364 }
         }
     ]
 }
 ```
+
+Here is an excerpt of a sample output. There is one 'trip' per tuple in the
+input given as an array in input order. Each trip contains the `cost` (distance
+or drive-time) and the `waypoints`, which define the shape of the route. All
+positions are again given as longitude (`lon`) & latitude (`lat`).
+
+```jsonc
+{
+    "trips": [
+        {
+            "waypoints": [
+                { "lon": -76.7316, "lat": 38.887352 },
+                { "lon": -76.731415, "lat": 38.88516 },
+                { "lon": -76.73108, "lat": 38.88498 },
+                // ...
+                { "lon": -77.09511, "lat": 38.98097 }
+            ],
+            "cost": 42480
+        },
+        {
+            "waypoints": [
+                { "lon": -76.888374, "lat": 38.95079 },
+                { "lon": -76.88743, "lat": 38.950684 },
+                { "lon": -76.88705, "lat": 38.950535 },
+                // ...
+                { "lon": -76.867935, "lat": 38.937477 }
+            ],
+            "cost": 5200
+        },
+        {
+            "waypoints": [
+                { "lon": -76.69816, "lat": 39.064713 },
+                { "lon": -76.697945, "lat": 39.065346 },
+                { "lon": -76.69793, "lat": 39.065422 },
+                // ...
+                { "lon": -77.028854, "lat": 39.022038 }
+            ],
+            "cost": 38806
+        },
+        {
+            "waypoints": [
+                { "lon": -76.88802, "lat": 39.206516 },
+                { "lon": -76.88725, "lat": 39.20655 },
+                { "lon": -76.88608, "lat": 39.2066 },
+                // ...
+                { "lon": -76.48349, "lat": 39.363342 }
+            ],
+            "cost": 45401
+        }
+    ]
+}
+```
+
+[ch]: https://en.wikipedia.org/wiki/Contraction_hierarchies

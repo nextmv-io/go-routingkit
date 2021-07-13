@@ -96,7 +96,13 @@ func main() {
 	for i, p := range input.Tuples {
 		go func(i int, p pointTuple) {
 			defer wg.Done()
-			dist, waypoints := client.Route(p.From, p.To)
+			from := []float32{p.From.Lon, p.From.Lat}
+			to := []float32{p.To.Lon, p.To.Lat}
+			dist, wpTuples := client.Route(from, to)
+			waypoints := make([]position, len(wpTuples))
+			for w, tuple := range wpTuples {
+				waypoints[w] = position{Lon: tuple[0], Lat: tuple[1]}
+			}
 			trips[i] = trip{Cost: dist, Waypoints: waypoints}
 		}(i, p)
 	}
@@ -212,8 +218,13 @@ type input struct {
 }
 
 type pointTuple struct {
-	From []float32 `json:"from"`
-	To   []float32 `json:"to"`
+	From position `json:"from"`
+	To   position `json:"to"`
+}
+
+type position struct {
+	Lon float32 `json:"lon"`
+	Lat float32 `json:"lat"`
 }
 
 type output struct {
@@ -221,6 +232,6 @@ type output struct {
 }
 
 type trip struct {
-	Waypoints [][]float32 `json:"waypoints"`
-	Cost      uint32      `json:"cost"`
+	Waypoints []position `json:"waypoints"`
+	Cost      uint32     `json:"cost"`
 }
