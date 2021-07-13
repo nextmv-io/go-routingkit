@@ -20,9 +20,9 @@
         -measure "distance"
     ```
 
-Note that [contraction hierarchies][ch] are built and saved to the _.ch_ file.
-This process takes a while. Subsequent calls (with a present _.ch_ file will be
-faster).
+Note that [contraction hierarchies][ch] are built and saved to the _.ch_ file,
+if the file is not yet present. This process takes a while. Subsequent calls
+(with a _.ch_ file present) will be faster.
 
 ## Usage
 
