@@ -24,7 +24,7 @@ go.sum
 # Ignore entry point example files
 cmd/routingkit/routingkit
 cmd/routingkit/data/maryland-latest.osm.pbf
-cmd/routingkit/data/maryland-latest.osm.pbf.ch
+cmd/routingkit/data/maryland-latest.ch
 
 # Temporary directories
 third_party/RoutingKit/

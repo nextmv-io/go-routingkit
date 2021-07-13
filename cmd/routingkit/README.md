@@ -5,7 +5,39 @@
 Run `./example.sh` for a quickstart. Prior to executing a sample call the script
 will download a matching osm region file.
 
+## Example
+
+1. Download an _.osm.pbf_ file for Maryland from [Geofabrik](http://download.geofabrik.de/):
+
+    ```bash
+    wget -P "data/" "http://download.geofabrik.de/north-america/us/maryland-latest.osm.pbf"
+    ```
+
+1. Execute the sample request from `data/maryland-points.json`
+
+    ```bash
+    go run . \
+        -map "data/maryland-latest.osm.pbf" \
+        -ch "data/maryland-latest.ch" \
+        -input "data/maryland-points.json" \
+        -measure "distance"
+    ```
+
+Note that [contraction hierarchies][ch] are built and saved to the _.ch_ file.
+This process takes a while. Subsequent calls (with a present _.ch_ file will be
+faster).
+
 ## Usage
+
+### Build
+
+Build a binary by simply invoking
+
+```bash
+go build
+```
+
+### Arguments
 
 ```go
 Usage of ./routingkit:
@@ -24,7 +56,9 @@ Usage of ./routingkit:
         (default "car")
 ```
 
-Find a sample input below. Each request is given as a tuple of two locations
+### Input / output
+
+Find a sample `--input` below. Each request is given as a tuple of two locations
 defining the `from` and `to` part of the trip. The coordinates of the location
 are given in `[lon, lat]` order.
 
@@ -103,3 +137,5 @@ coordinates are given in `[lon, lat]` order.
 }
 
 ```
+
+[ch]: https://en.wikipedia.org/wiki/Contraction_hierarchies

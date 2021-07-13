@@ -1,8 +1,8 @@
 # go-routingkit
 
-Go-routingkit is a Go wrapper around the
-[RoutingKit](https://github.com/RoutingKit/RoutingKit) C++ library. It answers
-queries about the shortest path between points found within a road network.
+Go-routingkit is a Go wrapper around the [RoutingKit][rk] C++ library. It
+answers queries about the shortest path between points found within a road
+network.
 
 ## Installing and Building
 
@@ -122,4 +122,7 @@ a point will be snapped to on the road grid. It can be set with:
 cli.SetSnapRadius(100)
 ```
 
-After being adjusted, this snap radius will be applied to any query done by the client.
+After being adjusted, this snap radius will be applied to any query done by the
+client.
+
+[rk]: https://github.com/RoutingKit/RoutingKit
