@@ -2,7 +2,7 @@
 
 `routingkit` allows the usage of go-routingkit as a standalone executable.
 
-Run `./cmd.sh` for a quickstart. Prior to executing a sample call the script
+Run `./example.sh` for a quickstart. Prior to executing a sample call the script
 will download a matching osm region file.
 
 ## Usage
