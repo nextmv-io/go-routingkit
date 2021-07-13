@@ -51,7 +51,7 @@ are given in `[lon, lat]` order.
 }
 ```
 
-Here is an excerpt of a sample output. There is on 'trip' per tuple in the input
+Here is an excerpt of a sample output. There is one 'trip' per tuple in the input
 given as an array in input order. Each trip contains the `cost` (distance or
 drive-time) and the `waypoints`, which define the shape of the route. All
 coordinates are given in `[lon, lat]` order.
