@@ -21,7 +21,7 @@ go.sum
 # ignore C++ object files
 .o
 
-# Ignore standalone intermediate & example files
+# Ignore standalone go-routingkit intermediate & example files
 cmd/routingkit/routingkit
 cmd/routingkit/data/maryland-latest.osm.pbf
 cmd/routingkit/data/maryland-latest.ch
