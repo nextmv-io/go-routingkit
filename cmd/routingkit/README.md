@@ -1,9 +1,6 @@
-# routingkit binary
+# go-routingkit standalone
 
 `routingkit` allows the usage of go-routingkit as a standalone executable.
-
-Run `./example.sh` for a quickstart. Prior to executing a sample call the script
-will download a matching osm region file.
 
 ## Example
 
@@ -28,6 +25,8 @@ This process takes a while. Subsequent calls (with a present _.ch_ file will be
 faster).
 
 ## Usage
+
+Usage of _standalone go-routingkit_ is described below.
 
 ### Build
 
