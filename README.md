@@ -12,18 +12,9 @@ go get -u github.com/nextmv-io/go-routingkit
 
 Go-routingkit is currently supported on Linux, MacOS (both Intel and Apple Silicon).
 
-Go-routingkit relies on cgo, and its C dependencies are dynamically linked.
-However, this requires packages that import go-routingkit to do two things when
-running `go build`:
-
-- The `netgo` build tag should be passed to avoid linking with native networking
-  libraries: `go build -tags netgo`.
-- When compiled, go-routingkit will pass two arguments to the linker that must
-  be approved by the system doing the build. This is done by setting the
-  environment variable
-  `CGO_LDFLAGS_ALLOW="-Wl,--whole-archive|-Wl,--no-whole-archive"` (or by
-  modifying your existing `CGO_LDFLAGS_ALLOW` environment variable to include
-  these tags).
+As go-routingkit uses cgo, any programs that use it should ensure that at runtime they
+can dynamically link against a C standard library version that is compatible with the
+version the program was built with. If using glibc, version 2.26 or higher is required.
 
 ## Usage
 
