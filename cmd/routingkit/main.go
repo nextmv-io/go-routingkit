@@ -172,7 +172,7 @@ func parseFlags() (params parameters, err error) {
 	if out == "" {
 		params.out = os.Stdout
 	} else {
-		params.out, err = os.Open(out)
+		params.out, err = os.Create(out)
 		if err != nil {
 			return parameters{}, err
 		}
