@@ -10,11 +10,11 @@ queries about the shortest path between points found within a road network.
 go get -u github.com/nextmv-io/go-routingkit
 ```
 
-Go-routingkit is currently only supported on Linux.
+Go-routingkit is currently supported on Linux, MacOS (both Intel and Apple Silicon).
 
-Go-routingkit relies on cgo, and its C dependencies are statically linked to
-increase portability. However, this requires packages that import go-routingkit
-to do two things when running `go build`:
+Go-routingkit relies on cgo, and its C dependencies are dynamically linked.
+However, this requires packages that import go-routingkit to do two things when
+running `go build`:
 
 - The `netgo` build tag should be passed to avoid linking with native networking
   libraries: `go build -tags netgo`.
