@@ -3,6 +3,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -44,7 +45,11 @@ var profileEnum = struct {
 }
 
 func main() {
-	params := parseFlags()
+	params, err := parseFlags()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "error parsing flags: %v", err)
+		os.Exit(1)
+	}
 
 	var client Router
 	switch params.measure {
@@ -55,27 +60,35 @@ func main() {
 			params.profile,
 		)
 		if err != nil {
-			fmt.Println("Error creating client %", err)
+			fmt.Fprintf(os.Stderr, "error creating client: %v", err)
+			os.Exit(1)
 		}
 		client = c
 	case measureEnum.TRAVELTIME:
 		if params.profile != routingkit.CarTravelProfile {
-			panic(`Invalid parameter combination.
+			fmt.Fprintf(os.Stderr, `invalid parameter combination.
 			This profile can only be used with measure=distance.`)
+			os.Exit(1)
 		}
 		c, err := routingkit.NewTravelTimeClient(
 			params.mapFile,
 			params.chFile,
 		)
 		if err != nil {
-			fmt.Println("Error creating client %", err)
+			fmt.Fprintf(os.Stderr, "error creating client: %v", err)
+			os.Exit(1)
 		}
 		client = c
 	default:
-		panic("Invalid option for measure" + params.measure)
+		fmt.Fprintf(os.Stderr, "invalid option for measure"+params.measure)
+		os.Exit(1)
 	}
 
-	input := read(params.in)
+	input, err := read(params.in)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "error reading input: %v", err)
+		os.Exit(1)
+	}
 
 	trips := make([]trip, len(input.Tuples))
 	var wg sync.WaitGroup
@@ -90,12 +103,15 @@ func main() {
 	wg.Wait()
 
 	output := output{Trips: trips}
-	write(params.out, output)
+	err = write(params.out, output)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "error writing output: %v", err)
+		os.Exit(1)
+	}
 }
 
-func parseFlags() (params parameters) {
+func parseFlags() (params parameters, err error) {
 	var in, out, profile string
-	var err error
 	flag.StringVar(
 		&in,
 		"input",
@@ -138,7 +154,7 @@ func parseFlags() (params parameters) {
 	} else {
 		params.in, err = os.Open(in)
 		if err != nil {
-			panic(err)
+			return parameters{}, err
 		}
 	}
 
@@ -150,7 +166,7 @@ func parseFlags() (params parameters) {
 	case profileEnum.PEDESTRIAN:
 		params.profile = routingkit.PedestrianTravelProfile
 	default:
-		panic("Invalid option for profile: " + profile)
+		return parameters{}, errors.New("invalid option for profile" + profile)
 	}
 
 	if out == "" {
@@ -158,37 +174,37 @@ func parseFlags() (params parameters) {
 	} else {
 		params.out, err = os.Open(out)
 		if err != nil {
-			panic(err)
+			return parameters{}, err
 		}
 	}
 	if err != nil {
-		panic(err)
+		return parameters{}, err
 	}
-	return params
+	return params, nil
 }
 
-func read(file *os.File) input {
+func read(file *os.File) (in input, err error) {
 	dat, err := ioutil.ReadAll(file)
 	if err != nil {
-		panic(err)
+		return in, err
 	}
-	var in input
 	err = json.Unmarshal(dat, &in)
 	if err != nil {
-		panic(err)
+		return in, err
 	}
-	return in
+	return in, nil
 }
 
-func write(file *os.File, output output) {
+func write(file *os.File, output output) (err error) {
 	b, err := json.Marshal(output)
 	if err != nil {
-		panic(err)
+		return err
 	}
 	_, err = file.Write(b)
 	if err != nil {
-		panic(err)
+		return err
 	}
+	return nil
 }
 
 type input struct {
