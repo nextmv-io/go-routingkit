@@ -21,7 +21,6 @@ type parameters struct {
 	in      *os.File
 	out     *os.File
 	mapFile string
-	chFile  string
 	measure string
 	profile routingkit.TravelProfile
 }
@@ -133,12 +132,6 @@ func parseFlags() (params parameters, err error) {
 		"map",
 		"data/map.osm.pbf",
 		"path to map file",
-	)
-	flag.StringVar(
-		&params.chFile,
-		"ch",
-		"data/map.ch",
-		"path to ch file",
 	)
 	flag.StringVar(
 		&profile,
