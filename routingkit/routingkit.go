@@ -1,10 +1,11 @@
 package routingkit
 
 import (
-	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 	"runtime"
+	"strings"
 
 	"github.com/nextmv-io/go-routingkit/routingkit/internal/routingkit"
 	rk "github.com/nextmv-io/go-routingkit/routingkit/internal/routingkit"
@@ -27,9 +28,14 @@ func init() {
 // NewDistanceClient initializes a DistanceClient using the provided .osm.pbf file and
 // .ch file. The .ch file will be created if it does not already exist. It is the caller's
 // responsibility to call Delete on the client when it is no longer needed.
-func NewDistanceClient(mapFile, chFile string, profile TravelProfile) (DistanceClient, error) {
+func NewDistanceClient(mapFile string, profile TravelProfile) (DistanceClient, error) {
 	if _, err := os.Stat(mapFile); os.IsNotExist(err) {
-		return DistanceClient{}, errors.New(fmt.Sprintf("could not find map file at %v", mapFile))
+		return DistanceClient{}, fmt.Errorf("could not find map file at %v", mapFile)
+	}
+
+	chFile, err := chFileName(mapFile, profile, false)
+	if err != nil {
+		return DistanceClient{}, err
 	}
 
 	concurrentQueries := runtime.GOMAXPROCS(0)
@@ -46,6 +52,27 @@ func NewDistanceClient(mapFile, chFile string, profile TravelProfile) (DistanceC
 			channel:    channel,
 			snapRadius: 1000,
 		}}, nil
+}
+
+func chFileName(mapFile string, profile TravelProfile, duration bool) (string, error) {
+	fileWithoutExt := strings.TrimSuffix(mapFile, filepath.Ext(mapFile))
+	extension := ""
+	switch profile {
+	case CarTravelProfile:
+		extension = "car"
+	case BikeTravelProfile:
+		extension = "bike"
+	case PedestrianTravelProfile:
+		extension = "pedestrian"
+	default:
+		return "", fmt.Errorf("profile %v did not match any profile", profile)
+	}
+
+	distOrDuration := "distance"
+	if duration {
+		distOrDuration = "duration"
+	}
+	return fileWithoutExt + "_" + extension + "_" + distOrDuration + ".ch", nil
 }
 
 // Delete deletes the client, releasing memory allocated for C++ routing data structures
@@ -206,11 +233,14 @@ type TravelTimeClient struct {
 // NewTravelTimeClient initializes a TravelTimeClient using the provided .osm.pbf file and
 // .ch file. The .ch file will be created if it does not already exist. It is the caller's
 // responsibility to call Delete on the client when it is no longer needed.
-func NewTravelTimeClient(mapFile, chFile string) (TravelTimeClient, error) {
+func NewTravelTimeClient(mapFile string) (TravelTimeClient, error) {
 	if _, err := os.Stat(mapFile); os.IsNotExist(err) {
-		return TravelTimeClient{}, errors.New(fmt.Sprintf("could not find map file at %v", mapFile))
+		return TravelTimeClient{}, fmt.Errorf("could not find map file at %v", mapFile)
 	}
-
+	chFile, err := chFileName(mapFile, CarTravelProfile, true)
+	if err != nil {
+		return TravelTimeClient{}, err
+	}
 	concurrentQueries := runtime.GOMAXPROCS(0)
 	c := rk.NewClient(concurrentQueries, mapFile, chFile, routingkit.Car, true)
 

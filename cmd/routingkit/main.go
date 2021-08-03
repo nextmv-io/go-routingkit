@@ -56,7 +56,6 @@ func main() {
 	case measureEnum.DISTANCE:
 		c, err := routingkit.NewDistanceClient(
 			params.mapFile,
-			params.chFile,
 			params.profile,
 		)
 		if err != nil {
@@ -72,7 +71,6 @@ func main() {
 		}
 		c, err := routingkit.NewTravelTimeClient(
 			params.mapFile,
-			params.chFile,
 		)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "error creating client: %v", err)
