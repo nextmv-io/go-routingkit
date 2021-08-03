@@ -12,9 +12,10 @@ go get -u github.com/nextmv-io/go-routingkit
 
 Go-routingkit is currently supported on Linux, MacOS (both Intel and Apple Silicon).
 
-As go-routingkit uses cgo, any programs that use it should ensure that at runtime they
-can dynamically link against a C standard library version that is compatible with the
-version the program was built with. If using glibc, version 2.26 or higher is required.
+As go-routingkit uses cgo, any programs that use it should ensure that at
+runtime they can dynamically link against a C standard library version that is
+compatible with the version the program was built with. If using glibc, version
+2.26 or higher is required.
 
 ## Usage
 
@@ -25,8 +26,8 @@ clients, `DistanceClient` and `TravelTimeClient`, which measure and minimize
 route lengths using distance and total travel time, respectively.
 
 ```go
-distanceCli, err := routingkit.NewDistanceClient("philadelphia.osm.pbf", "philadelphia-car.ch", routingkit.CarTravelProfile)
-timeCli, err := routingkit.NewTravelTimeClient("philadelphia.osm.pbf", "philadelphia-travel-time.ch")
+distanceCli, err := routingkit.NewDistanceClient("philadelphia.osm.pbf", routingkit.CarTravelProfile)
+timeCli, err := routingkit.NewTravelTimeClient("philadelphia.osm.pbf")
 ```
 
 The `DistanceClient` constructs different routes depending on the mode of
