@@ -3,9 +3,7 @@ package routingkit
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 	"runtime"
-	"strings"
 
 	"github.com/nextmv-io/go-routingkit/routingkit/internal/routingkit"
 	rk "github.com/nextmv-io/go-routingkit/routingkit/internal/routingkit"
@@ -55,7 +53,6 @@ func NewDistanceClient(mapFile string, profile TravelProfile) (DistanceClient, e
 }
 
 func chFileName(mapFile string, profile TravelProfile, duration bool) (string, error) {
-	fileWithoutExt := strings.TrimSuffix(mapFile, filepath.Ext(mapFile))
 	extension := ""
 	switch profile {
 	case CarTravelProfile:
@@ -72,7 +69,7 @@ func chFileName(mapFile string, profile TravelProfile, duration bool) (string, e
 	if duration {
 		distOrDuration = "duration"
 	}
-	return fileWithoutExt + "_" + extension + "_" + distOrDuration + ".ch", nil
+	return mapFile + "_" + extension + "_" + distOrDuration + ".ch", nil
 }
 
 // Delete deletes the client, releasing memory allocated for C++ routing data structures
