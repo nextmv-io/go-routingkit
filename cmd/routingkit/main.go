@@ -21,7 +21,6 @@ type parameters struct {
 	in      *os.File
 	out     *os.File
 	mapFile string
-	chFile  string
 	measure string
 	profile routingkit.TravelProfile
 }
@@ -56,7 +55,6 @@ func main() {
 	case measureEnum.DISTANCE:
 		c, err := routingkit.NewDistanceClient(
 			params.mapFile,
-			params.chFile,
 			params.profile,
 		)
 		if err != nil {
@@ -72,7 +70,6 @@ func main() {
 		}
 		c, err := routingkit.NewTravelTimeClient(
 			params.mapFile,
-			params.chFile,
 		)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "error creating client: %v", err)
@@ -135,12 +132,6 @@ func parseFlags() (params parameters, err error) {
 		"map",
 		"data/map.osm.pbf",
 		"path to map file",
-	)
-	flag.StringVar(
-		&params.chFile,
-		"ch",
-		"data/map.ch",
-		"path to ch file",
 	)
 	flag.StringVar(
 		&profile,

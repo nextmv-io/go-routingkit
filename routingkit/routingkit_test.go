@@ -15,10 +15,6 @@ import (
 // This is a small map file containing data for the boudning box from
 // -76.60735000000001,39.28971 to -76.57749,39.31587
 var marylandMap string = "testdata/maryland.osm.pbf"
-var carCh string = "testdata/maryland-car.ch"
-var bikeCh string = "testdata/maryland-bike.ch"
-var pedestrianCh string = "testdata/maryland-ped.ch"
-var carTravelTimeCh string = "testdata/maryland-car-travel-time.ch"
 
 // tempFile returns the location of a temporary file. It uses ioutil.TempFile
 // under the hood, but if the file exists (but does not contain a valid
@@ -43,7 +39,7 @@ func TestCreateCH(t *testing.T) {
 	}
 	defer os.Remove(chFile)
 
-	_, err = routingkit.NewDistanceClient(marylandMap, chFile, routingkit.CarTravelProfile)
+	_, err = routingkit.NewDistanceClient(marylandMap, routingkit.CarTravelProfile)
 	if err != nil {
 		t.Fatalf("creating Client: %v", err)
 	}
@@ -73,7 +69,7 @@ func TestNearest(t *testing.T) {
 		},
 	}
 
-	cli, err := routingkit.NewDistanceClient(marylandMap, carCh, routingkit.CarTravelProfile)
+	cli, err := routingkit.NewDistanceClient(marylandMap, routingkit.CarTravelProfile)
 	if err != nil {
 		t.Fatalf("creating Client: %v", err)
 	}
@@ -107,7 +103,6 @@ func TestDistances(t *testing.T) {
 			},
 			snap:    1000,
 			profile: routingkit.CarTravelProfile,
-			ch:      carCh,
 
 			expected: []uint32{1496, 617},
 		},
@@ -119,7 +114,6 @@ func TestDistances(t *testing.T) {
 			},
 			snap:    1000,
 			profile: routingkit.BikeTravelProfile,
-			ch:      bikeCh,
 
 			expected: []uint32{1440, 617},
 		},
@@ -131,7 +125,6 @@ func TestDistances(t *testing.T) {
 			},
 			snap:    1000,
 			profile: routingkit.PedestrianTravelProfile,
-			ch:      pedestrianCh,
 
 			expected: []uint32{1588, 912},
 		},
@@ -146,7 +139,6 @@ func TestDistances(t *testing.T) {
 			},
 			snap:    100,
 			profile: routingkit.CarTravelProfile,
-			ch:      carCh,
 
 			expected: []uint32{routingkit.MaxDistance, 1496, routingkit.MaxDistance, 1259},
 		},
@@ -159,14 +151,13 @@ func TestDistances(t *testing.T) {
 			},
 			snap:    10,
 			profile: routingkit.CarTravelProfile,
-			ch:      carCh,
 
 			expected: []uint32{routingkit.MaxDistance, routingkit.MaxDistance},
 		},
 	}
 
 	for i, test := range tests {
-		cli, err := routingkit.NewDistanceClient(marylandMap, test.ch, test.profile)
+		cli, err := routingkit.NewDistanceClient(marylandMap, test.profile)
 		if err != nil {
 			t.Fatalf("creating Client: %v", err)
 		}
@@ -205,7 +196,6 @@ func TestMatrix(t *testing.T) {
 				{3399, 1548},
 			},
 			profile: routingkit.CarTravelProfile,
-			ch:      carCh,
 		},
 		{
 			sources: [][]float32{
@@ -225,7 +215,6 @@ func TestMatrix(t *testing.T) {
 				{3354, 1547},
 			},
 			profile: routingkit.BikeTravelProfile,
-			ch:      bikeCh,
 		},
 		{
 			sources: [][]float32{
@@ -245,12 +234,11 @@ func TestMatrix(t *testing.T) {
 				{3151, 1544},
 			},
 			profile: routingkit.PedestrianTravelProfile,
-			ch:      pedestrianCh,
 		},
 	}
 
 	for i, test := range tests {
-		cli, err := routingkit.NewDistanceClient(marylandMap, test.ch, test.profile)
+		cli, err := routingkit.NewDistanceClient(marylandMap, test.profile)
 		if err != nil {
 			t.Fatalf("creating Client: %v", err)
 		}
@@ -317,7 +305,6 @@ func TestDistance(t *testing.T) {
 				{-76.58529663085938, 39.290008544921875},
 				{-76.58494567871094, 39.284912109375},
 			},
-			ch:      carCh,
 			profile: routingkit.CarTravelProfile,
 		},
 		{
@@ -349,7 +336,6 @@ func TestDistance(t *testing.T) {
 				{-76.5853, 39.29001},
 				{-76.584946, 39.284912},
 			},
-			ch:      bikeCh,
 			profile: routingkit.BikeTravelProfile,
 		},
 		{
@@ -391,7 +377,6 @@ func TestDistance(t *testing.T) {
 				{-76.5853, 39.29001},
 				{-76.584946, 39.284912},
 			},
-			ch:      pedestrianCh,
 			profile: routingkit.PedestrianTravelProfile,
 		},
 		{
@@ -401,13 +386,12 @@ func TestDistance(t *testing.T) {
 			snap:              10,
 			expectedDistance:  routingkit.MaxDistance,
 			expectedWaypoints: [][]float32{},
-			ch:                carCh,
 			profile:           routingkit.CarTravelProfile,
 		},
 	}
 
 	for i, test := range tests {
-		cli, err := routingkit.NewDistanceClient(marylandMap, test.ch, test.profile)
+		cli, err := routingkit.NewDistanceClient(marylandMap, test.profile)
 		if err != nil {
 			t.Fatalf("creating Client: %v", err)
 		}
@@ -442,14 +426,13 @@ func TestTravelTimes(t *testing.T) {
 				{-76.591286, 39.298443},
 			},
 			snap: 1000,
-			ch:   carTravelTimeCh,
 
 			expected: []uint32{134910, 55530},
 		},
 	}
 
 	for i, test := range tests {
-		cli, err := routingkit.NewTravelTimeClient(marylandMap, test.ch)
+		cli, err := routingkit.NewTravelTimeClient(marylandMap)
 		if err != nil {
 			t.Fatalf("creating Client: %v", err)
 		}
@@ -486,12 +469,11 @@ func TestTravelTimeMatrix(t *testing.T) {
 				{210945, 190230},
 				{295634, 129178},
 			},
-			ch: carTravelTimeCh,
 		},
 	}
 
 	for i, test := range tests {
-		cli, err := routingkit.NewTravelTimeClient(marylandMap, test.ch)
+		cli, err := routingkit.NewTravelTimeClient(marylandMap)
 		if err != nil {
 			t.Fatalf("creating Client: %v", err)
 		}
@@ -556,12 +538,11 @@ func TestTravelTime(t *testing.T) {
 				{-76.5853, 39.29001},
 				{-76.584946, 39.284912},
 			},
-			ch: carTravelTimeCh,
 		},
 	}
 
 	for i, test := range tests {
-		cli, err := routingkit.NewTravelTimeClient(marylandMap, test.ch)
+		cli, err := routingkit.NewTravelTimeClient(marylandMap)
 		if err != nil {
 			t.Fatalf("creating Client: %v", err)
 		}
@@ -603,7 +584,7 @@ func randomPointsInBoundingBox(n int, bottomLeft [2]float64, topRight [2]float64
 }
 
 func BenchmarkDistance(b *testing.B) {
-	cli, err := routingkit.NewDistanceClient(marylandMap, carCh, routingkit.CarTravelProfile)
+	cli, err := routingkit.NewDistanceClient(marylandMap, routingkit.CarTravelProfile)
 	if err != nil {
 		b.Fatalf("creating Client: %v", err)
 	}
@@ -630,7 +611,7 @@ func BenchmarkDistance(b *testing.B) {
 }
 
 func BenchmarkMatrix(b *testing.B) {
-	cli, err := routingkit.NewDistanceClient(marylandMap, carCh, routingkit.CarTravelProfile)
+	cli, err := routingkit.NewDistanceClient(marylandMap, routingkit.CarTravelProfile)
 	if err != nil {
 		b.Fatalf("creating Client: %v", err)
 	}

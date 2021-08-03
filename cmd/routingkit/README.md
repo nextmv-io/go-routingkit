@@ -15,7 +15,6 @@
     ```bash
     go run . \
         -map "data/maryland-latest.osm.pbf" \
-        -ch "data/maryland-latest.ch" \
         -input "data/maryland-points.json" \
         -measure "distance"
     ```
@@ -49,8 +48,6 @@ go install github.com/nextmv-io/go-routingkit/cmd/routingkit@latest
 
 ```go
 Usage of ./routingkit:
-  -ch string
-        path to ch file (default "data/map.ch")
   -input string
         path to input file. default is stdin.
   -map string
