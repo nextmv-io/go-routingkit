@@ -36,6 +36,15 @@ Build a binary by simply invoking
 go build
 ```
 
+### Install
+
+Install binary to `PATH`. Requires `$(go env GOPATH)/bin` to be included in
+`PATH`. After successful installation `routingkit` can be invoked as a command.
+
+```bash
+go install github.com/nextmv-io/go-routingkit/cmd/routingkit@latest
+```
+
 ### Arguments
 
 ```go
