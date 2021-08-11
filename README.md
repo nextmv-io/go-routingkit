@@ -12,10 +12,19 @@ go get -u github.com/nextmv-io/go-routingkit
 
 Go-routingkit is currently supported on Linux, MacOS (both Intel and Apple Silicon).
 
+## Deployment
+
 As go-routingkit uses cgo, any programs that use it should ensure that at
 runtime they can dynamically link against a C standard library version that is
 compatible with the version the program was built with. If using glibc, version
 2.26 or higher is required.
+
+The default AWS Lambda image does not meet the version requirements for glibc.
+However, the amazonlinux 2 image provides a more recent version of glibc that
+is compatible with routingkit. To use this image, simply use the dropdown under
+`Runtime` to select `Provide your own bootstrap on Amazon Linux 2` when creating
+your lambda function. If creating your Lambda function with SAM, enter
+`provided.al2` under the `Runtime` setting.
 
 ## Usage
 
