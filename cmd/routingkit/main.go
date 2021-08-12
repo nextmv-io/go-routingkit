@@ -46,7 +46,7 @@ var profileEnum = struct {
 func main() {
 	params, err := parseFlags()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "error parsing flags: %v", err)
+		fmt.Fprintf(os.Stderr, "error parsing flags: %v\n", err)
 		os.Exit(1)
 	}
 
@@ -58,32 +58,32 @@ func main() {
 			params.profile,
 		)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "error creating client: %v", err)
+			fmt.Fprintf(os.Stderr, "error creating client: %v\n", err)
 			os.Exit(1)
 		}
 		client = c
 	case measureEnum.TRAVELTIME:
 		if params.profile != routingkit.CarTravelProfile {
-			fmt.Fprintf(os.Stderr, `invalid parameter combination.
-			This profile can only be used with measure=distance.`)
+			fmt.Fprintf(os.Stderr, "invalid parameter combination. "+
+				"This profile can only be used with measure=distance.\n")
 			os.Exit(1)
 		}
 		c, err := routingkit.NewTravelTimeClient(
 			params.mapFile,
 		)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "error creating client: %v", err)
+			fmt.Fprintf(os.Stderr, "error creating client: %v\n", err)
 			os.Exit(1)
 		}
 		client = c
 	default:
-		fmt.Fprintf(os.Stderr, "invalid option for measure"+params.measure)
+		fmt.Fprintf(os.Stderr, "invalid option for measure "+params.measure+"\n")
 		os.Exit(1)
 	}
 
 	input, err := read(params.in)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "error reading input: %v", err)
+		fmt.Fprintf(os.Stderr, "error reading input: %v\n", err)
 		os.Exit(1)
 	}
 

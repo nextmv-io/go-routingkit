@@ -23,8 +23,9 @@ go.sum
 
 # Ignore standalone go-routingkit intermediate & example files
 cmd/routingkit/routingkit
-cmd/routingkit/data/maryland-latest.osm.pbf
-cmd/routingkit/data/maryland-latest.ch
+cmd/routingkit/**/*.osm.pbf
+cmd/routingkit/**/*.ch
+cmd/routingkit/**/*.json
 
 # Temporary directories
 third_party/RoutingKit/
