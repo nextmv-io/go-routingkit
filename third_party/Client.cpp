@@ -3,12 +3,15 @@
 #include <routingkit/inverse_vector.h>
 #include <routingkit/timer.h>
 #include <routingkit/geo_position_to_node.h>
+#include <routingkit/osm_graph_builder.h>
+#include <routingkit/osm_profile.h>
 #include "Client.h"
 #include <fstream>
 #include <iostream>
 #include <numeric>
 #include <thread>
 #include <future>
+#include <vector>
 
 using namespace RoutingKit;
 using namespace GoRoutingKit;
@@ -16,7 +19,189 @@ using namespace std;
 
 namespace GoRoutingKit
 {
-	const unsigned max_distance = RoutingKit::inf_weight;
+	const unsigned max_distance = inf_weight;
+
+	void log_message(const std::string &msg)
+	{
+		// cout << msg << endl;
+	}
+
+	bool str_eq(const char *l, const char *r)
+	{
+		return !strcmp(l, r);
+	}
+
+	bool is_osm_way_used_by_cars_custom(uint64_t osm_way_id, const TagMap &tags, std::function<void(const std::string &)> log_message)
+	{
+		const char *junction = tags["junction"];
+		if (junction != nullptr)
+			return true;
+
+		const char *route = tags["route"];
+		if (route && str_eq(route, "ferry"))
+			return true;
+
+		const char *ferry = tags["ferry"];
+		if (ferry && str_eq(ferry, "yes"))
+			return true;
+
+		const char *highway = tags["highway"];
+		if (highway == nullptr)
+			return false;
+
+		const char *motorcar = tags["motorcar"];
+		if (motorcar && str_eq(motorcar, "no"))
+			return false;
+
+		const char *motor_vehicle = tags["motor_vehicle"];
+		if (motor_vehicle && str_eq(motor_vehicle, "no"))
+			return false;
+
+		const char *access = tags["access"];
+		if (access)
+		{
+			if (!(str_eq(access, "yes") || str_eq(access, "permissive") || str_eq(access, "delivery") || str_eq(access, "designated") || str_eq(access, "destination")))
+				return false;
+		}
+
+		if (
+			str_eq(highway, "motorway") ||
+			str_eq(highway, "trunk") ||
+			str_eq(highway, "primary") ||
+			str_eq(highway, "secondary") ||
+			str_eq(highway, "tertiary") ||
+			str_eq(highway, "unclassified") ||
+			str_eq(highway, "residential") ||
+			str_eq(highway, "service") ||
+			str_eq(highway, "motorway_link") ||
+			str_eq(highway, "trunk_link") ||
+			str_eq(highway, "primary_link") ||
+			str_eq(highway, "secondary_link") ||
+			str_eq(highway, "tertiary_link") ||
+			str_eq(highway, "motorway_junction") ||
+			str_eq(highway, "living_street") ||
+			str_eq(highway, "residential") ||
+			str_eq(highway, "track") ||
+			str_eq(highway, "ferry"))
+			return true;
+
+		if (str_eq(highway, "bicycle_road"))
+		{
+			auto motorcar = tags["motorcar"];
+			if (motorcar != nullptr)
+				if (str_eq(motorcar, "yes"))
+					return true;
+			return false;
+		}
+
+		if (
+			str_eq(highway, "construction") ||
+			str_eq(highway, "path") ||
+			str_eq(highway, "footway") ||
+			str_eq(highway, "cycleway") ||
+			str_eq(highway, "bridleway") ||
+			str_eq(highway, "pedestrian") ||
+			str_eq(highway, "bus_guideway") ||
+			str_eq(highway, "raceway") ||
+			str_eq(highway, "escape") ||
+			str_eq(highway, "steps") ||
+			str_eq(highway, "proposed") ||
+			str_eq(highway, "conveying"))
+			return false;
+
+		const char *oneway = tags["oneway"];
+		if (oneway != nullptr)
+		{
+			if (str_eq(oneway, "reversible") || str_eq(oneway, "alternating"))
+			{
+				return false;
+			}
+		}
+
+		const char *maxspeed = tags["maxspeed"];
+		if (maxspeed != nullptr)
+			return true;
+
+		return false;
+	}
+
+	SimpleOSMCarRoutingGraph simple_load_osm_car_routing_graph_from_pbf_custom(
+		const std::string &pbf_file, std::vector<WayFilter> wayfilters)
+	{
+		bool all_modelling_nodes_are_routing_nodes = false;
+		bool file_is_ordered_even_though_file_header_says_that_it_is_unordered = false;
+
+		auto mapping = load_osm_id_mapping_from_pbf(
+			pbf_file,
+			nullptr,
+			[&](uint64_t osm_way_id, const TagMap &tags)
+			{
+				for (int i = 0; i < wayfilters.size(); i++)
+				{
+					auto filter = wayfilters[i];
+					const char *route = tags[filter.tag];
+					if (filter.matchTag)
+					{
+						// in case we matched the filter tag, either we do not care
+						// about the value or it also has to match
+						if (route && (filter.value == nullptr || str_eq(route, filter.value)))
+							return filter.allowed;
+					}
+					else
+					{
+						// tag did not match and that is what the filter defined
+						if (route == nullptr)
+						{
+							return filter.allowed;
+						}
+					}
+				}
+				return false;
+				// return is_osm_way_used_by_cars_custom(osm_way_id, tags, log_message);
+			},
+			log_message,
+			all_modelling_nodes_are_routing_nodes);
+
+		unsigned routing_way_count = mapping.is_routing_way.population_count();
+		std::vector<unsigned> way_speed(routing_way_count);
+
+		auto routing_graph = load_osm_routing_graph_from_pbf(
+			pbf_file,
+			mapping,
+			[&](uint64_t osm_way_id, unsigned routing_way_id, const TagMap &way_tags)
+			{
+				way_speed[routing_way_id] = get_osm_way_speed(osm_way_id, way_tags, log_message);
+				return get_osm_car_direction_category(osm_way_id, way_tags, log_message);
+			},
+			[&](uint64_t osm_relation_id, const std::vector<OSMRelationMember> &member_list, const TagMap &tags, std::function<void(OSMTurnRestriction)> on_new_restriction)
+			{
+				return decode_osm_car_turn_restrictions(osm_relation_id, member_list, tags, on_new_restriction, log_message);
+			},
+			log_message);
+
+		mapping = OSMRoutingIDMapping(); // release memory
+
+		SimpleOSMCarRoutingGraph ret;
+		ret.first_out = std::move(routing_graph.first_out);
+		ret.head = std::move(routing_graph.head);
+		ret.geo_distance = std::move(routing_graph.geo_distance);
+		ret.latitude = std::move(routing_graph.latitude);
+		ret.longitude = std::move(routing_graph.longitude);
+
+		ret.travel_time = ret.geo_distance;
+		for (unsigned a = 0; a < ret.travel_time.size(); ++a)
+		{
+			ret.travel_time[a] *= 18000;
+			ret.travel_time[a] /= way_speed[routing_graph.way[a]];
+			ret.travel_time[a] /= 5;
+		}
+
+		ret.forbidden_turn_from_arc = std::move(routing_graph.forbidden_turn_from_arc);
+		assert(is_sorted_using_less(ret.forbidden_turn_from_arc));
+		ret.forbidden_turn_to_arc = std::move(routing_graph.forbidden_turn_to_arc);
+
+		return ret;
+	}
 }
 
 bool file_exists(char *file)
@@ -33,11 +218,24 @@ Client::Client(int conc, char *pbf_file, char *ch_file, travel_profile prof, boo
 
 	bool ch_exists = file_exists(ch_file);
 
+	struct WayFilter wf
+	{
+		"junction", nullptr, true, true
+	};
+	std::vector<WayFilter> wayfilters;
+	wayfilters.push_back(wf);
+
+	struct WayFilter wf2
+	{
+		"highway", nullptr, false, false
+	};
+	wayfilters.push_back(wf2);
+
 	// Load a car routing graph from OpenStreetMap-based data
 	switch (profile)
 	{
 	case car:
-		car_graph = simple_load_osm_car_routing_graph_from_pbf(pbf_file);
+		car_graph = simple_load_osm_car_routing_graph_from_pbf_custom(pbf_file, wayfilters);
 		tail = invert_inverse_vector(car_graph.first_out);
 		if (ch_exists)
 		{
@@ -61,9 +259,9 @@ Client::Client(int conc, char *pbf_file, char *ch_file, travel_profile prof, boo
 		else
 		{
 			ch = ContractionHierarchy::build(
-			    pedestrian_graph.node_count(),
-			    tail, pedestrian_graph.head,
-			    pedestrian_graph.geo_distance);
+				pedestrian_graph.node_count(),
+				tail, pedestrian_graph.head,
+				pedestrian_graph.geo_distance);
 			ch.save_file(ch_file);
 		}
 		map = GeoPositionToNode{pedestrian_graph.latitude, pedestrian_graph.longitude};
@@ -78,9 +276,9 @@ Client::Client(int conc, char *pbf_file, char *ch_file, travel_profile prof, boo
 		else
 		{
 			ch = ContractionHierarchy::build(
-			    bike_graph.node_count(),
-			    tail, bike_graph.head,
-			    bike_graph.geo_distance);
+				bike_graph.node_count(),
+				tail, bike_graph.head,
+				bike_graph.geo_distance);
 			ch.save_file(ch_file);
 		}
 		map = GeoPositionToNode{bike_graph.latitude, bike_graph.longitude};
@@ -102,19 +300,19 @@ Point Client::point(int i)
 	case car:
 		return Point{
 			lon :
-			    car_graph.longitude[i],
+				car_graph.longitude[i],
 			lat : car_graph.latitude[i]
 		};
 	case pedestrian:
 		return Point{
 			lon :
-			    pedestrian_graph.longitude[i],
+				pedestrian_graph.longitude[i],
 			lat : pedestrian_graph.latitude[i]
 		};
 	case bike:
 		return Point{
 			lon :
-			    bike_graph.longitude[i],
+				bike_graph.longitude[i],
 			lat : bike_graph.latitude[i]
 		};
 	};

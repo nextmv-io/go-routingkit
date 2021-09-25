@@ -17,6 +17,18 @@ struct QueryResponse
         std::vector<Point> waypoints;
 };
 
+struct WayFilter
+{
+        // the tag to be matched
+        const char*tag;
+        // optional: the value that the tag has to equal
+        const char*value;
+        // either the tag has to match or the tag is not allowed to match
+        bool matchTag;
+        // expresses whether this way is allowed or not due to this filter
+        bool allowed;
+};
+
 namespace GoRoutingKit
 {
         extern const unsigned max_distance;
