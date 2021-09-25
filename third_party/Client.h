@@ -29,6 +29,10 @@ struct WayFilter
         bool allowed;
 };
 
+struct Profile{
+        std::vector<WayFilter> wayfilters;
+};
+
 namespace GoRoutingKit
 {
         extern const unsigned max_distance;
@@ -54,7 +58,7 @@ namespace GoRoutingKit
                                     float to_longitude, float to_latitude, bool include_waypoints);
                 std::vector<unsigned> distances(int i, float radius, Point source, std::vector<Point> targets);
                 Point *nearest(int i, float radius, float lon, float lat);
-                Client(int conc, char *pbf_file, char *ch_file, travel_profile profile, bool use_travel_time);
+                Client(int conc, char *pbf_file, char *ch_file, travel_profile profile, bool use_travel_time, Profile customProfile);
         };
 }
 

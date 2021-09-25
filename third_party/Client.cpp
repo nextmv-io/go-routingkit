@@ -211,7 +211,7 @@ bool file_exists(char *file)
 	return !!f;
 }
 
-Client::Client(int conc, char *pbf_file, char *ch_file, travel_profile prof, bool use_travel_time)
+Client::Client(int conc, char *pbf_file, char *ch_file, travel_profile prof, bool use_travel_time, Profile customProfile)
 {
 	vector<unsigned int> tail;
 	profile = prof;
@@ -235,7 +235,7 @@ Client::Client(int conc, char *pbf_file, char *ch_file, travel_profile prof, boo
 	switch (profile)
 	{
 	case car:
-		car_graph = simple_load_osm_car_routing_graph_from_pbf_custom(pbf_file, wayfilters);
+		car_graph = simple_load_osm_car_routing_graph_from_pbf_custom(pbf_file, customProfile.wayfilters);
 		tail = invert_inverse_vector(car_graph.first_out);
 		if (ch_exists)
 		{

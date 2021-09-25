@@ -6,7 +6,6 @@ import (
 	"runtime"
 
 	"github.com/nextmv-io/go-routingkit/routingkit/internal/routingkit"
-	rk "github.com/nextmv-io/go-routingkit/routingkit/internal/routingkit"
 )
 
 // MaxDistance represents the maximum possible route distance.
@@ -37,7 +36,15 @@ func NewDistanceClient(mapFile string, profile TravelProfile) (DistanceClient, e
 	}
 
 	concurrentQueries := runtime.GOMAXPROCS(0)
-	c := rk.NewClient(concurrentQueries, mapFile, chFile, routingkit.GoRoutingKitTravel_profile(profile), false)
+	customProfile := routingkit.NewProfile()
+	wf := routingkit.NewWayFilter()
+	wf.SetTag("highway")
+	wf.SetAllowed(false)
+	wf.SetMatchTag(false)
+	wayFilterVector := routingkit.NewWayFilterVector()
+	wayFilterVector.Add(wf)
+	customProfile.SetWayfilters(wayFilterVector)
+	c := routingkit.NewClient(concurrentQueries, mapFile, chFile, routingkit.GoRoutingKitTravel_profile(profile), false, customProfile)
 
 	channel := make(chan int, concurrentQueries)
 	for i := 0; i < concurrentQueries; i++ {
@@ -89,7 +96,7 @@ type DistanceClient struct {
 
 // client allows routing queries to be executed against a particular region.
 type client struct {
-	client     rk.Client
+	client     routingkit.Client
 	channel    chan int
 	snapRadius float32
 }
@@ -110,7 +117,7 @@ func (c client) Route(from []float32, to []float32) (uint32, [][]float32) {
 		float32(to[1]),
 		true,
 	)
-	defer rk.DeleteQueryResponse(resp)
+	defer routingkit.DeleteQueryResponse(resp)
 	wp := resp.GetWaypoints()
 	waypoints := make([][]float32, wp.Size())
 	for i := 0; i < len(waypoints); i++ {
@@ -136,7 +143,7 @@ func (c client) Distance(from []float32, to []float32) uint32 {
 		to[1],
 		false,
 	)
-	defer rk.DeleteQueryResponse(resp)
+	defer routingkit.DeleteQueryResponse(resp)
 
 	return uint32(resp.GetDistance())
 }
@@ -157,7 +164,7 @@ func (c client) Nearest(point []float32) ([]float32, bool) {
 	if res.Swigcptr() == 0 {
 		return nil, false
 	}
-	defer rk.DeletePoint(res)
+	defer routingkit.DeletePoint(res)
 	return []float32{res.GetLon(), res.GetLat()}, true
 }
 
@@ -196,16 +203,16 @@ func (c client) Distances(source []float32, targets [][]float32) []uint32 {
 		c.channel <- counter
 	}()
 
-	s := rk.NewPoint()
+	s := routingkit.NewPoint()
 	defer routingkit.DeletePoint(s)
 	s.SetLon(float32(source[0]))
 	s.SetLat(float32(source[1]))
 
-	targetsVector := rk.NewPointVector(int64(len(targets)))
+	targetsVector := routingkit.NewPointVector(int64(len(targets)))
 	defer routingkit.DeletePointVector(targetsVector)
 
 	for i := 0; i < len(targets); i++ {
-		t := rk.NewPoint()
+		t := routingkit.NewPoint()
 		t.SetLon(float32(targets[i][0]))
 		t.SetLat(float32(targets[i][1]))
 		targetsVector.Set(i, t)
@@ -239,7 +246,15 @@ func NewTravelTimeClient(mapFile string) (TravelTimeClient, error) {
 		return TravelTimeClient{}, err
 	}
 	concurrentQueries := runtime.GOMAXPROCS(0)
-	c := rk.NewClient(concurrentQueries, mapFile, chFile, routingkit.Car, true)
+	customProfile := routingkit.NewProfile()
+	wf := routingkit.NewWayFilter()
+	wf.SetTag("highway")
+	wf.SetAllowed(false)
+	wf.SetMatchTag(false)
+	wayFilterVector := routingkit.NewWayFilterVector()
+	wayFilterVector.Add(wf)
+	customProfile.SetWayfilters(wayFilterVector)
+	c := routingkit.NewClient(concurrentQueries, mapFile, chFile, routingkit.Car, true, customProfile)
 
 	channel := make(chan int, concurrentQueries)
 	for i := 0; i < concurrentQueries; i++ {

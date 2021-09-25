@@ -17,6 +17,7 @@ namespace std {
   %template(PointVector) vector<Point>;
   %template(UnsignedVector) vector<unsigned>;
   %template(LongIntVector) vector<long int>;
+  %template(WayFilterVector) vector<WayFilter>;
 }
 
 %include "Client.h"
