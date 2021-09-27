@@ -39,7 +39,7 @@ func TestCreateCH(t *testing.T) {
 	}
 	defer os.Remove(chFile)
 
-	_, err = routingkit.NewDistanceClient(marylandMap, routingkit.CarTravelProfile)
+	_, err = routingkit.NewDistanceClient(marylandMap, routingkit.Car())
 	if err != nil {
 		t.Fatalf("creating Client: %v", err)
 	}
@@ -69,7 +69,7 @@ func TestNearest(t *testing.T) {
 		},
 	}
 
-	cli, err := routingkit.NewDistanceClient(marylandMap, routingkit.CarTravelProfile)
+	cli, err := routingkit.NewDistanceClient(marylandMap, routingkit.Car())
 	if err != nil {
 		t.Fatalf("creating Client: %v", err)
 	}
@@ -90,7 +90,7 @@ func TestDistances(t *testing.T) {
 		source       []float32
 		destinations [][]float32
 		snap         float32
-		profile      routingkit.TravelProfile
+		profile      routingkit.Profile
 		ch           string
 
 		expected []uint32
@@ -102,7 +102,7 @@ func TestDistances(t *testing.T) {
 				{-76.591286, 39.298443},
 			},
 			snap:    1000,
-			profile: routingkit.CarTravelProfile,
+			profile: routingkit.Car(),
 
 			expected: []uint32{1496, 617},
 		},
@@ -113,7 +113,7 @@ func TestDistances(t *testing.T) {
 				{-76.591286, 39.298443},
 			},
 			snap:    1000,
-			profile: routingkit.BikeTravelProfile,
+			profile: routingkit.Bike(),
 
 			expected: []uint32{1440, 617},
 		},
@@ -124,7 +124,7 @@ func TestDistances(t *testing.T) {
 				{-76.591286, 39.298443},
 			},
 			snap:    1000,
-			profile: routingkit.PedestrianTravelProfile,
+			profile: routingkit.Pedestrian(),
 
 			expected: []uint32{1588, 912},
 		},
@@ -138,7 +138,7 @@ func TestDistances(t *testing.T) {
 				{-76.599388, 39.302014},
 			},
 			snap:    100,
-			profile: routingkit.CarTravelProfile,
+			profile: routingkit.Car(),
 
 			expected: []uint32{routingkit.MaxDistance, 1496, routingkit.MaxDistance, 1259},
 		},
@@ -150,7 +150,7 @@ func TestDistances(t *testing.T) {
 				{-76.584897, 39.280774},
 			},
 			snap:    10,
-			profile: routingkit.CarTravelProfile,
+			profile: routingkit.Car(),
 
 			expected: []uint32{routingkit.MaxDistance, routingkit.MaxDistance},
 		},
@@ -173,7 +173,7 @@ func TestMatrix(t *testing.T) {
 	tests := []struct {
 		sources      [][]float32
 		destinations [][]float32
-		profile      routingkit.TravelProfile
+		profile      routingkit.Profile
 		ch           string
 
 		expected [][]uint32
@@ -195,7 +195,7 @@ func TestMatrix(t *testing.T) {
 				{2372, 2224},
 				{3399, 1548},
 			},
-			profile: routingkit.CarTravelProfile,
+			profile: routingkit.Car(),
 		},
 		{
 			sources: [][]float32{
@@ -214,7 +214,7 @@ func TestMatrix(t *testing.T) {
 				{2370, 2192},
 				{3354, 1547},
 			},
-			profile: routingkit.BikeTravelProfile,
+			profile: routingkit.Bike(),
 		},
 		{
 			sources: [][]float32{
@@ -233,7 +233,7 @@ func TestMatrix(t *testing.T) {
 				{2368, 2209},
 				{3151, 1544},
 			},
-			profile: routingkit.PedestrianTravelProfile,
+			profile: routingkit.Pedestrian(),
 		},
 	}
 
@@ -254,7 +254,7 @@ func TestDistance(t *testing.T) {
 		source      []float32
 		destination []float32
 		snap        float32
-		profile     routingkit.TravelProfile
+		profile     routingkit.Profile
 		ch          string
 
 		expectedDistance  uint32
@@ -305,7 +305,7 @@ func TestDistance(t *testing.T) {
 				{-76.58529663085938, 39.290008544921875},
 				{-76.58494567871094, 39.284912109375},
 			},
-			profile: routingkit.CarTravelProfile,
+			profile: routingkit.Car(),
 		},
 		{
 			source:           []float32{-76.587490, 39.299710},
@@ -336,7 +336,7 @@ func TestDistance(t *testing.T) {
 				{-76.5853, 39.29001},
 				{-76.584946, 39.284912},
 			},
-			profile: routingkit.BikeTravelProfile,
+			profile: routingkit.Bike(),
 		},
 		{
 			source:           []float32{-76.587490, 39.299710},
@@ -377,7 +377,7 @@ func TestDistance(t *testing.T) {
 				{-76.5853, 39.29001},
 				{-76.584946, 39.284912},
 			},
-			profile: routingkit.PedestrianTravelProfile,
+			profile: routingkit.Pedestrian(),
 		},
 		{
 			source: []float32{-76.587490, 39.299710},
@@ -386,7 +386,7 @@ func TestDistance(t *testing.T) {
 			snap:              10,
 			expectedDistance:  routingkit.MaxDistance,
 			expectedWaypoints: [][]float32{},
-			profile:           routingkit.CarTravelProfile,
+			profile:           routingkit.Car(),
 		},
 	}
 
@@ -432,7 +432,7 @@ func TestTravelTimes(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		cli, err := routingkit.NewTravelTimeClient(marylandMap)
+		cli, err := routingkit.NewTravelTimeClient(marylandMap, routingkit.Car())
 		if err != nil {
 			t.Fatalf("creating Client: %v", err)
 		}
@@ -473,7 +473,7 @@ func TestTravelTimeMatrix(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		cli, err := routingkit.NewTravelTimeClient(marylandMap)
+		cli, err := routingkit.NewTravelTimeClient(marylandMap, routingkit.Car())
 		if err != nil {
 			t.Fatalf("creating Client: %v", err)
 		}
@@ -542,7 +542,7 @@ func TestTravelTime(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		cli, err := routingkit.NewTravelTimeClient(marylandMap)
+		cli, err := routingkit.NewTravelTimeClient(marylandMap, routingkit.Car())
 		if err != nil {
 			t.Fatalf("creating Client: %v", err)
 		}
@@ -584,7 +584,7 @@ func randomPointsInBoundingBox(n int, bottomLeft [2]float64, topRight [2]float64
 }
 
 func BenchmarkDistance(b *testing.B) {
-	cli, err := routingkit.NewDistanceClient(marylandMap, routingkit.CarTravelProfile)
+	cli, err := routingkit.NewDistanceClient(marylandMap, routingkit.Car())
 	if err != nil {
 		b.Fatalf("creating Client: %v", err)
 	}
@@ -611,7 +611,7 @@ func BenchmarkDistance(b *testing.B) {
 }
 
 func BenchmarkMatrix(b *testing.B) {
-	cli, err := routingkit.NewDistanceClient(marylandMap, routingkit.CarTravelProfile)
+	cli, err := routingkit.NewDistanceClient(marylandMap, routingkit.Car())
 	if err != nil {
 		b.Fatalf("creating Client: %v", err)
 	}

@@ -20,17 +20,22 @@ struct QueryResponse
 struct WayFilter
 {
         // the tag to be matched
-        const char*tag;
-        // optional: the value that the tag has to equal
-        const char*value;
+        const char *tag;
         // either the tag has to match or the tag is not allowed to match
         bool matchTag;
+        // optional: the value that the tag has to equal
+        const char *value;
+        // either the value has to match or the value is not allowed to match
+        bool matchValue;
         // expresses whether this way is allowed or not due to this filter
         bool allowed;
 };
 
-struct Profile{
+struct Profile
+{
         std::vector<WayFilter> wayfilters;
+        const char *name;
+        bool travel_time;
 };
 
 namespace GoRoutingKit

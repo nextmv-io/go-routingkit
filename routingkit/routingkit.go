@@ -15,6 +15,285 @@ type TravelProfile routingkit.GoRoutingKitTravel_profile
 
 var CarTravelProfile, BikeTravelProfile, PedestrianTravelProfile TravelProfile
 
+type Wayfilter struct {
+	// the Tag to be matched
+	Tag string
+	// either the Tag has to match or the Tag is not allowed to match
+	MatchTag bool
+	// optional: the value that the Tag has to equal
+	Value string
+	// either the value has to match or the value is not allowed to match
+	MatchValue bool
+	// expresses whether this way is allowed or not due to this filter
+	Allowed bool
+}
+
+func Car() Profile {
+	profile := Profile{
+		Name: "car",
+		Wayfilters: []Wayfilter{
+			{
+				Tag:      "junction",
+				MatchTag: true,
+				Allowed:  true,
+			},
+			{
+				Tag:        "route",
+				MatchTag:   true,
+				Value:      "ferry",
+				MatchValue: true,
+				Allowed:    true,
+			},
+			{
+				Tag:        "ferry",
+				MatchTag:   true,
+				Value:      "yes",
+				MatchValue: true,
+				Allowed:    true,
+			},
+			{
+				Tag:      "highway",
+				MatchTag: false,
+				Allowed:  false,
+			},
+			{
+				Tag:        "motorcar",
+				MatchTag:   true,
+				Value:      "no",
+				MatchValue: true,
+				Allowed:    false,
+			},
+			{
+				Tag:        "motor_vehicle",
+				MatchTag:   true,
+				Value:      "no",
+				MatchValue: true,
+				Allowed:    false,
+			},
+			{
+				Tag:        "access",
+				MatchTag:   true,
+				Value:      "no",
+				MatchValue: true,
+				Allowed:    false,
+			},
+			{
+				Tag:        "highway",
+				MatchTag:   true,
+				Value:      "construction",
+				MatchValue: true,
+				Allowed:    false,
+			},
+			{
+				Tag:        "highway",
+				MatchTag:   true,
+				Value:      "path",
+				MatchValue: true,
+				Allowed:    false,
+			},
+			{
+				Tag:        "highway",
+				MatchTag:   true,
+				Value:      "footway",
+				MatchValue: true,
+				Allowed:    false,
+			},
+			{
+				Tag:        "highway",
+				MatchTag:   true,
+				Value:      "cycleway",
+				MatchValue: true,
+				Allowed:    false,
+			},
+			{
+				Tag:        "highway",
+				MatchTag:   true,
+				Value:      "bridleway",
+				MatchValue: true,
+				Allowed:    false,
+			},
+			{
+				Tag:        "highway",
+				MatchTag:   true,
+				Value:      "pedestrian",
+				MatchValue: true,
+				Allowed:    false,
+			},
+			{
+				Tag:        "highway",
+				MatchTag:   true,
+				Value:      "bus_guideway",
+				MatchValue: true,
+				Allowed:    false,
+			},
+			{
+				Tag:        "highway",
+				MatchTag:   true,
+				Value:      "raceway",
+				MatchValue: true,
+				Allowed:    false,
+			},
+			{
+				Tag:        "highway",
+				MatchTag:   true,
+				Value:      "escape",
+				MatchValue: true,
+				Allowed:    false,
+			},
+			{
+				Tag:        "highway",
+				MatchTag:   true,
+				Value:      "steps",
+				MatchValue: true,
+				Allowed:    false,
+			},
+			{
+				Tag:        "highway",
+				MatchTag:   true,
+				Value:      "proposed",
+				MatchValue: true,
+				Allowed:    false,
+			},
+			{
+				Tag:        "highway",
+				MatchTag:   true,
+				Value:      "conveying",
+				MatchValue: true,
+				Allowed:    false,
+			},
+			{
+				Tag:        "highway",
+				MatchTag:   true,
+				Value:      "corridor",
+				MatchValue: true,
+				Allowed:    false,
+			},
+			{
+				Tag:      "maxspeed",
+				MatchTag: false,
+				Allowed:  false,
+			},
+		},
+	}
+	return profile
+}
+
+func Bike() Profile {
+	profile := Profile{
+		Name: "bike",
+		Wayfilters: []Wayfilter{
+			{
+				Tag: "highway",
+			},
+		},
+	}
+	return profile
+}
+
+func Pedestrian() Profile {
+	profile := Profile{
+		Name: "pedestrian",
+		Wayfilters: []Wayfilter{
+			{
+				Tag:      "junction",
+				MatchTag: true,
+				Allowed:  true,
+			},
+			{
+				Tag:      "route",
+				MatchTag: true,
+				Value:    "ferry",
+				Allowed:  true,
+			},
+			{
+				Tag:      "ferry",
+				MatchTag: true,
+				Value:    "ferry",
+				Allowed:  true,
+			},
+			{
+				Tag:      "public_transport",
+				MatchTag: true,
+				Value:    "stop_position",
+				Allowed:  true,
+			},
+			{
+				Tag:      "public_transport",
+				MatchTag: true,
+				Value:    "platform",
+				Allowed:  true,
+			},
+			{
+				Tag:      "public_transport",
+				MatchTag: true,
+				Value:    "stop_area",
+				Allowed:  true,
+			},
+			{
+				Tag:      "public_transport",
+				MatchTag: true,
+				Value:    "station",
+				Allowed:  true,
+			},
+			{
+				Tag:      "railway",
+				MatchTag: true,
+				Value:    "halt",
+				Allowed:  true,
+			},
+			{
+				Tag:      "railway",
+				MatchTag: true,
+				Value:    "platform",
+				Allowed:  true,
+			},
+			{
+				Tag:      "railway",
+				MatchTag: true,
+				Value:    "subway_entrance",
+				Allowed:  true,
+			},
+			{
+				Tag:      "railway",
+				MatchTag: true,
+				Value:    "station",
+				Allowed:  true,
+			},
+			{
+				Tag:      "railway",
+				MatchTag: true,
+				Value:    "tram_stop",
+				Allowed:  true,
+			},
+			{
+				Tag: "highway",
+			},
+		},
+	}
+	return profile
+}
+
+type Profile struct {
+	Wayfilters []Wayfilter
+	Name       string
+}
+
+func (p Profile) swigProfile() routingkit.Profile {
+	customProfile := routingkit.NewProfile()
+	wayFilterVector := routingkit.NewWayFilterVector()
+	for _, wayFilter := range p.Wayfilters {
+		wf := routingkit.NewWayFilter()
+		wf.SetTag(wayFilter.Tag)
+		wf.SetMatchTag(wayFilter.MatchTag)
+		wf.SetValue(wayFilter.Value)
+		wf.SetMatchValue(wayFilter.MatchValue)
+		wf.SetAllowed(wayFilter.Allowed)
+		wayFilterVector.Add(wf)
+	}
+	customProfile.SetWayfilters(wayFilterVector)
+	return customProfile
+}
+
 func init() {
 	MaxDistance = uint32(routingkit.GetMax_distance())
 	CarTravelProfile = TravelProfile(routingkit.Car)
@@ -25,26 +304,22 @@ func init() {
 // NewDistanceClient initializes a DistanceClient using the provided .osm.pbf file and
 // .ch file. The .ch file will be created if it does not already exist. It is the caller's
 // responsibility to call Delete on the client when it is no longer needed.
-func NewDistanceClient(mapFile string, profile TravelProfile) (DistanceClient, error) {
+func NewDistanceClient(mapFile string, p Profile) (DistanceClient, error) {
 	if _, err := os.Stat(mapFile); os.IsNotExist(err) {
 		return DistanceClient{}, fmt.Errorf("could not find map file at %v", mapFile)
 	}
 
-	chFile, err := chFileName(mapFile, profile, false)
+	chFile, err := chFileName(mapFile, p, false)
 	if err != nil {
 		return DistanceClient{}, err
 	}
 
 	concurrentQueries := runtime.GOMAXPROCS(0)
-	customProfile := routingkit.NewProfile()
-	wf := routingkit.NewWayFilter()
-	wf.SetTag("highway")
-	wf.SetAllowed(false)
-	wf.SetMatchTag(false)
-	wayFilterVector := routingkit.NewWayFilterVector()
-	wayFilterVector.Add(wf)
-	customProfile.SetWayfilters(wayFilterVector)
-	c := routingkit.NewClient(concurrentQueries, mapFile, chFile, routingkit.GoRoutingKitTravel_profile(profile), false, customProfile)
+	customProfile := p.swigProfile()
+	defer func() {
+		routingkit.DeleteProfile(customProfile)
+	}()
+	c := routingkit.NewClient(concurrentQueries, mapFile, chFile, routingkit.GoRoutingKitTravel_profile(CarTravelProfile), false, customProfile)
 
 	channel := make(chan int, concurrentQueries)
 	for i := 0; i < concurrentQueries; i++ {
@@ -59,17 +334,10 @@ func NewDistanceClient(mapFile string, profile TravelProfile) (DistanceClient, e
 		}}, nil
 }
 
-func chFileName(mapFile string, profile TravelProfile, duration bool) (string, error) {
-	extension := ""
-	switch profile {
-	case CarTravelProfile:
-		extension = "car"
-	case BikeTravelProfile:
-		extension = "bike"
-	case PedestrianTravelProfile:
-		extension = "pedestrian"
-	default:
-		return "", fmt.Errorf("profile %v did not match any profile", profile)
+func chFileName(mapFile string, profile Profile, duration bool) (string, error) {
+	extension := profile.Name
+	if profile.Name == "" {
+		return "", fmt.Errorf("profile name was empty")
 	}
 
 	distOrDuration := "distance"
@@ -237,23 +505,21 @@ type TravelTimeClient struct {
 // NewTravelTimeClient initializes a TravelTimeClient using the provided .osm.pbf file and
 // .ch file. The .ch file will be created if it does not already exist. It is the caller's
 // responsibility to call Delete on the client when it is no longer needed.
-func NewTravelTimeClient(mapFile string) (TravelTimeClient, error) {
+func NewTravelTimeClient(mapFile string, profile Profile) (TravelTimeClient, error) {
 	if _, err := os.Stat(mapFile); os.IsNotExist(err) {
 		return TravelTimeClient{}, fmt.Errorf("could not find map file at %v", mapFile)
 	}
-	chFile, err := chFileName(mapFile, CarTravelProfile, true)
+	chFile, err := chFileName(mapFile, profile, true)
 	if err != nil {
 		return TravelTimeClient{}, err
 	}
 	concurrentQueries := runtime.GOMAXPROCS(0)
-	customProfile := routingkit.NewProfile()
-	wf := routingkit.NewWayFilter()
-	wf.SetTag("highway")
-	wf.SetAllowed(false)
-	wf.SetMatchTag(false)
-	wayFilterVector := routingkit.NewWayFilterVector()
-	wayFilterVector.Add(wf)
-	customProfile.SetWayfilters(wayFilterVector)
+	customProfile := profile.swigProfile()
+	// sets that we are interested in the travel time rather than the distance
+	customProfile.SetTravel_time(true)
+	defer func() {
+		routingkit.DeleteProfile(customProfile)
+	}()
 	c := routingkit.NewClient(concurrentQueries, mapFile, chFile, routingkit.Car, true, customProfile)
 
 	channel := make(chan int, concurrentQueries)

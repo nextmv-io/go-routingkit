@@ -140,12 +140,28 @@ namespace GoRoutingKit
 				{
 					auto filter = wayfilters[i];
 					const char *route = tags[filter.tag];
+					// we want that the tag matches
 					if (filter.matchTag)
 					{
-						// in case we matched the filter tag, either we do not care
-						// about the value or it also has to match
-						if (route && (filter.value == nullptr || str_eq(route, filter.value)))
-							return filter.allowed;
+						// if it did match
+						if (route)
+						{
+							// we want the value to match
+							if (filter.matchValue)
+							{
+								if (str_eq(route, filter.value))
+								{
+									return filter.allowed;
+								}
+							}
+							else
+							{
+								if (filter.value == nullptr || !str_eq(route, filter.value))
+								{
+									return filter.allowed;
+								}
+							}
+						}
 					}
 					else
 					{
@@ -156,7 +172,7 @@ namespace GoRoutingKit
 						}
 					}
 				}
-				return false;
+				return true;
 				// return is_osm_way_used_by_cars_custom(osm_way_id, tags, log_message);
 			},
 			log_message,
@@ -217,19 +233,6 @@ Client::Client(int conc, char *pbf_file, char *ch_file, travel_profile prof, boo
 	profile = prof;
 
 	bool ch_exists = file_exists(ch_file);
-
-	struct WayFilter wf
-	{
-		"junction", nullptr, true, true
-	};
-	std::vector<WayFilter> wayfilters;
-	wayfilters.push_back(wf);
-
-	struct WayFilter wf2
-	{
-		"highway", nullptr, false, false
-	};
-	wayfilters.push_back(wf2);
 
 	// Load a car routing graph from OpenStreetMap-based data
 	switch (profile)
