@@ -11,10 +11,6 @@ import (
 // MaxDistance represents the maximum possible route distance.
 var MaxDistance uint32
 
-type TravelProfile routingkit.GoRoutingKitTravel_profile
-
-var CarTravelProfile, BikeTravelProfile, PedestrianTravelProfile TravelProfile
-
 type Wayfilter struct {
 	// the Tag to be matched
 	Tag string
@@ -296,9 +292,6 @@ func (p Profile) swigProfile() routingkit.Profile {
 
 func init() {
 	MaxDistance = uint32(routingkit.GetMax_distance())
-	CarTravelProfile = TravelProfile(routingkit.Car)
-	BikeTravelProfile = TravelProfile(routingkit.Bike)
-	PedestrianTravelProfile = TravelProfile(routingkit.Pedestrian)
 }
 
 // NewDistanceClient initializes a DistanceClient using the provided .osm.pbf file and
@@ -319,7 +312,7 @@ func NewDistanceClient(mapFile string, p Profile) (DistanceClient, error) {
 	defer func() {
 		routingkit.DeleteProfile(customProfile)
 	}()
-	c := routingkit.NewClient(concurrentQueries, mapFile, chFile, routingkit.GoRoutingKitTravel_profile(CarTravelProfile), customProfile)
+	c := routingkit.NewClient(concurrentQueries, mapFile, chFile, customProfile)
 
 	channel := make(chan int, concurrentQueries)
 	for i := 0; i < concurrentQueries; i++ {
@@ -520,7 +513,7 @@ func NewTravelTimeClient(mapFile string, profile Profile) (TravelTimeClient, err
 	defer func() {
 		routingkit.DeleteProfile(customProfile)
 	}()
-	c := routingkit.NewClient(concurrentQueries, mapFile, chFile, routingkit.Car, customProfile)
+	c := routingkit.NewClient(concurrentQueries, mapFile, chFile, customProfile)
 
 	channel := make(chan int, concurrentQueries)
 	for i := 0; i < concurrentQueries; i++ {

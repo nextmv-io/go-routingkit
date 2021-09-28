@@ -21,6 +21,8 @@ namespace GoRoutingKit
 {
 	const unsigned max_distance = inf_weight;
 
+	
+
 	void log_message(const std::string &msg)
 	{
 		// cout << msg << endl;
@@ -31,101 +33,7 @@ namespace GoRoutingKit
 		return !strcmp(l, r);
 	}
 
-	bool is_osm_way_used_by_cars_custom(uint64_t osm_way_id, const TagMap &tags, std::function<void(const std::string &)> log_message)
-	{
-		const char *junction = tags["junction"];
-		if (junction != nullptr)
-			return true;
-
-		const char *route = tags["route"];
-		if (route && str_eq(route, "ferry"))
-			return true;
-
-		const char *ferry = tags["ferry"];
-		if (ferry && str_eq(ferry, "yes"))
-			return true;
-
-		const char *highway = tags["highway"];
-		if (highway == nullptr)
-			return false;
-
-		const char *motorcar = tags["motorcar"];
-		if (motorcar && str_eq(motorcar, "no"))
-			return false;
-
-		const char *motor_vehicle = tags["motor_vehicle"];
-		if (motor_vehicle && str_eq(motor_vehicle, "no"))
-			return false;
-
-		const char *access = tags["access"];
-		if (access)
-		{
-			if (!(str_eq(access, "yes") || str_eq(access, "permissive") || str_eq(access, "delivery") || str_eq(access, "designated") || str_eq(access, "destination")))
-				return false;
-		}
-
-		if (
-			str_eq(highway, "motorway") ||
-			str_eq(highway, "trunk") ||
-			str_eq(highway, "primary") ||
-			str_eq(highway, "secondary") ||
-			str_eq(highway, "tertiary") ||
-			str_eq(highway, "unclassified") ||
-			str_eq(highway, "residential") ||
-			str_eq(highway, "service") ||
-			str_eq(highway, "motorway_link") ||
-			str_eq(highway, "trunk_link") ||
-			str_eq(highway, "primary_link") ||
-			str_eq(highway, "secondary_link") ||
-			str_eq(highway, "tertiary_link") ||
-			str_eq(highway, "motorway_junction") ||
-			str_eq(highway, "living_street") ||
-			str_eq(highway, "residential") ||
-			str_eq(highway, "track") ||
-			str_eq(highway, "ferry"))
-			return true;
-
-		if (str_eq(highway, "bicycle_road"))
-		{
-			auto motorcar = tags["motorcar"];
-			if (motorcar != nullptr)
-				if (str_eq(motorcar, "yes"))
-					return true;
-			return false;
-		}
-
-		if (
-			str_eq(highway, "construction") ||
-			str_eq(highway, "path") ||
-			str_eq(highway, "footway") ||
-			str_eq(highway, "cycleway") ||
-			str_eq(highway, "bridleway") ||
-			str_eq(highway, "pedestrian") ||
-			str_eq(highway, "bus_guideway") ||
-			str_eq(highway, "raceway") ||
-			str_eq(highway, "escape") ||
-			str_eq(highway, "steps") ||
-			str_eq(highway, "proposed") ||
-			str_eq(highway, "conveying"))
-			return false;
-
-		const char *oneway = tags["oneway"];
-		if (oneway != nullptr)
-		{
-			if (str_eq(oneway, "reversible") || str_eq(oneway, "alternating"))
-			{
-				return false;
-			}
-		}
-
-		const char *maxspeed = tags["maxspeed"];
-		if (maxspeed != nullptr)
-			return true;
-
-		return false;
-	}
-
-	SimpleOSMCarRoutingGraph simple_load_osm_car_routing_graph_from_pbf_custom(
+	RoutingGraph load_custom_osm_routing_graph_from_pbf(
 		const std::string &pbf_file, std::vector<WayFilter> wayfilters)
 	{
 		bool all_modelling_nodes_are_routing_nodes = false;
@@ -196,7 +104,7 @@ namespace GoRoutingKit
 
 		mapping = OSMRoutingIDMapping(); // release memory
 
-		SimpleOSMCarRoutingGraph ret;
+		RoutingGraph ret;
 		ret.first_out = std::move(routing_graph.first_out);
 		ret.head = std::move(routing_graph.head);
 		ret.geo_distance = std::move(routing_graph.geo_distance);
@@ -226,67 +134,26 @@ bool file_exists(char *file)
 	return !!f;
 }
 
-Client::Client(int conc, char *pbf_file, char *ch_file, travel_profile prof, Profile customProfile)
+Client::Client(int conc, char *pbf_file, char *ch_file, Profile customProfile)
 {
 	vector<unsigned int> tail;
-	profile = prof;
 
 	bool ch_exists = file_exists(ch_file);
 
-	// Load a car routing graph from OpenStreetMap-based data
-	switch (profile)
+	// Load a routing graph from OpenStreetMap-based data
+	graph = load_custom_osm_routing_graph_from_pbf(pbf_file, customProfile.wayfilters);
+	tail = invert_inverse_vector(graph.first_out);
+	if (ch_exists)
 	{
-	case car:
-		car_graph = simple_load_osm_car_routing_graph_from_pbf_custom(pbf_file, customProfile.wayfilters);
-		tail = invert_inverse_vector(car_graph.first_out);
-		if (ch_exists)
-		{
-			ch = ContractionHierarchy::load_file(ch_file);
-		}
-		else
-		{
-			vector<unsigned> weight = customProfile.travel_time ? car_graph.travel_time : car_graph.geo_distance;
-			ch = ContractionHierarchy::build(car_graph.node_count(), tail, car_graph.head, weight);
-			ch.save_file(ch_file);
-		}
-		map = GeoPositionToNode{car_graph.latitude, car_graph.longitude};
-		break;
-	case pedestrian:
-		pedestrian_graph = simple_load_osm_pedestrian_routing_graph_from_pbf(pbf_file);
-		tail = invert_inverse_vector(pedestrian_graph.first_out);
-		if (ch_exists)
-		{
-			ch = ContractionHierarchy::load_file(ch_file);
-		}
-		else
-		{
-			ch = ContractionHierarchy::build(
-				pedestrian_graph.node_count(),
-				tail, pedestrian_graph.head,
-				pedestrian_graph.geo_distance);
-			ch.save_file(ch_file);
-		}
-		map = GeoPositionToNode{pedestrian_graph.latitude, pedestrian_graph.longitude};
-		break;
-	case bike:
-		bike_graph = simple_load_osm_bicycle_routing_graph_from_pbf(pbf_file);
-		tail = invert_inverse_vector(bike_graph.first_out);
-		if (ch_exists)
-		{
-			ch = ContractionHierarchy::load_file(ch_file);
-		}
-		else
-		{
-			ch = ContractionHierarchy::build(
-				bike_graph.node_count(),
-				tail, bike_graph.head,
-				bike_graph.geo_distance);
-			ch.save_file(ch_file);
-		}
-		map = GeoPositionToNode{bike_graph.latitude, bike_graph.longitude};
-		break;
+		ch = ContractionHierarchy::load_file(ch_file);
 	}
-
+	else
+	{
+		vector<unsigned> weight = customProfile.travel_time ? graph.travel_time : graph.geo_distance;
+		ch = ContractionHierarchy::build(graph.node_count(), tail, graph.head, weight);
+		ch.save_file(ch_file);
+	}
+	map = GeoPositionToNode{graph.latitude, graph.longitude};
 	// Besides the CH itself we need a query object.
 	for (int i = 0; i < conc; i++)
 	{
@@ -297,28 +164,11 @@ Client::Client(int conc, char *pbf_file, char *ch_file, travel_profile prof, Pro
 
 Point Client::point(int i)
 {
-	switch (profile)
-	{
-	case car:
-		return Point{
-			lon :
-				car_graph.longitude[i],
-			lat : car_graph.latitude[i]
-		};
-	case pedestrian:
-		return Point{
-			lon :
-				pedestrian_graph.longitude[i],
-			lat : pedestrian_graph.latitude[i]
-		};
-	case bike:
-		return Point{
-			lon :
-				bike_graph.longitude[i],
-			lat : bike_graph.latitude[i]
-		};
+	return Point{
+		lon :
+			graph.longitude[i],
+		lat : graph.latitude[i]
 	};
-	return Point{};
 }
 
 Point *Client::nearest(int i, float radius, float lon, float lat)

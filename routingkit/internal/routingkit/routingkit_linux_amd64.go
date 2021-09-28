@@ -174,13 +174,30 @@ extern _Bool _wrap_Profile_travel_time_get_routingkit_192513bd4d9cfeea(uintptr_t
 extern uintptr_t _wrap_new_Profile_routingkit_192513bd4d9cfeea(void);
 extern void _wrap_delete_Profile_routingkit_192513bd4d9cfeea(uintptr_t arg1);
 extern swig_intgo _wrap_max_distance_get_routingkit_192513bd4d9cfeea(void);
-extern swig_intgo _wrap_car_routingkit_192513bd4d9cfeea(void);
-extern swig_intgo _wrap_bike_routingkit_192513bd4d9cfeea(void);
-extern swig_intgo _wrap_pedestrian_routingkit_192513bd4d9cfeea(void);
+extern void _wrap_RoutingGraph_first_out_set_routingkit_192513bd4d9cfeea(uintptr_t arg1, uintptr_t arg2);
+extern uintptr_t _wrap_RoutingGraph_first_out_get_routingkit_192513bd4d9cfeea(uintptr_t arg1);
+extern void _wrap_RoutingGraph_head_set_routingkit_192513bd4d9cfeea(uintptr_t arg1, uintptr_t arg2);
+extern uintptr_t _wrap_RoutingGraph_head_get_routingkit_192513bd4d9cfeea(uintptr_t arg1);
+extern void _wrap_RoutingGraph_travel_time_set_routingkit_192513bd4d9cfeea(uintptr_t arg1, uintptr_t arg2);
+extern uintptr_t _wrap_RoutingGraph_travel_time_get_routingkit_192513bd4d9cfeea(uintptr_t arg1);
+extern void _wrap_RoutingGraph_geo_distance_set_routingkit_192513bd4d9cfeea(uintptr_t arg1, uintptr_t arg2);
+extern uintptr_t _wrap_RoutingGraph_geo_distance_get_routingkit_192513bd4d9cfeea(uintptr_t arg1);
+extern void _wrap_RoutingGraph_latitude_set_routingkit_192513bd4d9cfeea(uintptr_t arg1, uintptr_t arg2);
+extern uintptr_t _wrap_RoutingGraph_latitude_get_routingkit_192513bd4d9cfeea(uintptr_t arg1);
+extern void _wrap_RoutingGraph_longitude_set_routingkit_192513bd4d9cfeea(uintptr_t arg1, uintptr_t arg2);
+extern uintptr_t _wrap_RoutingGraph_longitude_get_routingkit_192513bd4d9cfeea(uintptr_t arg1);
+extern void _wrap_RoutingGraph_forbidden_turn_from_arc_set_routingkit_192513bd4d9cfeea(uintptr_t arg1, uintptr_t arg2);
+extern uintptr_t _wrap_RoutingGraph_forbidden_turn_from_arc_get_routingkit_192513bd4d9cfeea(uintptr_t arg1);
+extern void _wrap_RoutingGraph_forbidden_turn_to_arc_set_routingkit_192513bd4d9cfeea(uintptr_t arg1, uintptr_t arg2);
+extern uintptr_t _wrap_RoutingGraph_forbidden_turn_to_arc_get_routingkit_192513bd4d9cfeea(uintptr_t arg1);
+extern swig_intgo _wrap_RoutingGraph_node_count_routingkit_192513bd4d9cfeea(uintptr_t arg1);
+extern swig_intgo _wrap_RoutingGraph_arc_count_routingkit_192513bd4d9cfeea(uintptr_t arg1);
+extern uintptr_t _wrap_new_RoutingGraph_routingkit_192513bd4d9cfeea(void);
+extern void _wrap_delete_RoutingGraph_routingkit_192513bd4d9cfeea(uintptr_t arg1);
 extern uintptr_t _wrap_Client_query_routingkit_192513bd4d9cfeea(uintptr_t arg1, swig_intgo arg2, float arg3, float arg4, float arg5, float arg6, float arg7, _Bool arg8);
 extern uintptr_t _wrap_Client_distances_routingkit_192513bd4d9cfeea(uintptr_t arg1, swig_intgo arg2, float arg3, uintptr_t arg4, uintptr_t arg5);
 extern uintptr_t _wrap_Client_nearest_routingkit_192513bd4d9cfeea(uintptr_t arg1, swig_intgo arg2, float arg3, float arg4, float arg5);
-extern uintptr_t _wrap_new_Client_routingkit_192513bd4d9cfeea(swig_intgo arg1, swig_type_34 arg2, swig_type_35 arg3, swig_intgo arg4, uintptr_t arg5);
+extern uintptr_t _wrap_new_Client_routingkit_192513bd4d9cfeea(swig_intgo arg1, swig_type_34 arg2, swig_type_35 arg3, uintptr_t arg4);
 extern void _wrap_delete_Client_routingkit_192513bd4d9cfeea(uintptr_t arg1);
 #undef intgo
 */
@@ -1238,28 +1255,167 @@ func GetMax_distance() (_swig_ret uint) {
 	return swig_r
 }
 
-type GoRoutingKitTravel_profile int
-func _swig_getcar() (_swig_ret GoRoutingKitTravel_profile) {
-	var swig_r GoRoutingKitTravel_profile
-	swig_r = (GoRoutingKitTravel_profile)(C._wrap_car_routingkit_192513bd4d9cfeea())
+type SwigcptrRoutingGraph uintptr
+
+func (p SwigcptrRoutingGraph) Swigcptr() uintptr {
+	return (uintptr)(p)
+}
+
+func (p SwigcptrRoutingGraph) SwigIsRoutingGraph() {
+}
+
+func (arg1 SwigcptrRoutingGraph) SetFirst_out(arg2 UnsignedVector) {
+	_swig_i_0 := arg1
+	_swig_i_1 := arg2.Swigcptr()
+	C._wrap_RoutingGraph_first_out_set_routingkit_192513bd4d9cfeea(C.uintptr_t(_swig_i_0), C.uintptr_t(_swig_i_1))
+}
+
+func (arg1 SwigcptrRoutingGraph) GetFirst_out() (_swig_ret UnsignedVector) {
+	var swig_r UnsignedVector
+	_swig_i_0 := arg1
+	swig_r = (UnsignedVector)(SwigcptrUnsignedVector(C._wrap_RoutingGraph_first_out_get_routingkit_192513bd4d9cfeea(C.uintptr_t(_swig_i_0))))
 	return swig_r
 }
 
-var Car GoRoutingKitTravel_profile = _swig_getcar()
-func _swig_getbike() (_swig_ret GoRoutingKitTravel_profile) {
-	var swig_r GoRoutingKitTravel_profile
-	swig_r = (GoRoutingKitTravel_profile)(C._wrap_bike_routingkit_192513bd4d9cfeea())
+func (arg1 SwigcptrRoutingGraph) SetHead(arg2 UnsignedVector) {
+	_swig_i_0 := arg1
+	_swig_i_1 := arg2.Swigcptr()
+	C._wrap_RoutingGraph_head_set_routingkit_192513bd4d9cfeea(C.uintptr_t(_swig_i_0), C.uintptr_t(_swig_i_1))
+}
+
+func (arg1 SwigcptrRoutingGraph) GetHead() (_swig_ret UnsignedVector) {
+	var swig_r UnsignedVector
+	_swig_i_0 := arg1
+	swig_r = (UnsignedVector)(SwigcptrUnsignedVector(C._wrap_RoutingGraph_head_get_routingkit_192513bd4d9cfeea(C.uintptr_t(_swig_i_0))))
 	return swig_r
 }
 
-var Bike GoRoutingKitTravel_profile = _swig_getbike()
-func _swig_getpedestrian() (_swig_ret GoRoutingKitTravel_profile) {
-	var swig_r GoRoutingKitTravel_profile
-	swig_r = (GoRoutingKitTravel_profile)(C._wrap_pedestrian_routingkit_192513bd4d9cfeea())
+func (arg1 SwigcptrRoutingGraph) SetTravel_time(arg2 UnsignedVector) {
+	_swig_i_0 := arg1
+	_swig_i_1 := arg2.Swigcptr()
+	C._wrap_RoutingGraph_travel_time_set_routingkit_192513bd4d9cfeea(C.uintptr_t(_swig_i_0), C.uintptr_t(_swig_i_1))
+}
+
+func (arg1 SwigcptrRoutingGraph) GetTravel_time() (_swig_ret UnsignedVector) {
+	var swig_r UnsignedVector
+	_swig_i_0 := arg1
+	swig_r = (UnsignedVector)(SwigcptrUnsignedVector(C._wrap_RoutingGraph_travel_time_get_routingkit_192513bd4d9cfeea(C.uintptr_t(_swig_i_0))))
 	return swig_r
 }
 
-var Pedestrian GoRoutingKitTravel_profile = _swig_getpedestrian()
+func (arg1 SwigcptrRoutingGraph) SetGeo_distance(arg2 UnsignedVector) {
+	_swig_i_0 := arg1
+	_swig_i_1 := arg2.Swigcptr()
+	C._wrap_RoutingGraph_geo_distance_set_routingkit_192513bd4d9cfeea(C.uintptr_t(_swig_i_0), C.uintptr_t(_swig_i_1))
+}
+
+func (arg1 SwigcptrRoutingGraph) GetGeo_distance() (_swig_ret UnsignedVector) {
+	var swig_r UnsignedVector
+	_swig_i_0 := arg1
+	swig_r = (UnsignedVector)(SwigcptrUnsignedVector(C._wrap_RoutingGraph_geo_distance_get_routingkit_192513bd4d9cfeea(C.uintptr_t(_swig_i_0))))
+	return swig_r
+}
+
+func (arg1 SwigcptrRoutingGraph) SetLatitude(arg2 FloatVector) {
+	_swig_i_0 := arg1
+	_swig_i_1 := arg2.Swigcptr()
+	C._wrap_RoutingGraph_latitude_set_routingkit_192513bd4d9cfeea(C.uintptr_t(_swig_i_0), C.uintptr_t(_swig_i_1))
+}
+
+func (arg1 SwigcptrRoutingGraph) GetLatitude() (_swig_ret FloatVector) {
+	var swig_r FloatVector
+	_swig_i_0 := arg1
+	swig_r = (FloatVector)(SwigcptrFloatVector(C._wrap_RoutingGraph_latitude_get_routingkit_192513bd4d9cfeea(C.uintptr_t(_swig_i_0))))
+	return swig_r
+}
+
+func (arg1 SwigcptrRoutingGraph) SetLongitude(arg2 FloatVector) {
+	_swig_i_0 := arg1
+	_swig_i_1 := arg2.Swigcptr()
+	C._wrap_RoutingGraph_longitude_set_routingkit_192513bd4d9cfeea(C.uintptr_t(_swig_i_0), C.uintptr_t(_swig_i_1))
+}
+
+func (arg1 SwigcptrRoutingGraph) GetLongitude() (_swig_ret FloatVector) {
+	var swig_r FloatVector
+	_swig_i_0 := arg1
+	swig_r = (FloatVector)(SwigcptrFloatVector(C._wrap_RoutingGraph_longitude_get_routingkit_192513bd4d9cfeea(C.uintptr_t(_swig_i_0))))
+	return swig_r
+}
+
+func (arg1 SwigcptrRoutingGraph) SetForbidden_turn_from_arc(arg2 UnsignedVector) {
+	_swig_i_0 := arg1
+	_swig_i_1 := arg2.Swigcptr()
+	C._wrap_RoutingGraph_forbidden_turn_from_arc_set_routingkit_192513bd4d9cfeea(C.uintptr_t(_swig_i_0), C.uintptr_t(_swig_i_1))
+}
+
+func (arg1 SwigcptrRoutingGraph) GetForbidden_turn_from_arc() (_swig_ret UnsignedVector) {
+	var swig_r UnsignedVector
+	_swig_i_0 := arg1
+	swig_r = (UnsignedVector)(SwigcptrUnsignedVector(C._wrap_RoutingGraph_forbidden_turn_from_arc_get_routingkit_192513bd4d9cfeea(C.uintptr_t(_swig_i_0))))
+	return swig_r
+}
+
+func (arg1 SwigcptrRoutingGraph) SetForbidden_turn_to_arc(arg2 UnsignedVector) {
+	_swig_i_0 := arg1
+	_swig_i_1 := arg2.Swigcptr()
+	C._wrap_RoutingGraph_forbidden_turn_to_arc_set_routingkit_192513bd4d9cfeea(C.uintptr_t(_swig_i_0), C.uintptr_t(_swig_i_1))
+}
+
+func (arg1 SwigcptrRoutingGraph) GetForbidden_turn_to_arc() (_swig_ret UnsignedVector) {
+	var swig_r UnsignedVector
+	_swig_i_0 := arg1
+	swig_r = (UnsignedVector)(SwigcptrUnsignedVector(C._wrap_RoutingGraph_forbidden_turn_to_arc_get_routingkit_192513bd4d9cfeea(C.uintptr_t(_swig_i_0))))
+	return swig_r
+}
+
+func (arg1 SwigcptrRoutingGraph) Node_count() (_swig_ret uint) {
+	var swig_r uint
+	_swig_i_0 := arg1
+	swig_r = (uint)(C._wrap_RoutingGraph_node_count_routingkit_192513bd4d9cfeea(C.uintptr_t(_swig_i_0)))
+	return swig_r
+}
+
+func (arg1 SwigcptrRoutingGraph) Arc_count() (_swig_ret uint) {
+	var swig_r uint
+	_swig_i_0 := arg1
+	swig_r = (uint)(C._wrap_RoutingGraph_arc_count_routingkit_192513bd4d9cfeea(C.uintptr_t(_swig_i_0)))
+	return swig_r
+}
+
+func NewRoutingGraph() (_swig_ret RoutingGraph) {
+	var swig_r RoutingGraph
+	swig_r = (RoutingGraph)(SwigcptrRoutingGraph(C._wrap_new_RoutingGraph_routingkit_192513bd4d9cfeea()))
+	return swig_r
+}
+
+func DeleteRoutingGraph(arg1 RoutingGraph) {
+	_swig_i_0 := arg1.Swigcptr()
+	C._wrap_delete_RoutingGraph_routingkit_192513bd4d9cfeea(C.uintptr_t(_swig_i_0))
+}
+
+type RoutingGraph interface {
+	Swigcptr() uintptr
+	SwigIsRoutingGraph()
+	SetFirst_out(arg2 UnsignedVector)
+	GetFirst_out() (_swig_ret UnsignedVector)
+	SetHead(arg2 UnsignedVector)
+	GetHead() (_swig_ret UnsignedVector)
+	SetTravel_time(arg2 UnsignedVector)
+	GetTravel_time() (_swig_ret UnsignedVector)
+	SetGeo_distance(arg2 UnsignedVector)
+	GetGeo_distance() (_swig_ret UnsignedVector)
+	SetLatitude(arg2 FloatVector)
+	GetLatitude() (_swig_ret FloatVector)
+	SetLongitude(arg2 FloatVector)
+	GetLongitude() (_swig_ret FloatVector)
+	SetForbidden_turn_from_arc(arg2 UnsignedVector)
+	GetForbidden_turn_from_arc() (_swig_ret UnsignedVector)
+	SetForbidden_turn_to_arc(arg2 UnsignedVector)
+	GetForbidden_turn_to_arc() (_swig_ret UnsignedVector)
+	Node_count() (_swig_ret uint)
+	Arc_count() (_swig_ret uint)
+}
+
 type SwigcptrClient uintptr
 
 func (p SwigcptrClient) Swigcptr() uintptr {
@@ -1305,14 +1461,13 @@ func (arg1 SwigcptrClient) Nearest(arg2 int, arg3 float32, arg4 float32, arg5 fl
 	return swig_r
 }
 
-func NewClient(arg1 int, arg2 string, arg3 string, arg4 GoRoutingKitTravel_profile, arg5 Profile) (_swig_ret Client) {
+func NewClient(arg1 int, arg2 string, arg3 string, arg4 Profile) (_swig_ret Client) {
 	var swig_r Client
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2
 	_swig_i_2 := arg3
-	_swig_i_3 := arg4
-	_swig_i_4 := arg5.Swigcptr()
-	swig_r = (Client)(SwigcptrClient(C._wrap_new_Client_routingkit_192513bd4d9cfeea(C.swig_intgo(_swig_i_0), *(*C.swig_type_34)(unsafe.Pointer(&_swig_i_1)), *(*C.swig_type_35)(unsafe.Pointer(&_swig_i_2)), C.swig_intgo(_swig_i_3), C.uintptr_t(_swig_i_4))))
+	_swig_i_3 := arg4.Swigcptr()
+	swig_r = (Client)(SwigcptrClient(C._wrap_new_Client_routingkit_192513bd4d9cfeea(C.swig_intgo(_swig_i_0), *(*C.swig_type_34)(unsafe.Pointer(&_swig_i_1)), *(*C.swig_type_35)(unsafe.Pointer(&_swig_i_2)), C.uintptr_t(_swig_i_3))))
 	if Swig_escape_always_false {
 		Swig_escape_val = arg2
 	}

@@ -1767,39 +1767,250 @@ intgo _wrap_max_distance_get_routingkit_192513bd4d9cfeea() {
 }
 
 
-intgo _wrap_car_routingkit_192513bd4d9cfeea() {
-  GoRoutingKit::travel_profile result;
-  intgo _swig_go_result;
+void _wrap_RoutingGraph_first_out_set_routingkit_192513bd4d9cfeea(GoRoutingKit::RoutingGraph *_swig_go_0, std::vector< unsigned int > *_swig_go_1) {
+  GoRoutingKit::RoutingGraph *arg1 = (GoRoutingKit::RoutingGraph *) 0 ;
+  std::vector< unsigned int > *arg2 = (std::vector< unsigned int > *) 0 ;
   
+  arg1 = *(GoRoutingKit::RoutingGraph **)&_swig_go_0; 
+  arg2 = *(std::vector< unsigned int > **)&_swig_go_1; 
   
-  result = GoRoutingKit::car;
+  if (arg1) (arg1)->first_out = *arg2;
   
-  _swig_go_result = (intgo)result; 
+}
+
+
+std::vector< unsigned int > *_wrap_RoutingGraph_first_out_get_routingkit_192513bd4d9cfeea(GoRoutingKit::RoutingGraph *_swig_go_0) {
+  GoRoutingKit::RoutingGraph *arg1 = (GoRoutingKit::RoutingGraph *) 0 ;
+  std::vector< unsigned int > *result = 0 ;
+  std::vector< unsigned int > *_swig_go_result;
+  
+  arg1 = *(GoRoutingKit::RoutingGraph **)&_swig_go_0; 
+  
+  result = (std::vector< unsigned int > *)& ((arg1)->first_out);
+  *(std::vector< unsigned int > **)&_swig_go_result = (std::vector< unsigned int > *)result; 
   return _swig_go_result;
 }
 
 
-intgo _wrap_bike_routingkit_192513bd4d9cfeea() {
-  GoRoutingKit::travel_profile result;
-  intgo _swig_go_result;
+void _wrap_RoutingGraph_head_set_routingkit_192513bd4d9cfeea(GoRoutingKit::RoutingGraph *_swig_go_0, std::vector< unsigned int > *_swig_go_1) {
+  GoRoutingKit::RoutingGraph *arg1 = (GoRoutingKit::RoutingGraph *) 0 ;
+  std::vector< unsigned int > *arg2 = (std::vector< unsigned int > *) 0 ;
   
+  arg1 = *(GoRoutingKit::RoutingGraph **)&_swig_go_0; 
+  arg2 = *(std::vector< unsigned int > **)&_swig_go_1; 
   
-  result = GoRoutingKit::bike;
+  if (arg1) (arg1)->head = *arg2;
   
-  _swig_go_result = (intgo)result; 
+}
+
+
+std::vector< unsigned int > *_wrap_RoutingGraph_head_get_routingkit_192513bd4d9cfeea(GoRoutingKit::RoutingGraph *_swig_go_0) {
+  GoRoutingKit::RoutingGraph *arg1 = (GoRoutingKit::RoutingGraph *) 0 ;
+  std::vector< unsigned int > *result = 0 ;
+  std::vector< unsigned int > *_swig_go_result;
+  
+  arg1 = *(GoRoutingKit::RoutingGraph **)&_swig_go_0; 
+  
+  result = (std::vector< unsigned int > *)& ((arg1)->head);
+  *(std::vector< unsigned int > **)&_swig_go_result = (std::vector< unsigned int > *)result; 
   return _swig_go_result;
 }
 
 
-intgo _wrap_pedestrian_routingkit_192513bd4d9cfeea() {
-  GoRoutingKit::travel_profile result;
+void _wrap_RoutingGraph_travel_time_set_routingkit_192513bd4d9cfeea(GoRoutingKit::RoutingGraph *_swig_go_0, std::vector< unsigned int > *_swig_go_1) {
+  GoRoutingKit::RoutingGraph *arg1 = (GoRoutingKit::RoutingGraph *) 0 ;
+  std::vector< unsigned int > *arg2 = (std::vector< unsigned int > *) 0 ;
+  
+  arg1 = *(GoRoutingKit::RoutingGraph **)&_swig_go_0; 
+  arg2 = *(std::vector< unsigned int > **)&_swig_go_1; 
+  
+  if (arg1) (arg1)->travel_time = *arg2;
+  
+}
+
+
+std::vector< unsigned int > *_wrap_RoutingGraph_travel_time_get_routingkit_192513bd4d9cfeea(GoRoutingKit::RoutingGraph *_swig_go_0) {
+  GoRoutingKit::RoutingGraph *arg1 = (GoRoutingKit::RoutingGraph *) 0 ;
+  std::vector< unsigned int > *result = 0 ;
+  std::vector< unsigned int > *_swig_go_result;
+  
+  arg1 = *(GoRoutingKit::RoutingGraph **)&_swig_go_0; 
+  
+  result = (std::vector< unsigned int > *)& ((arg1)->travel_time);
+  *(std::vector< unsigned int > **)&_swig_go_result = (std::vector< unsigned int > *)result; 
+  return _swig_go_result;
+}
+
+
+void _wrap_RoutingGraph_geo_distance_set_routingkit_192513bd4d9cfeea(GoRoutingKit::RoutingGraph *_swig_go_0, std::vector< unsigned int > *_swig_go_1) {
+  GoRoutingKit::RoutingGraph *arg1 = (GoRoutingKit::RoutingGraph *) 0 ;
+  std::vector< unsigned int > *arg2 = (std::vector< unsigned int > *) 0 ;
+  
+  arg1 = *(GoRoutingKit::RoutingGraph **)&_swig_go_0; 
+  arg2 = *(std::vector< unsigned int > **)&_swig_go_1; 
+  
+  if (arg1) (arg1)->geo_distance = *arg2;
+  
+}
+
+
+std::vector< unsigned int > *_wrap_RoutingGraph_geo_distance_get_routingkit_192513bd4d9cfeea(GoRoutingKit::RoutingGraph *_swig_go_0) {
+  GoRoutingKit::RoutingGraph *arg1 = (GoRoutingKit::RoutingGraph *) 0 ;
+  std::vector< unsigned int > *result = 0 ;
+  std::vector< unsigned int > *_swig_go_result;
+  
+  arg1 = *(GoRoutingKit::RoutingGraph **)&_swig_go_0; 
+  
+  result = (std::vector< unsigned int > *)& ((arg1)->geo_distance);
+  *(std::vector< unsigned int > **)&_swig_go_result = (std::vector< unsigned int > *)result; 
+  return _swig_go_result;
+}
+
+
+void _wrap_RoutingGraph_latitude_set_routingkit_192513bd4d9cfeea(GoRoutingKit::RoutingGraph *_swig_go_0, std::vector< float > *_swig_go_1) {
+  GoRoutingKit::RoutingGraph *arg1 = (GoRoutingKit::RoutingGraph *) 0 ;
+  std::vector< float > *arg2 = (std::vector< float > *) 0 ;
+  
+  arg1 = *(GoRoutingKit::RoutingGraph **)&_swig_go_0; 
+  arg2 = *(std::vector< float > **)&_swig_go_1; 
+  
+  if (arg1) (arg1)->latitude = *arg2;
+  
+}
+
+
+std::vector< float > *_wrap_RoutingGraph_latitude_get_routingkit_192513bd4d9cfeea(GoRoutingKit::RoutingGraph *_swig_go_0) {
+  GoRoutingKit::RoutingGraph *arg1 = (GoRoutingKit::RoutingGraph *) 0 ;
+  std::vector< float > *result = 0 ;
+  std::vector< float > *_swig_go_result;
+  
+  arg1 = *(GoRoutingKit::RoutingGraph **)&_swig_go_0; 
+  
+  result = (std::vector< float > *)& ((arg1)->latitude);
+  *(std::vector< float > **)&_swig_go_result = (std::vector< float > *)result; 
+  return _swig_go_result;
+}
+
+
+void _wrap_RoutingGraph_longitude_set_routingkit_192513bd4d9cfeea(GoRoutingKit::RoutingGraph *_swig_go_0, std::vector< float > *_swig_go_1) {
+  GoRoutingKit::RoutingGraph *arg1 = (GoRoutingKit::RoutingGraph *) 0 ;
+  std::vector< float > *arg2 = (std::vector< float > *) 0 ;
+  
+  arg1 = *(GoRoutingKit::RoutingGraph **)&_swig_go_0; 
+  arg2 = *(std::vector< float > **)&_swig_go_1; 
+  
+  if (arg1) (arg1)->longitude = *arg2;
+  
+}
+
+
+std::vector< float > *_wrap_RoutingGraph_longitude_get_routingkit_192513bd4d9cfeea(GoRoutingKit::RoutingGraph *_swig_go_0) {
+  GoRoutingKit::RoutingGraph *arg1 = (GoRoutingKit::RoutingGraph *) 0 ;
+  std::vector< float > *result = 0 ;
+  std::vector< float > *_swig_go_result;
+  
+  arg1 = *(GoRoutingKit::RoutingGraph **)&_swig_go_0; 
+  
+  result = (std::vector< float > *)& ((arg1)->longitude);
+  *(std::vector< float > **)&_swig_go_result = (std::vector< float > *)result; 
+  return _swig_go_result;
+}
+
+
+void _wrap_RoutingGraph_forbidden_turn_from_arc_set_routingkit_192513bd4d9cfeea(GoRoutingKit::RoutingGraph *_swig_go_0, std::vector< unsigned int > *_swig_go_1) {
+  GoRoutingKit::RoutingGraph *arg1 = (GoRoutingKit::RoutingGraph *) 0 ;
+  std::vector< unsigned int > *arg2 = (std::vector< unsigned int > *) 0 ;
+  
+  arg1 = *(GoRoutingKit::RoutingGraph **)&_swig_go_0; 
+  arg2 = *(std::vector< unsigned int > **)&_swig_go_1; 
+  
+  if (arg1) (arg1)->forbidden_turn_from_arc = *arg2;
+  
+}
+
+
+std::vector< unsigned int > *_wrap_RoutingGraph_forbidden_turn_from_arc_get_routingkit_192513bd4d9cfeea(GoRoutingKit::RoutingGraph *_swig_go_0) {
+  GoRoutingKit::RoutingGraph *arg1 = (GoRoutingKit::RoutingGraph *) 0 ;
+  std::vector< unsigned int > *result = 0 ;
+  std::vector< unsigned int > *_swig_go_result;
+  
+  arg1 = *(GoRoutingKit::RoutingGraph **)&_swig_go_0; 
+  
+  result = (std::vector< unsigned int > *)& ((arg1)->forbidden_turn_from_arc);
+  *(std::vector< unsigned int > **)&_swig_go_result = (std::vector< unsigned int > *)result; 
+  return _swig_go_result;
+}
+
+
+void _wrap_RoutingGraph_forbidden_turn_to_arc_set_routingkit_192513bd4d9cfeea(GoRoutingKit::RoutingGraph *_swig_go_0, std::vector< unsigned int > *_swig_go_1) {
+  GoRoutingKit::RoutingGraph *arg1 = (GoRoutingKit::RoutingGraph *) 0 ;
+  std::vector< unsigned int > *arg2 = (std::vector< unsigned int > *) 0 ;
+  
+  arg1 = *(GoRoutingKit::RoutingGraph **)&_swig_go_0; 
+  arg2 = *(std::vector< unsigned int > **)&_swig_go_1; 
+  
+  if (arg1) (arg1)->forbidden_turn_to_arc = *arg2;
+  
+}
+
+
+std::vector< unsigned int > *_wrap_RoutingGraph_forbidden_turn_to_arc_get_routingkit_192513bd4d9cfeea(GoRoutingKit::RoutingGraph *_swig_go_0) {
+  GoRoutingKit::RoutingGraph *arg1 = (GoRoutingKit::RoutingGraph *) 0 ;
+  std::vector< unsigned int > *result = 0 ;
+  std::vector< unsigned int > *_swig_go_result;
+  
+  arg1 = *(GoRoutingKit::RoutingGraph **)&_swig_go_0; 
+  
+  result = (std::vector< unsigned int > *)& ((arg1)->forbidden_turn_to_arc);
+  *(std::vector< unsigned int > **)&_swig_go_result = (std::vector< unsigned int > *)result; 
+  return _swig_go_result;
+}
+
+
+intgo _wrap_RoutingGraph_node_count_routingkit_192513bd4d9cfeea(GoRoutingKit::RoutingGraph *_swig_go_0) {
+  GoRoutingKit::RoutingGraph *arg1 = (GoRoutingKit::RoutingGraph *) 0 ;
+  unsigned int result;
   intgo _swig_go_result;
   
+  arg1 = *(GoRoutingKit::RoutingGraph **)&_swig_go_0; 
   
-  result = GoRoutingKit::pedestrian;
-  
-  _swig_go_result = (intgo)result; 
+  result = (unsigned int)((GoRoutingKit::RoutingGraph const *)arg1)->node_count();
+  _swig_go_result = result; 
   return _swig_go_result;
+}
+
+
+intgo _wrap_RoutingGraph_arc_count_routingkit_192513bd4d9cfeea(GoRoutingKit::RoutingGraph *_swig_go_0) {
+  GoRoutingKit::RoutingGraph *arg1 = (GoRoutingKit::RoutingGraph *) 0 ;
+  unsigned int result;
+  intgo _swig_go_result;
+  
+  arg1 = *(GoRoutingKit::RoutingGraph **)&_swig_go_0; 
+  
+  result = (unsigned int)((GoRoutingKit::RoutingGraph const *)arg1)->arc_count();
+  _swig_go_result = result; 
+  return _swig_go_result;
+}
+
+
+GoRoutingKit::RoutingGraph *_wrap_new_RoutingGraph_routingkit_192513bd4d9cfeea() {
+  GoRoutingKit::RoutingGraph *result = 0 ;
+  GoRoutingKit::RoutingGraph *_swig_go_result;
+  
+  
+  result = (GoRoutingKit::RoutingGraph *)new GoRoutingKit::RoutingGraph();
+  *(GoRoutingKit::RoutingGraph **)&_swig_go_result = (GoRoutingKit::RoutingGraph *)result; 
+  return _swig_go_result;
+}
+
+
+void _wrap_delete_RoutingGraph_routingkit_192513bd4d9cfeea(GoRoutingKit::RoutingGraph *_swig_go_0) {
+  GoRoutingKit::RoutingGraph *arg1 = (GoRoutingKit::RoutingGraph *) 0 ;
+  
+  arg1 = *(GoRoutingKit::RoutingGraph **)&_swig_go_0; 
+  
+  delete arg1;
+  
 }
 
 
@@ -1886,13 +2097,12 @@ Point *_wrap_Client_nearest_routingkit_192513bd4d9cfeea(GoRoutingKit::Client *_s
 }
 
 
-GoRoutingKit::Client *_wrap_new_Client_routingkit_192513bd4d9cfeea(intgo _swig_go_0, _gostring_ _swig_go_1, _gostring_ _swig_go_2, intgo _swig_go_3, Profile *_swig_go_4) {
+GoRoutingKit::Client *_wrap_new_Client_routingkit_192513bd4d9cfeea(intgo _swig_go_0, _gostring_ _swig_go_1, _gostring_ _swig_go_2, Profile *_swig_go_3) {
   int arg1 ;
   char *arg2 = (char *) 0 ;
   char *arg3 = (char *) 0 ;
-  GoRoutingKit::travel_profile arg4 ;
-  Profile arg5 ;
-  Profile *argp5 ;
+  Profile arg4 ;
+  Profile *argp4 ;
   GoRoutingKit::Client *result = 0 ;
   GoRoutingKit::Client *_swig_go_result;
   
@@ -1907,16 +2117,15 @@ GoRoutingKit::Client *_wrap_new_Client_routingkit_192513bd4d9cfeea(intgo _swig_g
   memcpy(arg3, _swig_go_2.p, _swig_go_2.n);
   arg3[_swig_go_2.n] = '\0';
   
-  arg4 = (GoRoutingKit::travel_profile)_swig_go_3; 
   
-  argp5 = (Profile *)_swig_go_4;
-  if (argp5 == NULL) {
+  argp4 = (Profile *)_swig_go_3;
+  if (argp4 == NULL) {
     _swig_gopanic("Attempt to dereference null Profile");
   }
-  arg5 = (Profile)*argp5;
+  arg4 = (Profile)*argp4;
   
   
-  result = (GoRoutingKit::Client *)new GoRoutingKit::Client(arg1,arg2,arg3,arg4,arg5);
+  result = (GoRoutingKit::Client *)new GoRoutingKit::Client(arg1,arg2,arg3,arg4);
   *(GoRoutingKit::Client **)&_swig_go_result = (GoRoutingKit::Client *)result; 
   free(arg2); 
   free(arg3); 
