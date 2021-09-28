@@ -226,7 +226,7 @@ bool file_exists(char *file)
 	return !!f;
 }
 
-Client::Client(int conc, char *pbf_file, char *ch_file, travel_profile prof, bool use_travel_time, Profile customProfile)
+Client::Client(int conc, char *pbf_file, char *ch_file, travel_profile prof, Profile customProfile)
 {
 	vector<unsigned int> tail;
 	profile = prof;
@@ -245,7 +245,7 @@ Client::Client(int conc, char *pbf_file, char *ch_file, travel_profile prof, boo
 		}
 		else
 		{
-			vector<unsigned> weight = use_travel_time ? car_graph.travel_time : car_graph.geo_distance;
+			vector<unsigned> weight = customProfile.travel_time ? car_graph.travel_time : car_graph.geo_distance;
 			ch = ContractionHierarchy::build(car_graph.node_count(), tail, car_graph.head, weight);
 			ch.save_file(ch_file);
 		}

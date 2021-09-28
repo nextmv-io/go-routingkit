@@ -1886,14 +1886,13 @@ Point *_wrap_Client_nearest_routingkit_192513bd4d9cfeea(GoRoutingKit::Client *_s
 }
 
 
-GoRoutingKit::Client *_wrap_new_Client_routingkit_192513bd4d9cfeea(intgo _swig_go_0, _gostring_ _swig_go_1, _gostring_ _swig_go_2, intgo _swig_go_3, bool _swig_go_4, Profile *_swig_go_5) {
+GoRoutingKit::Client *_wrap_new_Client_routingkit_192513bd4d9cfeea(intgo _swig_go_0, _gostring_ _swig_go_1, _gostring_ _swig_go_2, intgo _swig_go_3, Profile *_swig_go_4) {
   int arg1 ;
   char *arg2 = (char *) 0 ;
   char *arg3 = (char *) 0 ;
   GoRoutingKit::travel_profile arg4 ;
-  bool arg5 ;
-  Profile arg6 ;
-  Profile *argp6 ;
+  Profile arg5 ;
+  Profile *argp5 ;
   GoRoutingKit::Client *result = 0 ;
   GoRoutingKit::Client *_swig_go_result;
   
@@ -1909,16 +1908,15 @@ GoRoutingKit::Client *_wrap_new_Client_routingkit_192513bd4d9cfeea(intgo _swig_g
   arg3[_swig_go_2.n] = '\0';
   
   arg4 = (GoRoutingKit::travel_profile)_swig_go_3; 
-  arg5 = (bool)_swig_go_4; 
   
-  argp6 = (Profile *)_swig_go_5;
-  if (argp6 == NULL) {
+  argp5 = (Profile *)_swig_go_4;
+  if (argp5 == NULL) {
     _swig_gopanic("Attempt to dereference null Profile");
   }
-  arg6 = (Profile)*argp6;
+  arg5 = (Profile)*argp5;
   
   
-  result = (GoRoutingKit::Client *)new GoRoutingKit::Client(arg1,arg2,arg3,arg4,arg5,arg6);
+  result = (GoRoutingKit::Client *)new GoRoutingKit::Client(arg1,arg2,arg3,arg4,arg5);
   *(GoRoutingKit::Client **)&_swig_go_result = (GoRoutingKit::Client *)result; 
   free(arg2); 
   free(arg3); 

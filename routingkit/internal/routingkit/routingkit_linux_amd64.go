@@ -180,7 +180,7 @@ extern swig_intgo _wrap_pedestrian_routingkit_192513bd4d9cfeea(void);
 extern uintptr_t _wrap_Client_query_routingkit_192513bd4d9cfeea(uintptr_t arg1, swig_intgo arg2, float arg3, float arg4, float arg5, float arg6, float arg7, _Bool arg8);
 extern uintptr_t _wrap_Client_distances_routingkit_192513bd4d9cfeea(uintptr_t arg1, swig_intgo arg2, float arg3, uintptr_t arg4, uintptr_t arg5);
 extern uintptr_t _wrap_Client_nearest_routingkit_192513bd4d9cfeea(uintptr_t arg1, swig_intgo arg2, float arg3, float arg4, float arg5);
-extern uintptr_t _wrap_new_Client_routingkit_192513bd4d9cfeea(swig_intgo arg1, swig_type_34 arg2, swig_type_35 arg3, swig_intgo arg4, _Bool arg5, uintptr_t arg6);
+extern uintptr_t _wrap_new_Client_routingkit_192513bd4d9cfeea(swig_intgo arg1, swig_type_34 arg2, swig_type_35 arg3, swig_intgo arg4, uintptr_t arg5);
 extern void _wrap_delete_Client_routingkit_192513bd4d9cfeea(uintptr_t arg1);
 #undef intgo
 */
@@ -1305,15 +1305,14 @@ func (arg1 SwigcptrClient) Nearest(arg2 int, arg3 float32, arg4 float32, arg5 fl
 	return swig_r
 }
 
-func NewClient(arg1 int, arg2 string, arg3 string, arg4 GoRoutingKitTravel_profile, arg5 bool, arg6 Profile) (_swig_ret Client) {
+func NewClient(arg1 int, arg2 string, arg3 string, arg4 GoRoutingKitTravel_profile, arg5 Profile) (_swig_ret Client) {
 	var swig_r Client
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2
 	_swig_i_2 := arg3
 	_swig_i_3 := arg4
-	_swig_i_4 := arg5
-	_swig_i_5 := arg6.Swigcptr()
-	swig_r = (Client)(SwigcptrClient(C._wrap_new_Client_routingkit_192513bd4d9cfeea(C.swig_intgo(_swig_i_0), *(*C.swig_type_34)(unsafe.Pointer(&_swig_i_1)), *(*C.swig_type_35)(unsafe.Pointer(&_swig_i_2)), C.swig_intgo(_swig_i_3), C._Bool(_swig_i_4), C.uintptr_t(_swig_i_5))))
+	_swig_i_4 := arg5.Swigcptr()
+	swig_r = (Client)(SwigcptrClient(C._wrap_new_Client_routingkit_192513bd4d9cfeea(C.swig_intgo(_swig_i_0), *(*C.swig_type_34)(unsafe.Pointer(&_swig_i_1)), *(*C.swig_type_35)(unsafe.Pointer(&_swig_i_2)), C.swig_intgo(_swig_i_3), C.uintptr_t(_swig_i_4))))
 	if Swig_escape_always_false {
 		Swig_escape_val = arg2
 	}
