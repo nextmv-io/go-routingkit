@@ -319,7 +319,7 @@ func NewDistanceClient(mapFile string, p Profile) (DistanceClient, error) {
 	defer func() {
 		routingkit.DeleteProfile(customProfile)
 	}()
-	c := routingkit.NewClient(concurrentQueries, mapFile, chFile, routingkit.GoRoutingKitTravel_profile(CarTravelProfile), false, customProfile)
+	c := routingkit.NewClient(concurrentQueries, mapFile, chFile, routingkit.GoRoutingKitTravel_profile(CarTravelProfile), customProfile)
 
 	channel := make(chan int, concurrentQueries)
 	for i := 0; i < concurrentQueries; i++ {
@@ -520,7 +520,7 @@ func NewTravelTimeClient(mapFile string, profile Profile) (TravelTimeClient, err
 	defer func() {
 		routingkit.DeleteProfile(customProfile)
 	}()
-	c := routingkit.NewClient(concurrentQueries, mapFile, chFile, routingkit.Car, true, customProfile)
+	c := routingkit.NewClient(concurrentQueries, mapFile, chFile, routingkit.Car, customProfile)
 
 	channel := make(chan int, concurrentQueries)
 	for i := 0; i < concurrentQueries; i++ {
