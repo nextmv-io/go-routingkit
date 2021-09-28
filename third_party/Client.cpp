@@ -149,7 +149,7 @@ namespace GoRoutingKit
 							// we want the value to match
 							if (filter.matchValue)
 							{
-								if (str_eq(route, filter.value))
+								if (filter.value == nullptr || str_eq(route, filter.value))
 								{
 									return filter.allowed;
 								}
@@ -173,7 +173,6 @@ namespace GoRoutingKit
 					}
 				}
 				return true;
-				// return is_osm_way_used_by_cars_custom(osm_way_id, tags, log_message);
 			},
 			log_message,
 			all_modelling_nodes_are_routing_nodes);
