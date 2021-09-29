@@ -158,11 +158,11 @@ func parseFlags() (params parameters, err error) {
 
 	switch profile {
 	case profileEnum.CAR:
-		params.profile = routingkit.Car()
+		params.profile = routingkit.Car(params.mapFile)
 	case profileEnum.BIKE:
-		params.profile = routingkit.Bike()
+		params.profile = routingkit.Bike(params.mapFile)
 	case profileEnum.PEDESTRIAN:
-		params.profile = routingkit.Pedestrian()
+		params.profile = routingkit.Pedestrian(params.mapFile)
 	default:
 		return parameters{}, errors.New("invalid option for profile" + profile)
 	}

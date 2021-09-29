@@ -14,21 +14,8 @@ import (
 // MaxDistance represents the maximum possible route distance.
 var MaxDistance uint32
 
-type Wayfilter struct {
-	// the Tag to be matched
-	Tag string
-	// either the Tag has to match or the Tag is not allowed to match
-	MatchTag bool
-	// optional: the value that the Tag has to equal
-	Value string
-	// either the value has to match or the value is not allowed to match
-	MatchValue bool
-	// expresses whether this way is allowed or not due to this filter
-	Allowed bool
-}
-
-func ParsePBF() map[int]bool {
-	file, err := os.Open("testdata/maryland.osm.pbf")
+func ParsePBF(osmFile string, tagMapFilter TagMapFilter) map[int]bool {
+	file, err := os.Open(osmFile)
 	if err != nil {
 		panic(err)
 	}
@@ -45,7 +32,7 @@ func ParsePBF() map[int]bool {
 		switch o := scanner.Object().(type) {
 		case *osm.Way:
 			tagMap := o.Tags.Map()
-			if TagMapFilter(tagMap) {
+			if tagMapFilter(tagMap) {
 				allowed[int(o.ID)] = true
 			}
 		}
@@ -58,7 +45,9 @@ func ParsePBF() map[int]bool {
 	return allowed
 }
 
-func TagMapFilter(tagMap map[string]string) bool {
+type TagMapFilter func(tagMap map[string]string) bool
+
+func carTagMapFilter(tagMap map[string]string) bool {
 	if _, ok := tagMap["junction"]; ok {
 		return true
 	}
@@ -138,24 +127,218 @@ func TagMapFilter(tagMap map[string]string) bool {
 	return false
 }
 
-func Car() Profile {
+func bikeTagMapFilter(tagMap map[string]string) bool {
+	if _, ok := tagMap["junction"]; ok {
+		return true
+	}
+	if val, ok := tagMap["route"]; ok && val == "ferry" {
+		return true
+	}
+	// TODO: I noticed this is different from cars, where the val is "yes" instead of "ferry".
+	// This matches what RoutingKit does but I'd like to double check this
+	if val, ok := tagMap["ferry"]; ok && val == "ferry" {
+		return true
+	}
+	highway, ok := tagMap["highway"]
+	if !ok {
+		return false
+	}
+	// TODO: proposed highways aren't filtered out until later in the car profile,
+	// which seems wrong...
+	if highway == "proposed" {
+		return false
+	}
+
+	if val, ok := tagMap["access"]; ok {
+		if !(val == "yes" ||
+			val == "permissive" ||
+			val == "delivery" ||
+			val == "designated" ||
+			val == "destination" ||
+			val == "agricultural" ||
+			val == "forestry" ||
+			val == "public") {
+			return false
+		}
+	}
+
+	if val, ok := tagMap["bicycle"]; ok && val == "no" || val == "use_sidepath" {
+		return false
+	}
+
+	if _, ok := tagMap["cycleway"]; ok {
+		return true
+	}
+	if _, ok := tagMap["cycleway:left"]; ok {
+		return true
+	}
+	if _, ok := tagMap["cycleway:right"]; ok {
+		return true
+	}
+	if _, ok := tagMap["cycleway:both"]; ok {
+		return true
+	}
+
+	if highway == "secondary" ||
+		highway == "tertiary" ||
+		highway == "unclassified" ||
+		highway == "residential" ||
+		highway == "service" ||
+		highway == "secondary_link" ||
+		highway == "tertiary_link" ||
+		highway == "living_street" ||
+		highway == "track" ||
+		highway == "bicycle_road" ||
+		highway == "primary" ||
+		highway == "primary_link" ||
+		highway == "path" ||
+		highway == "footway" ||
+		highway == "cycleway" ||
+		// TODO: from OSM docs it doesn't seem like bridleways universally permit biking
+		highway == "bridleway" ||
+		highway == "pedestrian" ||
+		highway == "crossing" ||
+		highway == "escape" ||
+		highway == "steps" ||
+		highway == "ferry" {
+		return true
+	}
+
+	if highway == "motorway" ||
+		highway == "motorway_link" ||
+		highway == "motorway_junction" ||
+		highway == "trunk" ||
+		highway == "trunk_link" ||
+		highway == "construction" ||
+		highway == "bus_guideway" ||
+		highway == "raceway" ||
+		highway == "conveying" {
+		return false
+	}
+
+	// TODO: curious about lack of handling for one-way streets
+
+	return false
+}
+
+func pedestrianTagMapFilter(tagMap map[string]string) bool {
+	if _, ok := tagMap["junction"]; ok {
+		return true
+	}
+	if val, ok := tagMap["route"]; ok && val == "ferry" {
+		return true
+	}
+	// TOOD: same question here as with bikes
+	if val, ok := tagMap["ferry"]; ok && val == "ferry" {
+		return true
+	}
+
+	publicTransport, ok := tagMap["public_transport"]
+	if ok && (publicTransport == "stop_position" ||
+		publicTransport == "platform" ||
+		publicTransport == "stop_area" ||
+		publicTransport == "station") {
+		return true
+	}
+
+	railway, ok := tagMap["railway"]
+	if ok && (railway == "halt" ||
+		railway == "platform" ||
+		railway == "subway_entrance" ||
+		railway == "station" ||
+		railway == "tram_stop") {
+		return true
+	}
+
+	highway, ok := tagMap["highway"]
+	if !ok {
+		return false
+	}
+
+	if val, ok := tagMap["access"]; ok {
+		if !(val == "yes" ||
+			val == "permissive" ||
+			val == "delivery" ||
+			val == "designated" ||
+			val == "destination" ||
+			val == "agricultural" ||
+			val == "forestry" ||
+			val == "public") {
+			return false
+		}
+	}
+
+	if val, ok := tagMap["crossing"]; ok && val == "no" {
+		return false
+	}
+
+	if highway == "secondary" ||
+		highway == "tertiary" ||
+		highway == "unclassified" ||
+		highway == "residential" ||
+		highway == "service" ||
+		highway == "secondary_link" ||
+		highway == "tertiary_link" ||
+		highway == "living_street" ||
+		highway == "track" ||
+		highway == "bicycle_road" ||
+		highway == "path" ||
+		highway == "footway" ||
+		highway == "cycleway" ||
+		highway == "bridleway" ||
+		highway == "pedestrian" ||
+		highway == "escape" ||
+		highway == "steps" ||
+		highway == "crossing" ||
+		highway == "escalator" ||
+		highway == "elevator" ||
+		highway == "platform" ||
+		highway == "ferry" {
+		return true
+	}
+
+	if highway == "motorway" ||
+		highway == "motorway_link" ||
+		highway == "motorway_junction" ||
+		highway == "trunk" ||
+		highway == "trunk_link" ||
+		highway == "primary" ||
+		highway == "primary_link" ||
+		highway == "construction" ||
+		highway == "bus_guideway" ||
+		highway == "raceway" ||
+		// TODO: again, strikes me as wrong that proposed isn't given higher precedence
+		// but maybe there's a reason for this
+		highway == "proposed" ||
+		highway == "conveying" {
+		return false
+	}
+
+	// TODO: curious about lack of handling for one-way streets
+
+	return false
+}
+
+func Car(osmFile string) Profile {
 	profile := Profile{
 		Name:          "car",
-		AllowedWayIds: ParsePBF(),
+		AllowedWayIds: ParsePBF(osmFile, carTagMapFilter),
 	}
 	return profile
 }
 
-func Bike() Profile {
+func Bike(osmFile string) Profile {
 	profile := Profile{
-		Name: "bike",
+		Name:          "bike",
+		AllowedWayIds: ParsePBF(osmFile, bikeTagMapFilter),
 	}
 	return profile
 }
 
-func Pedestrian() Profile {
+func Pedestrian(osmFile string) Profile {
 	profile := Profile{
-		Name: "pedestrian",
+		Name:          "pedestrian",
+		AllowedWayIds: ParsePBF(osmFile, pedestrianTagMapFilter),
 	}
 	return profile
 }
@@ -163,7 +346,6 @@ func Pedestrian() Profile {
 type Profile struct {
 	AllowedWayIds map[int]bool
 	Name          string
-	Wayfilters    []Wayfilter
 }
 
 func (p Profile) swigProfile() routingkit.Profile {
