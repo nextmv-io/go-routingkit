@@ -1673,6 +1673,56 @@ std::vector< WayFilter > *_wrap_Profile_wayfilters_get_routingkit_192513bd4d9cfe
 }
 
 
+void _wrap_Profile_allowedWayIds_set_routingkit_192513bd4d9cfeea(Profile *_swig_go_0, std::vector< int > *_swig_go_1) {
+  Profile *arg1 = (Profile *) 0 ;
+  std::vector< int > *arg2 = (std::vector< int > *) 0 ;
+  
+  arg1 = *(Profile **)&_swig_go_0; 
+  arg2 = *(std::vector< int > **)&_swig_go_1; 
+  
+  if (arg1) (arg1)->allowedWayIds = *arg2;
+  
+}
+
+
+std::vector< int > *_wrap_Profile_allowedWayIds_get_routingkit_192513bd4d9cfeea(Profile *_swig_go_0) {
+  Profile *arg1 = (Profile *) 0 ;
+  std::vector< int > *result = 0 ;
+  std::vector< int > *_swig_go_result;
+  
+  arg1 = *(Profile **)&_swig_go_0; 
+  
+  result = (std::vector< int > *)& ((arg1)->allowedWayIds);
+  *(std::vector< int > **)&_swig_go_result = (std::vector< int > *)result; 
+  return _swig_go_result;
+}
+
+
+void _wrap_Profile_forbiddenWayIds_set_routingkit_192513bd4d9cfeea(Profile *_swig_go_0, std::vector< int > *_swig_go_1) {
+  Profile *arg1 = (Profile *) 0 ;
+  std::vector< int > *arg2 = (std::vector< int > *) 0 ;
+  
+  arg1 = *(Profile **)&_swig_go_0; 
+  arg2 = *(std::vector< int > **)&_swig_go_1; 
+  
+  if (arg1) (arg1)->forbiddenWayIds = *arg2;
+  
+}
+
+
+std::vector< int > *_wrap_Profile_forbiddenWayIds_get_routingkit_192513bd4d9cfeea(Profile *_swig_go_0) {
+  Profile *arg1 = (Profile *) 0 ;
+  std::vector< int > *result = 0 ;
+  std::vector< int > *_swig_go_result;
+  
+  arg1 = *(Profile **)&_swig_go_0; 
+  
+  result = (std::vector< int > *)& ((arg1)->forbiddenWayIds);
+  *(std::vector< int > **)&_swig_go_result = (std::vector< int > *)result; 
+  return _swig_go_result;
+}
+
+
 void _wrap_Profile_name_set_routingkit_192513bd4d9cfeea(Profile *_swig_go_0, _gostring_ _swig_go_1) {
   Profile *arg1 = (Profile *) 0 ;
   char *arg2 = (char *) 0 ;

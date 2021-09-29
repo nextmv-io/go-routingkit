@@ -11,6 +11,7 @@
 #include <numeric>
 #include <thread>
 #include <future>
+#include <unordered_set>
 #include <vector>
 
 using namespace RoutingKit;
@@ -20,8 +21,6 @@ using namespace std;
 namespace GoRoutingKit
 {
 	const unsigned max_distance = inf_weight;
-
-	
 
 	void log_message(const std::string &msg)
 	{
@@ -34,19 +33,40 @@ namespace GoRoutingKit
 	}
 
 	RoutingGraph load_custom_osm_routing_graph_from_pbf(
-		const std::string &pbf_file, std::vector<WayFilter> wayfilters)
+		const std::string &pbf_file, Profile profile)
 	{
 		bool all_modelling_nodes_are_routing_nodes = false;
 		bool file_is_ordered_even_though_file_header_says_that_it_is_unordered = false;
+
+		std::unordered_set<uint64_t> allowedWayIds;
+		for (int i = 0; i < profile.allowedWayIds.size(); i++)
+		{
+			auto wayId = profile.allowedWayIds[i];
+			allowedWayIds.insert(wayId);
+		}
+		std::unordered_set<uint64_t> forbiddenWayIds;
+		for (int i = 0; i < profile.forbiddenWayIds.size(); i++)
+		{
+			auto wayId = profile.forbiddenWayIds[i];
+			forbiddenWayIds.insert(wayId);
+		}
 
 		auto mapping = load_osm_id_mapping_from_pbf(
 			pbf_file,
 			nullptr,
 			[&](uint64_t osm_way_id, const TagMap &tags)
 			{
-				for (int i = 0; i < wayfilters.size(); i++)
+				if (allowedWayIds.find(osm_way_id) != allowedWayIds.end())
 				{
-					auto filter = wayfilters[i];
+					return true;
+				}
+				if (forbiddenWayIds.find(osm_way_id) != forbiddenWayIds.end())
+				{
+					return false;
+				}
+				for (int i = 0; i < profile.wayfilters.size(); i++)
+				{
+					auto filter = profile.wayfilters[i];
 					const char *route = tags[filter.tag];
 					// we want that the tag matches
 					if (filter.matchTag)
@@ -134,14 +154,14 @@ bool file_exists(char *file)
 	return !!f;
 }
 
-Client::Client(int conc, char *pbf_file, char *ch_file, Profile customProfile)
+Client::Client(int conc, char *pbf_file, char *ch_file, Profile profile)
 {
 	vector<unsigned int> tail;
 
 	bool ch_exists = file_exists(ch_file);
 
 	// Load a routing graph from OpenStreetMap-based data
-	graph = load_custom_osm_routing_graph_from_pbf(pbf_file, customProfile.wayfilters);
+	graph = load_custom_osm_routing_graph_from_pbf(pbf_file, profile);
 	tail = invert_inverse_vector(graph.first_out);
 	if (ch_exists)
 	{
@@ -149,7 +169,7 @@ Client::Client(int conc, char *pbf_file, char *ch_file, Profile customProfile)
 	}
 	else
 	{
-		vector<unsigned> weight = customProfile.travel_time ? graph.travel_time : graph.geo_distance;
+		vector<unsigned> weight = profile.travel_time ? graph.travel_time : graph.geo_distance;
 		ch = ContractionHierarchy::build(graph.node_count(), tail, graph.head, weight);
 		ch.save_file(ch_file);
 	}

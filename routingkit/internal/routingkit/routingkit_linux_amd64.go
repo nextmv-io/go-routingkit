@@ -167,6 +167,10 @@ extern uintptr_t _wrap_new_WayFilter_routingkit_192513bd4d9cfeea(void);
 extern void _wrap_delete_WayFilter_routingkit_192513bd4d9cfeea(uintptr_t arg1);
 extern void _wrap_Profile_wayfilters_set_routingkit_192513bd4d9cfeea(uintptr_t arg1, uintptr_t arg2);
 extern uintptr_t _wrap_Profile_wayfilters_get_routingkit_192513bd4d9cfeea(uintptr_t arg1);
+extern void _wrap_Profile_allowedWayIds_set_routingkit_192513bd4d9cfeea(uintptr_t arg1, uintptr_t arg2);
+extern uintptr_t _wrap_Profile_allowedWayIds_get_routingkit_192513bd4d9cfeea(uintptr_t arg1);
+extern void _wrap_Profile_forbiddenWayIds_set_routingkit_192513bd4d9cfeea(uintptr_t arg1, uintptr_t arg2);
+extern uintptr_t _wrap_Profile_forbiddenWayIds_get_routingkit_192513bd4d9cfeea(uintptr_t arg1);
 extern void _wrap_Profile_name_set_routingkit_192513bd4d9cfeea(uintptr_t arg1, swig_type_32 arg2);
 extern swig_type_33 _wrap_Profile_name_get_routingkit_192513bd4d9cfeea(uintptr_t arg1);
 extern void _wrap_Profile_travel_time_set_routingkit_192513bd4d9cfeea(uintptr_t arg1, _Bool arg2);
@@ -1195,6 +1199,32 @@ func (arg1 SwigcptrProfile) GetWayfilters() (_swig_ret WayFilterVector) {
 	return swig_r
 }
 
+func (arg1 SwigcptrProfile) SetAllowedWayIds(arg2 IntVector) {
+	_swig_i_0 := arg1
+	_swig_i_1 := arg2.Swigcptr()
+	C._wrap_Profile_allowedWayIds_set_routingkit_192513bd4d9cfeea(C.uintptr_t(_swig_i_0), C.uintptr_t(_swig_i_1))
+}
+
+func (arg1 SwigcptrProfile) GetAllowedWayIds() (_swig_ret IntVector) {
+	var swig_r IntVector
+	_swig_i_0 := arg1
+	swig_r = (IntVector)(SwigcptrIntVector(C._wrap_Profile_allowedWayIds_get_routingkit_192513bd4d9cfeea(C.uintptr_t(_swig_i_0))))
+	return swig_r
+}
+
+func (arg1 SwigcptrProfile) SetForbiddenWayIds(arg2 IntVector) {
+	_swig_i_0 := arg1
+	_swig_i_1 := arg2.Swigcptr()
+	C._wrap_Profile_forbiddenWayIds_set_routingkit_192513bd4d9cfeea(C.uintptr_t(_swig_i_0), C.uintptr_t(_swig_i_1))
+}
+
+func (arg1 SwigcptrProfile) GetForbiddenWayIds() (_swig_ret IntVector) {
+	var swig_r IntVector
+	_swig_i_0 := arg1
+	swig_r = (IntVector)(SwigcptrIntVector(C._wrap_Profile_forbiddenWayIds_get_routingkit_192513bd4d9cfeea(C.uintptr_t(_swig_i_0))))
+	return swig_r
+}
+
 func (arg1 SwigcptrProfile) SetName(arg2 string) {
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2
@@ -1243,6 +1273,10 @@ type Profile interface {
 	SwigIsProfile()
 	SetWayfilters(arg2 WayFilterVector)
 	GetWayfilters() (_swig_ret WayFilterVector)
+	SetAllowedWayIds(arg2 IntVector)
+	GetAllowedWayIds() (_swig_ret IntVector)
+	SetForbiddenWayIds(arg2 IntVector)
+	GetForbiddenWayIds() (_swig_ret IntVector)
 	SetName(arg2 string)
 	GetName() (_swig_ret string)
 	SetTravel_time(arg2 bool)

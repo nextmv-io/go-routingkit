@@ -450,12 +450,16 @@ func Pedestrian() Profile {
 }
 
 type Profile struct {
-	Wayfilters []Wayfilter
-	Name       string
+	AllowedWayIds   map[int]bool
+	ForbiddenWayIds map[int]bool
+	Name            string
+	Wayfilters      []Wayfilter
 }
 
 func (p Profile) swigProfile() routingkit.Profile {
 	customProfile := routingkit.NewProfile()
+	customProfile.SetName(p.Name)
+
 	wayFilterVector := routingkit.NewWayFilterVector()
 	for _, wayFilter := range p.Wayfilters {
 		wf := routingkit.NewWayFilter()
@@ -467,6 +471,18 @@ func (p Profile) swigProfile() routingkit.Profile {
 		wayFilterVector.Add(wf)
 	}
 	customProfile.SetWayfilters(wayFilterVector)
+
+	allowedWayIds := routingkit.NewIntVector()
+	for wayId := range p.AllowedWayIds {
+		allowedWayIds.Add(wayId)
+	}
+	customProfile.SetAllowedWayIds(allowedWayIds)
+	forbiddenWayIds := routingkit.NewIntVector()
+	for wayId := range p.ForbiddenWayIds {
+		forbiddenWayIds.Add(wayId)
+	}
+	customProfile.SetAllowedWayIds(forbiddenWayIds)
+
 	return customProfile
 }
 

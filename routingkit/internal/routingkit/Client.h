@@ -34,6 +34,8 @@ struct WayFilter
 struct Profile
 {
         std::vector<WayFilter> wayfilters;
+        std::vector<int> allowedWayIds;
+        std::vector<int> forbiddenWayIds;
         const char *name;
         bool travel_time;
 };
