@@ -1,11 +1,14 @@
 package routingkit
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"runtime"
 
 	"github.com/nextmv-io/go-routingkit/routingkit/internal/routingkit"
+	"github.com/paulmach/osm"
+	"github.com/paulmach/osm/osmpbf"
 )
 
 // MaxDistance represents the maximum possible route distance.
@@ -24,332 +27,121 @@ type Wayfilter struct {
 	Allowed bool
 }
 
+func ParsePBF() map[int]bool {
+	file, err := os.Open("testdata/maryland.osm.pbf")
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
+
+	// The third parameter is the number of parallel decoders to use.
+	scanner := osmpbf.New(context.Background(), file, 1)
+	scanner.SkipNodes = true
+	scanner.SkipRelations = true
+	defer scanner.Close()
+
+	allowed := map[int]bool{}
+	for scanner.Scan() {
+		switch o := scanner.Object().(type) {
+		case *osm.Way:
+			tagMap := o.Tags.Map()
+			if TagMapFilter(tagMap) {
+				allowed[int(o.ID)] = true
+			}
+		}
+	}
+
+	if err := scanner.Err(); err != nil {
+		panic(err)
+	}
+
+	return allowed
+}
+
+func TagMapFilter(tagMap map[string]string) bool {
+	if _, ok := tagMap["junction"]; ok {
+		return true
+	}
+	if val, ok := tagMap["route"]; ok && val == "ferry" {
+		return true
+	}
+	if val, ok := tagMap["ferry"]; ok && val == "yes" {
+		return true
+	}
+	highway, ok := tagMap["highway"]
+	if !ok {
+		return false
+	}
+	if val, ok := tagMap["motorcar"]; ok && val == "no" {
+		return false
+	}
+	if val, ok := tagMap["motor_vehicle"]; ok && val == "no" {
+		return false
+	}
+
+	if val, ok := tagMap["access"]; ok {
+		if !(val == "yes" || val == "permissive" || val == "delivery" || val == "designated" || val == "destination") {
+			return false
+		}
+	}
+
+	if highway == "motorway" ||
+		highway == "trunk" ||
+		highway == "primary" ||
+		highway == "secondary" ||
+		highway == "tertiary" ||
+		highway == "unclassified" ||
+		highway == "residential" ||
+		highway == "service" ||
+		highway == "motorway_link" ||
+		highway == "trunk_link" ||
+		highway == "primary_link" ||
+		highway == "secondary_link" ||
+		highway == "tertiary_link" ||
+		highway == "motorway_junction" ||
+		highway == "living_street" ||
+		highway == "track" ||
+		highway == "ferry" {
+		return true
+	}
+
+	if highway == "bicycle_road" {
+		if val, ok := tagMap["motorcar"]; ok && val == "yes" {
+			return true
+		}
+		return false
+	}
+
+	if highway == "construction" ||
+		highway == "path" ||
+		highway == "footway" ||
+		highway == "cycleway" ||
+		highway == "bridleway" ||
+		highway == "pedestrian" ||
+		highway == "bus_guideway" ||
+		highway == "raceway" ||
+		highway == "escape" ||
+		highway == "steps" ||
+		highway == "proposed" ||
+		highway == "conveying" {
+		return false
+	}
+
+	if val, ok := tagMap["oneway"]; ok && val == "reversible" || val == "alternating" {
+		return false
+	}
+
+	if _, ok := tagMap["maxspeed"]; ok {
+		return true
+	}
+
+	return false
+}
+
 func Car() Profile {
 	profile := Profile{
-		Name: "car",
-		Wayfilters: []Wayfilter{
-			{
-				Tag:      "junction",
-				MatchTag: true,
-				Allowed:  true,
-			},
-			{
-				Tag:        "route",
-				MatchTag:   true,
-				Value:      "ferry",
-				MatchValue: true,
-				Allowed:    true,
-			},
-			{
-				Tag:        "ferry",
-				MatchTag:   true,
-				Value:      "yes",
-				MatchValue: true,
-				Allowed:    true,
-			},
-			{
-				// if highway doesn't match as a tag, this way is not allowed
-				Tag:      "highway",
-				MatchTag: false,
-				Allowed:  false,
-			},
-			{
-				Tag:        "motorcar",
-				MatchTag:   true,
-				Value:      "no",
-				MatchValue: true,
-				Allowed:    false,
-			},
-			{
-				Tag:        "motor_vehicle",
-				MatchTag:   true,
-				Value:      "no",
-				MatchValue: true,
-				Allowed:    false,
-			},
-			{
-				Tag:        "access",
-				MatchTag:   true,
-				Value:      "no",
-				MatchValue: true,
-				Allowed:    false,
-			},
-			{
-				Tag:        "access",
-				MatchTag:   true,
-				Value:      "agricultural",
-				MatchValue: true,
-				Allowed:    false,
-			},
-			{
-				Tag:        "access",
-				MatchTag:   true,
-				Value:      "forestry",
-				MatchValue: true,
-				Allowed:    false,
-			},
-			{
-				Tag:        "access",
-				MatchTag:   true,
-				Value:      "emergency",
-				MatchValue: true,
-				Allowed:    false,
-			},
-			{
-				Tag:        "access",
-				MatchTag:   true,
-				Value:      "psv",
-				MatchValue: true,
-				Allowed:    false,
-			},
-			{
-				Tag:        "access",
-				MatchTag:   true,
-				Value:      "customers",
-				MatchValue: true,
-				Allowed:    false,
-			},
-			{
-				Tag:        "access",
-				MatchTag:   true,
-				Value:      "private",
-				MatchValue: true,
-				Allowed:    false,
-			},
-			// allowed highways
-			{
-				Tag:        "highway",
-				MatchTag:   true,
-				Value:      "motorway",
-				MatchValue: true,
-				Allowed:    true,
-			},
-			{
-				Tag:        "highway",
-				MatchTag:   true,
-				Value:      "trunk",
-				MatchValue: true,
-				Allowed:    true,
-			},
-			{
-				Tag:        "highway",
-				MatchTag:   true,
-				Value:      "primary",
-				MatchValue: true,
-				Allowed:    true,
-			},
-			{
-				Tag:        "highway",
-				MatchTag:   true,
-				Value:      "secondary",
-				MatchValue: true,
-				Allowed:    true,
-			},
-			{
-				Tag:        "highway",
-				MatchTag:   true,
-				Value:      "tertiary",
-				MatchValue: true,
-				Allowed:    true,
-			},
-			{
-				Tag:        "highway",
-				MatchTag:   true,
-				Value:      "unclassified",
-				MatchValue: true,
-				Allowed:    true,
-			},
-			{
-				Tag:        "highway",
-				MatchTag:   true,
-				Value:      "residential",
-				MatchValue: true,
-				Allowed:    true,
-			},
-			{
-				Tag:        "highway",
-				MatchTag:   true,
-				Value:      "service",
-				MatchValue: true,
-				Allowed:    true,
-			},
-			{
-				Tag:        "highway",
-				MatchTag:   true,
-				Value:      "motorway_link",
-				MatchValue: true,
-				Allowed:    true,
-			},
-			{
-				Tag:        "highway",
-				MatchTag:   true,
-				Value:      "trunk_link",
-				MatchValue: true,
-				Allowed:    true,
-			},
-			{
-				Tag:        "highway",
-				MatchTag:   true,
-				Value:      "primary_link",
-				MatchValue: true,
-				Allowed:    true,
-			},
-			{
-				Tag:        "highway",
-				MatchTag:   true,
-				Value:      "secondary_link",
-				MatchValue: true,
-				Allowed:    true,
-			},
-			{
-				Tag:        "highway",
-				MatchTag:   true,
-				Value:      "tertiary_link",
-				MatchValue: true,
-				Allowed:    true,
-			},
-			{
-				Tag:        "highway",
-				MatchTag:   true,
-				Value:      "motorway_junction",
-				MatchValue: true,
-				Allowed:    true,
-			},
-			{
-				Tag:        "highway",
-				MatchTag:   true,
-				Value:      "living_street",
-				MatchValue: true,
-				Allowed:    true,
-			},
-			{
-				Tag:        "highway",
-				MatchTag:   true,
-				Value:      "residential",
-				MatchValue: true,
-				Allowed:    true,
-			},
-			{
-				Tag:        "highway",
-				MatchTag:   true,
-				Value:      "track",
-				MatchValue: true,
-				Allowed:    true,
-			},
-			{
-				Tag:        "highway",
-				MatchTag:   true,
-				Value:      "ferry",
-				MatchValue: true,
-				Allowed:    true,
-			},
-			// not allowed highways
-			{
-				Tag:        "highway",
-				MatchTag:   true,
-				Value:      "construction",
-				MatchValue: true,
-				Allowed:    false,
-			},
-			{
-				Tag:        "highway",
-				MatchTag:   true,
-				Value:      "path",
-				MatchValue: true,
-				Allowed:    false,
-			},
-			{
-				Tag:        "highway",
-				MatchTag:   true,
-				Value:      "footway",
-				MatchValue: true,
-				Allowed:    false,
-			},
-			{
-				Tag:        "highway",
-				MatchTag:   true,
-				Value:      "cycleway",
-				MatchValue: true,
-				Allowed:    false,
-			},
-			{
-				Tag:        "highway",
-				MatchTag:   true,
-				Value:      "bridleway",
-				MatchValue: true,
-				Allowed:    false,
-			},
-			{
-				Tag:        "highway",
-				MatchTag:   true,
-				Value:      "pedestrian",
-				MatchValue: true,
-				Allowed:    false,
-			},
-			{
-				Tag:        "highway",
-				MatchTag:   true,
-				Value:      "bus_guideway",
-				MatchValue: true,
-				Allowed:    false,
-			},
-			{
-				Tag:        "highway",
-				MatchTag:   true,
-				Value:      "raceway",
-				MatchValue: true,
-				Allowed:    false,
-			},
-			{
-				Tag:        "highway",
-				MatchTag:   true,
-				Value:      "escape",
-				MatchValue: true,
-				Allowed:    false,
-			},
-			{
-				Tag:        "highway",
-				MatchTag:   true,
-				Value:      "steps",
-				MatchValue: true,
-				Allowed:    false,
-			},
-			{
-				Tag:        "highway",
-				MatchTag:   true,
-				Value:      "proposed",
-				MatchValue: true,
-				Allowed:    false,
-			},
-			{
-				Tag:        "highway",
-				MatchTag:   true,
-				Value:      "conveying",
-				MatchValue: true,
-				Allowed:    false,
-			},
-			{
-				Tag:      "maxspeed",
-				MatchTag: true,
-				Allowed:  true,
-			},
-			// It's interesting that these get filtered out in this step, but I guess it makes sense
-			// because they're conditional on which direction you're trying to go in
-			{
-				Tag:        "oneway",
-				MatchTag:   true,
-				Value:      "reversible",
-				MatchValue: true,
-				Allowed:    false,
-			},
-			{
-				Tag:        "oneway",
-				MatchTag:   true,
-				Value:      "alternating",
-				MatchValue: true,
-				Allowed:    false,
-			},
-		},
+		Name:          "car",
+		AllowedWayIds: ParsePBF(),
 	}
 	return profile
 }
@@ -357,11 +149,6 @@ func Car() Profile {
 func Bike() Profile {
 	profile := Profile{
 		Name: "bike",
-		Wayfilters: []Wayfilter{
-			{
-				Tag: "highway",
-			},
-		},
 	}
 	return profile
 }
@@ -369,119 +156,25 @@ func Bike() Profile {
 func Pedestrian() Profile {
 	profile := Profile{
 		Name: "pedestrian",
-		Wayfilters: []Wayfilter{
-			{
-				Tag:      "junction",
-				MatchTag: true,
-				Allowed:  true,
-			},
-			{
-				Tag:      "route",
-				MatchTag: true,
-				Value:    "ferry",
-				Allowed:  true,
-			},
-			{
-				Tag:      "ferry",
-				MatchTag: true,
-				Value:    "ferry",
-				Allowed:  true,
-			},
-			{
-				Tag:      "public_transport",
-				MatchTag: true,
-				Value:    "stop_position",
-				Allowed:  true,
-			},
-			{
-				Tag:      "public_transport",
-				MatchTag: true,
-				Value:    "platform",
-				Allowed:  true,
-			},
-			{
-				Tag:      "public_transport",
-				MatchTag: true,
-				Value:    "stop_area",
-				Allowed:  true,
-			},
-			{
-				Tag:      "public_transport",
-				MatchTag: true,
-				Value:    "station",
-				Allowed:  true,
-			},
-			{
-				Tag:      "railway",
-				MatchTag: true,
-				Value:    "halt",
-				Allowed:  true,
-			},
-			{
-				Tag:      "railway",
-				MatchTag: true,
-				Value:    "platform",
-				Allowed:  true,
-			},
-			{
-				Tag:      "railway",
-				MatchTag: true,
-				Value:    "subway_entrance",
-				Allowed:  true,
-			},
-			{
-				Tag:      "railway",
-				MatchTag: true,
-				Value:    "station",
-				Allowed:  true,
-			},
-			{
-				Tag:      "railway",
-				MatchTag: true,
-				Value:    "tram_stop",
-				Allowed:  true,
-			},
-			{
-				Tag: "highway",
-			},
-		},
 	}
 	return profile
 }
 
 type Profile struct {
-	AllowedWayIds   map[int]bool
-	ForbiddenWayIds map[int]bool
-	Name            string
-	Wayfilters      []Wayfilter
+	AllowedWayIds map[int]bool
+	Name          string
+	Wayfilters    []Wayfilter
 }
 
 func (p Profile) swigProfile() routingkit.Profile {
 	customProfile := routingkit.NewProfile()
 	customProfile.SetName(p.Name)
 
-	wayFilterVector := routingkit.NewWayFilterVector()
-	for _, wayFilter := range p.Wayfilters {
-		wf := routingkit.NewWayFilter()
-		wf.SetTag(wayFilter.Tag)
-		wf.SetMatchTag(wayFilter.MatchTag)
-		wf.SetValue(wayFilter.Value)
-		wf.SetMatchValue(wayFilter.MatchValue)
-		wf.SetAllowed(wayFilter.Allowed)
-		wayFilterVector.Add(wf)
-	}
-	customProfile.SetWayfilters(wayFilterVector)
-
 	allowedWayIds := routingkit.NewIntVector()
 	for wayId := range p.AllowedWayIds {
 		allowedWayIds.Add(wayId)
 	}
 	customProfile.SetAllowedWayIds(allowedWayIds)
-	forbiddenWayIds := routingkit.NewIntVector()
-	for wayId := range p.ForbiddenWayIds {
-		forbiddenWayIds.Add(wayId)
-	}
-	customProfile.SetAllowedWayIds(forbiddenWayIds)
 
 	return customProfile
 }

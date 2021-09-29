@@ -69,7 +69,9 @@ func TestNearest(t *testing.T) {
 		},
 	}
 
-	cli, err := routingkit.NewDistanceClient(marylandMap, routingkit.Car())
+	car := routingkit.Car()
+
+	cli, err := routingkit.NewDistanceClient(marylandMap, car)
 	if err != nil {
 		t.Fatalf("creating Client: %v", err)
 	}

@@ -325,25 +325,11 @@ SWIGINTERN void std_vector_Sl_long_Sg__set(std::vector< long > *self,int i,std::
                 else
                     throw std::out_of_range("vector index out of range");
             }
-SWIGINTERN std::vector< WayFilter >::const_reference std_vector_Sl_WayFilter_Sg__get(std::vector< WayFilter > *self,int i){
-                int size = int(self->size());
-                if (i>=0 && i<size)
-                    return (*self)[i];
-                else
-                    throw std::out_of_range("vector index out of range");
-            }
-SWIGINTERN void std_vector_Sl_WayFilter_Sg__set(std::vector< WayFilter > *self,int i,std::vector< WayFilter >::value_type const &val){
-                int size = int(self->size());
-                if (i>=0 && i<size)
-                    (*self)[i] = val;
-                else
-                    throw std::out_of_range("vector index out of range");
-            }
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void _wrap_Swig_free_routingkit_192513bd4d9cfeea(void *_swig_go_0) {
+void _wrap_Swig_free_routingkit_ce045163960071b9(void *_swig_go_0) {
   void *arg1 = (void *) 0 ;
   
   arg1 = *(void **)&_swig_go_0; 
@@ -353,7 +339,7 @@ void _wrap_Swig_free_routingkit_192513bd4d9cfeea(void *_swig_go_0) {
 }
 
 
-void *_wrap_Swig_malloc_routingkit_192513bd4d9cfeea(intgo _swig_go_0) {
+void *_wrap_Swig_malloc_routingkit_ce045163960071b9(intgo _swig_go_0) {
   int arg1 ;
   void *result = 0 ;
   void *_swig_go_result;
@@ -366,7 +352,7 @@ void *_wrap_Swig_malloc_routingkit_192513bd4d9cfeea(intgo _swig_go_0) {
 }
 
 
-std::vector< int > *_wrap_new_IntVector__SWIG_0_routingkit_192513bd4d9cfeea() {
+std::vector< int > *_wrap_new_IntVector__SWIG_0_routingkit_ce045163960071b9() {
   std::vector< int > *result = 0 ;
   std::vector< int > *_swig_go_result;
   
@@ -377,7 +363,7 @@ std::vector< int > *_wrap_new_IntVector__SWIG_0_routingkit_192513bd4d9cfeea() {
 }
 
 
-std::vector< int > *_wrap_new_IntVector__SWIG_1_routingkit_192513bd4d9cfeea(long long _swig_go_0) {
+std::vector< int > *_wrap_new_IntVector__SWIG_1_routingkit_ce045163960071b9(long long _swig_go_0) {
   std::vector< int >::size_type arg1 ;
   std::vector< int > *result = 0 ;
   std::vector< int > *_swig_go_result;
@@ -390,7 +376,7 @@ std::vector< int > *_wrap_new_IntVector__SWIG_1_routingkit_192513bd4d9cfeea(long
 }
 
 
-std::vector< int > *_wrap_new_IntVector__SWIG_2_routingkit_192513bd4d9cfeea(std::vector< int > *_swig_go_0) {
+std::vector< int > *_wrap_new_IntVector__SWIG_2_routingkit_ce045163960071b9(std::vector< int > *_swig_go_0) {
   std::vector< int > *arg1 = 0 ;
   std::vector< int > *result = 0 ;
   std::vector< int > *_swig_go_result;
@@ -403,7 +389,7 @@ std::vector< int > *_wrap_new_IntVector__SWIG_2_routingkit_192513bd4d9cfeea(std:
 }
 
 
-long long _wrap_IntVector_size_routingkit_192513bd4d9cfeea(std::vector< int > *_swig_go_0) {
+long long _wrap_IntVector_size_routingkit_ce045163960071b9(std::vector< int > *_swig_go_0) {
   std::vector< int > *arg1 = (std::vector< int > *) 0 ;
   std::vector< int >::size_type result;
   long long _swig_go_result;
@@ -416,7 +402,7 @@ long long _wrap_IntVector_size_routingkit_192513bd4d9cfeea(std::vector< int > *_
 }
 
 
-long long _wrap_IntVector_capacity_routingkit_192513bd4d9cfeea(std::vector< int > *_swig_go_0) {
+long long _wrap_IntVector_capacity_routingkit_ce045163960071b9(std::vector< int > *_swig_go_0) {
   std::vector< int > *arg1 = (std::vector< int > *) 0 ;
   std::vector< int >::size_type result;
   long long _swig_go_result;
@@ -429,7 +415,7 @@ long long _wrap_IntVector_capacity_routingkit_192513bd4d9cfeea(std::vector< int 
 }
 
 
-void _wrap_IntVector_reserve_routingkit_192513bd4d9cfeea(std::vector< int > *_swig_go_0, long long _swig_go_1) {
+void _wrap_IntVector_reserve_routingkit_ce045163960071b9(std::vector< int > *_swig_go_0, long long _swig_go_1) {
   std::vector< int > *arg1 = (std::vector< int > *) 0 ;
   std::vector< int >::size_type arg2 ;
   
@@ -441,7 +427,7 @@ void _wrap_IntVector_reserve_routingkit_192513bd4d9cfeea(std::vector< int > *_sw
 }
 
 
-bool _wrap_IntVector_isEmpty_routingkit_192513bd4d9cfeea(std::vector< int > *_swig_go_0) {
+bool _wrap_IntVector_isEmpty_routingkit_ce045163960071b9(std::vector< int > *_swig_go_0) {
   std::vector< int > *arg1 = (std::vector< int > *) 0 ;
   bool result;
   bool _swig_go_result;
@@ -454,7 +440,7 @@ bool _wrap_IntVector_isEmpty_routingkit_192513bd4d9cfeea(std::vector< int > *_sw
 }
 
 
-void _wrap_IntVector_clear_routingkit_192513bd4d9cfeea(std::vector< int > *_swig_go_0) {
+void _wrap_IntVector_clear_routingkit_ce045163960071b9(std::vector< int > *_swig_go_0) {
   std::vector< int > *arg1 = (std::vector< int > *) 0 ;
   
   arg1 = *(std::vector< int > **)&_swig_go_0; 
@@ -464,7 +450,7 @@ void _wrap_IntVector_clear_routingkit_192513bd4d9cfeea(std::vector< int > *_swig
 }
 
 
-void _wrap_IntVector_add_routingkit_192513bd4d9cfeea(std::vector< int > *_swig_go_0, intgo _swig_go_1) {
+void _wrap_IntVector_add_routingkit_ce045163960071b9(std::vector< int > *_swig_go_0, intgo _swig_go_1) {
   std::vector< int > *arg1 = (std::vector< int > *) 0 ;
   std::vector< int >::value_type *arg2 = 0 ;
   
@@ -476,7 +462,7 @@ void _wrap_IntVector_add_routingkit_192513bd4d9cfeea(std::vector< int > *_swig_g
 }
 
 
-intgo _wrap_IntVector_get_routingkit_192513bd4d9cfeea(std::vector< int > *_swig_go_0, intgo _swig_go_1) {
+intgo _wrap_IntVector_get_routingkit_ce045163960071b9(std::vector< int > *_swig_go_0, intgo _swig_go_1) {
   std::vector< int > *arg1 = (std::vector< int > *) 0 ;
   int arg2 ;
   std::vector< int >::value_type *result = 0 ;
@@ -497,7 +483,7 @@ intgo _wrap_IntVector_get_routingkit_192513bd4d9cfeea(std::vector< int > *_swig_
 }
 
 
-void _wrap_IntVector_set_routingkit_192513bd4d9cfeea(std::vector< int > *_swig_go_0, intgo _swig_go_1, intgo _swig_go_2) {
+void _wrap_IntVector_set_routingkit_ce045163960071b9(std::vector< int > *_swig_go_0, intgo _swig_go_1, intgo _swig_go_2) {
   std::vector< int > *arg1 = (std::vector< int > *) 0 ;
   int arg2 ;
   std::vector< int >::value_type *arg3 = 0 ;
@@ -517,7 +503,7 @@ void _wrap_IntVector_set_routingkit_192513bd4d9cfeea(std::vector< int > *_swig_g
 }
 
 
-void _wrap_delete_IntVector_routingkit_192513bd4d9cfeea(std::vector< int > *_swig_go_0) {
+void _wrap_delete_IntVector_routingkit_ce045163960071b9(std::vector< int > *_swig_go_0) {
   std::vector< int > *arg1 = (std::vector< int > *) 0 ;
   
   arg1 = *(std::vector< int > **)&_swig_go_0; 
@@ -527,7 +513,7 @@ void _wrap_delete_IntVector_routingkit_192513bd4d9cfeea(std::vector< int > *_swi
 }
 
 
-std::vector< float > *_wrap_new_FloatVector__SWIG_0_routingkit_192513bd4d9cfeea() {
+std::vector< float > *_wrap_new_FloatVector__SWIG_0_routingkit_ce045163960071b9() {
   std::vector< float > *result = 0 ;
   std::vector< float > *_swig_go_result;
   
@@ -538,7 +524,7 @@ std::vector< float > *_wrap_new_FloatVector__SWIG_0_routingkit_192513bd4d9cfeea(
 }
 
 
-std::vector< float > *_wrap_new_FloatVector__SWIG_1_routingkit_192513bd4d9cfeea(long long _swig_go_0) {
+std::vector< float > *_wrap_new_FloatVector__SWIG_1_routingkit_ce045163960071b9(long long _swig_go_0) {
   std::vector< float >::size_type arg1 ;
   std::vector< float > *result = 0 ;
   std::vector< float > *_swig_go_result;
@@ -551,7 +537,7 @@ std::vector< float > *_wrap_new_FloatVector__SWIG_1_routingkit_192513bd4d9cfeea(
 }
 
 
-std::vector< float > *_wrap_new_FloatVector__SWIG_2_routingkit_192513bd4d9cfeea(std::vector< float > *_swig_go_0) {
+std::vector< float > *_wrap_new_FloatVector__SWIG_2_routingkit_ce045163960071b9(std::vector< float > *_swig_go_0) {
   std::vector< float > *arg1 = 0 ;
   std::vector< float > *result = 0 ;
   std::vector< float > *_swig_go_result;
@@ -564,7 +550,7 @@ std::vector< float > *_wrap_new_FloatVector__SWIG_2_routingkit_192513bd4d9cfeea(
 }
 
 
-long long _wrap_FloatVector_size_routingkit_192513bd4d9cfeea(std::vector< float > *_swig_go_0) {
+long long _wrap_FloatVector_size_routingkit_ce045163960071b9(std::vector< float > *_swig_go_0) {
   std::vector< float > *arg1 = (std::vector< float > *) 0 ;
   std::vector< float >::size_type result;
   long long _swig_go_result;
@@ -577,7 +563,7 @@ long long _wrap_FloatVector_size_routingkit_192513bd4d9cfeea(std::vector< float 
 }
 
 
-long long _wrap_FloatVector_capacity_routingkit_192513bd4d9cfeea(std::vector< float > *_swig_go_0) {
+long long _wrap_FloatVector_capacity_routingkit_ce045163960071b9(std::vector< float > *_swig_go_0) {
   std::vector< float > *arg1 = (std::vector< float > *) 0 ;
   std::vector< float >::size_type result;
   long long _swig_go_result;
@@ -590,7 +576,7 @@ long long _wrap_FloatVector_capacity_routingkit_192513bd4d9cfeea(std::vector< fl
 }
 
 
-void _wrap_FloatVector_reserve_routingkit_192513bd4d9cfeea(std::vector< float > *_swig_go_0, long long _swig_go_1) {
+void _wrap_FloatVector_reserve_routingkit_ce045163960071b9(std::vector< float > *_swig_go_0, long long _swig_go_1) {
   std::vector< float > *arg1 = (std::vector< float > *) 0 ;
   std::vector< float >::size_type arg2 ;
   
@@ -602,7 +588,7 @@ void _wrap_FloatVector_reserve_routingkit_192513bd4d9cfeea(std::vector< float > 
 }
 
 
-bool _wrap_FloatVector_isEmpty_routingkit_192513bd4d9cfeea(std::vector< float > *_swig_go_0) {
+bool _wrap_FloatVector_isEmpty_routingkit_ce045163960071b9(std::vector< float > *_swig_go_0) {
   std::vector< float > *arg1 = (std::vector< float > *) 0 ;
   bool result;
   bool _swig_go_result;
@@ -615,7 +601,7 @@ bool _wrap_FloatVector_isEmpty_routingkit_192513bd4d9cfeea(std::vector< float > 
 }
 
 
-void _wrap_FloatVector_clear_routingkit_192513bd4d9cfeea(std::vector< float > *_swig_go_0) {
+void _wrap_FloatVector_clear_routingkit_ce045163960071b9(std::vector< float > *_swig_go_0) {
   std::vector< float > *arg1 = (std::vector< float > *) 0 ;
   
   arg1 = *(std::vector< float > **)&_swig_go_0; 
@@ -625,7 +611,7 @@ void _wrap_FloatVector_clear_routingkit_192513bd4d9cfeea(std::vector< float > *_
 }
 
 
-void _wrap_FloatVector_add_routingkit_192513bd4d9cfeea(std::vector< float > *_swig_go_0, float _swig_go_1) {
+void _wrap_FloatVector_add_routingkit_ce045163960071b9(std::vector< float > *_swig_go_0, float _swig_go_1) {
   std::vector< float > *arg1 = (std::vector< float > *) 0 ;
   std::vector< float >::value_type *arg2 = 0 ;
   
@@ -637,7 +623,7 @@ void _wrap_FloatVector_add_routingkit_192513bd4d9cfeea(std::vector< float > *_sw
 }
 
 
-float _wrap_FloatVector_get_routingkit_192513bd4d9cfeea(std::vector< float > *_swig_go_0, intgo _swig_go_1) {
+float _wrap_FloatVector_get_routingkit_ce045163960071b9(std::vector< float > *_swig_go_0, intgo _swig_go_1) {
   std::vector< float > *arg1 = (std::vector< float > *) 0 ;
   int arg2 ;
   std::vector< float >::value_type *result = 0 ;
@@ -658,7 +644,7 @@ float _wrap_FloatVector_get_routingkit_192513bd4d9cfeea(std::vector< float > *_s
 }
 
 
-void _wrap_FloatVector_set_routingkit_192513bd4d9cfeea(std::vector< float > *_swig_go_0, intgo _swig_go_1, float _swig_go_2) {
+void _wrap_FloatVector_set_routingkit_ce045163960071b9(std::vector< float > *_swig_go_0, intgo _swig_go_1, float _swig_go_2) {
   std::vector< float > *arg1 = (std::vector< float > *) 0 ;
   int arg2 ;
   std::vector< float >::value_type *arg3 = 0 ;
@@ -678,7 +664,7 @@ void _wrap_FloatVector_set_routingkit_192513bd4d9cfeea(std::vector< float > *_sw
 }
 
 
-void _wrap_delete_FloatVector_routingkit_192513bd4d9cfeea(std::vector< float > *_swig_go_0) {
+void _wrap_delete_FloatVector_routingkit_ce045163960071b9(std::vector< float > *_swig_go_0) {
   std::vector< float > *arg1 = (std::vector< float > *) 0 ;
   
   arg1 = *(std::vector< float > **)&_swig_go_0; 
@@ -688,7 +674,7 @@ void _wrap_delete_FloatVector_routingkit_192513bd4d9cfeea(std::vector< float > *
 }
 
 
-std::vector< Point > *_wrap_new_PointVector__SWIG_0_routingkit_192513bd4d9cfeea() {
+std::vector< Point > *_wrap_new_PointVector__SWIG_0_routingkit_ce045163960071b9() {
   std::vector< Point > *result = 0 ;
   std::vector< Point > *_swig_go_result;
   
@@ -699,7 +685,7 @@ std::vector< Point > *_wrap_new_PointVector__SWIG_0_routingkit_192513bd4d9cfeea(
 }
 
 
-std::vector< Point > *_wrap_new_PointVector__SWIG_1_routingkit_192513bd4d9cfeea(long long _swig_go_0) {
+std::vector< Point > *_wrap_new_PointVector__SWIG_1_routingkit_ce045163960071b9(long long _swig_go_0) {
   std::vector< Point >::size_type arg1 ;
   std::vector< Point > *result = 0 ;
   std::vector< Point > *_swig_go_result;
@@ -712,7 +698,7 @@ std::vector< Point > *_wrap_new_PointVector__SWIG_1_routingkit_192513bd4d9cfeea(
 }
 
 
-std::vector< Point > *_wrap_new_PointVector__SWIG_2_routingkit_192513bd4d9cfeea(std::vector< Point > *_swig_go_0) {
+std::vector< Point > *_wrap_new_PointVector__SWIG_2_routingkit_ce045163960071b9(std::vector< Point > *_swig_go_0) {
   std::vector< Point > *arg1 = 0 ;
   std::vector< Point > *result = 0 ;
   std::vector< Point > *_swig_go_result;
@@ -725,7 +711,7 @@ std::vector< Point > *_wrap_new_PointVector__SWIG_2_routingkit_192513bd4d9cfeea(
 }
 
 
-long long _wrap_PointVector_size_routingkit_192513bd4d9cfeea(std::vector< Point > *_swig_go_0) {
+long long _wrap_PointVector_size_routingkit_ce045163960071b9(std::vector< Point > *_swig_go_0) {
   std::vector< Point > *arg1 = (std::vector< Point > *) 0 ;
   std::vector< Point >::size_type result;
   long long _swig_go_result;
@@ -738,7 +724,7 @@ long long _wrap_PointVector_size_routingkit_192513bd4d9cfeea(std::vector< Point 
 }
 
 
-long long _wrap_PointVector_capacity_routingkit_192513bd4d9cfeea(std::vector< Point > *_swig_go_0) {
+long long _wrap_PointVector_capacity_routingkit_ce045163960071b9(std::vector< Point > *_swig_go_0) {
   std::vector< Point > *arg1 = (std::vector< Point > *) 0 ;
   std::vector< Point >::size_type result;
   long long _swig_go_result;
@@ -751,7 +737,7 @@ long long _wrap_PointVector_capacity_routingkit_192513bd4d9cfeea(std::vector< Po
 }
 
 
-void _wrap_PointVector_reserve_routingkit_192513bd4d9cfeea(std::vector< Point > *_swig_go_0, long long _swig_go_1) {
+void _wrap_PointVector_reserve_routingkit_ce045163960071b9(std::vector< Point > *_swig_go_0, long long _swig_go_1) {
   std::vector< Point > *arg1 = (std::vector< Point > *) 0 ;
   std::vector< Point >::size_type arg2 ;
   
@@ -763,7 +749,7 @@ void _wrap_PointVector_reserve_routingkit_192513bd4d9cfeea(std::vector< Point > 
 }
 
 
-bool _wrap_PointVector_isEmpty_routingkit_192513bd4d9cfeea(std::vector< Point > *_swig_go_0) {
+bool _wrap_PointVector_isEmpty_routingkit_ce045163960071b9(std::vector< Point > *_swig_go_0) {
   std::vector< Point > *arg1 = (std::vector< Point > *) 0 ;
   bool result;
   bool _swig_go_result;
@@ -776,7 +762,7 @@ bool _wrap_PointVector_isEmpty_routingkit_192513bd4d9cfeea(std::vector< Point > 
 }
 
 
-void _wrap_PointVector_clear_routingkit_192513bd4d9cfeea(std::vector< Point > *_swig_go_0) {
+void _wrap_PointVector_clear_routingkit_ce045163960071b9(std::vector< Point > *_swig_go_0) {
   std::vector< Point > *arg1 = (std::vector< Point > *) 0 ;
   
   arg1 = *(std::vector< Point > **)&_swig_go_0; 
@@ -786,7 +772,7 @@ void _wrap_PointVector_clear_routingkit_192513bd4d9cfeea(std::vector< Point > *_
 }
 
 
-void _wrap_PointVector_add_routingkit_192513bd4d9cfeea(std::vector< Point > *_swig_go_0, Point *_swig_go_1) {
+void _wrap_PointVector_add_routingkit_ce045163960071b9(std::vector< Point > *_swig_go_0, Point *_swig_go_1) {
   std::vector< Point > *arg1 = (std::vector< Point > *) 0 ;
   std::vector< Point >::value_type *arg2 = 0 ;
   
@@ -798,7 +784,7 @@ void _wrap_PointVector_add_routingkit_192513bd4d9cfeea(std::vector< Point > *_sw
 }
 
 
-Point *_wrap_PointVector_get_routingkit_192513bd4d9cfeea(std::vector< Point > *_swig_go_0, intgo _swig_go_1) {
+Point *_wrap_PointVector_get_routingkit_ce045163960071b9(std::vector< Point > *_swig_go_0, intgo _swig_go_1) {
   std::vector< Point > *arg1 = (std::vector< Point > *) 0 ;
   int arg2 ;
   std::vector< Point >::value_type *result = 0 ;
@@ -819,7 +805,7 @@ Point *_wrap_PointVector_get_routingkit_192513bd4d9cfeea(std::vector< Point > *_
 }
 
 
-void _wrap_PointVector_set_routingkit_192513bd4d9cfeea(std::vector< Point > *_swig_go_0, intgo _swig_go_1, Point *_swig_go_2) {
+void _wrap_PointVector_set_routingkit_ce045163960071b9(std::vector< Point > *_swig_go_0, intgo _swig_go_1, Point *_swig_go_2) {
   std::vector< Point > *arg1 = (std::vector< Point > *) 0 ;
   int arg2 ;
   std::vector< Point >::value_type *arg3 = 0 ;
@@ -839,7 +825,7 @@ void _wrap_PointVector_set_routingkit_192513bd4d9cfeea(std::vector< Point > *_sw
 }
 
 
-void _wrap_delete_PointVector_routingkit_192513bd4d9cfeea(std::vector< Point > *_swig_go_0) {
+void _wrap_delete_PointVector_routingkit_ce045163960071b9(std::vector< Point > *_swig_go_0) {
   std::vector< Point > *arg1 = (std::vector< Point > *) 0 ;
   
   arg1 = *(std::vector< Point > **)&_swig_go_0; 
@@ -849,7 +835,7 @@ void _wrap_delete_PointVector_routingkit_192513bd4d9cfeea(std::vector< Point > *
 }
 
 
-std::vector< unsigned int > *_wrap_new_UnsignedVector__SWIG_0_routingkit_192513bd4d9cfeea() {
+std::vector< unsigned int > *_wrap_new_UnsignedVector__SWIG_0_routingkit_ce045163960071b9() {
   std::vector< unsigned int > *result = 0 ;
   std::vector< unsigned int > *_swig_go_result;
   
@@ -860,7 +846,7 @@ std::vector< unsigned int > *_wrap_new_UnsignedVector__SWIG_0_routingkit_192513b
 }
 
 
-std::vector< unsigned int > *_wrap_new_UnsignedVector__SWIG_1_routingkit_192513bd4d9cfeea(long long _swig_go_0) {
+std::vector< unsigned int > *_wrap_new_UnsignedVector__SWIG_1_routingkit_ce045163960071b9(long long _swig_go_0) {
   std::vector< unsigned int >::size_type arg1 ;
   std::vector< unsigned int > *result = 0 ;
   std::vector< unsigned int > *_swig_go_result;
@@ -873,7 +859,7 @@ std::vector< unsigned int > *_wrap_new_UnsignedVector__SWIG_1_routingkit_192513b
 }
 
 
-std::vector< unsigned int > *_wrap_new_UnsignedVector__SWIG_2_routingkit_192513bd4d9cfeea(std::vector< unsigned int > *_swig_go_0) {
+std::vector< unsigned int > *_wrap_new_UnsignedVector__SWIG_2_routingkit_ce045163960071b9(std::vector< unsigned int > *_swig_go_0) {
   std::vector< unsigned int > *arg1 = 0 ;
   std::vector< unsigned int > *result = 0 ;
   std::vector< unsigned int > *_swig_go_result;
@@ -886,7 +872,7 @@ std::vector< unsigned int > *_wrap_new_UnsignedVector__SWIG_2_routingkit_192513b
 }
 
 
-long long _wrap_UnsignedVector_size_routingkit_192513bd4d9cfeea(std::vector< unsigned int > *_swig_go_0) {
+long long _wrap_UnsignedVector_size_routingkit_ce045163960071b9(std::vector< unsigned int > *_swig_go_0) {
   std::vector< unsigned int > *arg1 = (std::vector< unsigned int > *) 0 ;
   std::vector< unsigned int >::size_type result;
   long long _swig_go_result;
@@ -899,7 +885,7 @@ long long _wrap_UnsignedVector_size_routingkit_192513bd4d9cfeea(std::vector< uns
 }
 
 
-long long _wrap_UnsignedVector_capacity_routingkit_192513bd4d9cfeea(std::vector< unsigned int > *_swig_go_0) {
+long long _wrap_UnsignedVector_capacity_routingkit_ce045163960071b9(std::vector< unsigned int > *_swig_go_0) {
   std::vector< unsigned int > *arg1 = (std::vector< unsigned int > *) 0 ;
   std::vector< unsigned int >::size_type result;
   long long _swig_go_result;
@@ -912,7 +898,7 @@ long long _wrap_UnsignedVector_capacity_routingkit_192513bd4d9cfeea(std::vector<
 }
 
 
-void _wrap_UnsignedVector_reserve_routingkit_192513bd4d9cfeea(std::vector< unsigned int > *_swig_go_0, long long _swig_go_1) {
+void _wrap_UnsignedVector_reserve_routingkit_ce045163960071b9(std::vector< unsigned int > *_swig_go_0, long long _swig_go_1) {
   std::vector< unsigned int > *arg1 = (std::vector< unsigned int > *) 0 ;
   std::vector< unsigned int >::size_type arg2 ;
   
@@ -924,7 +910,7 @@ void _wrap_UnsignedVector_reserve_routingkit_192513bd4d9cfeea(std::vector< unsig
 }
 
 
-bool _wrap_UnsignedVector_isEmpty_routingkit_192513bd4d9cfeea(std::vector< unsigned int > *_swig_go_0) {
+bool _wrap_UnsignedVector_isEmpty_routingkit_ce045163960071b9(std::vector< unsigned int > *_swig_go_0) {
   std::vector< unsigned int > *arg1 = (std::vector< unsigned int > *) 0 ;
   bool result;
   bool _swig_go_result;
@@ -937,7 +923,7 @@ bool _wrap_UnsignedVector_isEmpty_routingkit_192513bd4d9cfeea(std::vector< unsig
 }
 
 
-void _wrap_UnsignedVector_clear_routingkit_192513bd4d9cfeea(std::vector< unsigned int > *_swig_go_0) {
+void _wrap_UnsignedVector_clear_routingkit_ce045163960071b9(std::vector< unsigned int > *_swig_go_0) {
   std::vector< unsigned int > *arg1 = (std::vector< unsigned int > *) 0 ;
   
   arg1 = *(std::vector< unsigned int > **)&_swig_go_0; 
@@ -947,7 +933,7 @@ void _wrap_UnsignedVector_clear_routingkit_192513bd4d9cfeea(std::vector< unsigne
 }
 
 
-void _wrap_UnsignedVector_add_routingkit_192513bd4d9cfeea(std::vector< unsigned int > *_swig_go_0, intgo _swig_go_1) {
+void _wrap_UnsignedVector_add_routingkit_ce045163960071b9(std::vector< unsigned int > *_swig_go_0, intgo _swig_go_1) {
   std::vector< unsigned int > *arg1 = (std::vector< unsigned int > *) 0 ;
   std::vector< unsigned int >::value_type *arg2 = 0 ;
   
@@ -959,7 +945,7 @@ void _wrap_UnsignedVector_add_routingkit_192513bd4d9cfeea(std::vector< unsigned 
 }
 
 
-intgo _wrap_UnsignedVector_get_routingkit_192513bd4d9cfeea(std::vector< unsigned int > *_swig_go_0, intgo _swig_go_1) {
+intgo _wrap_UnsignedVector_get_routingkit_ce045163960071b9(std::vector< unsigned int > *_swig_go_0, intgo _swig_go_1) {
   std::vector< unsigned int > *arg1 = (std::vector< unsigned int > *) 0 ;
   int arg2 ;
   std::vector< unsigned int >::value_type *result = 0 ;
@@ -980,7 +966,7 @@ intgo _wrap_UnsignedVector_get_routingkit_192513bd4d9cfeea(std::vector< unsigned
 }
 
 
-void _wrap_UnsignedVector_set_routingkit_192513bd4d9cfeea(std::vector< unsigned int > *_swig_go_0, intgo _swig_go_1, intgo _swig_go_2) {
+void _wrap_UnsignedVector_set_routingkit_ce045163960071b9(std::vector< unsigned int > *_swig_go_0, intgo _swig_go_1, intgo _swig_go_2) {
   std::vector< unsigned int > *arg1 = (std::vector< unsigned int > *) 0 ;
   int arg2 ;
   std::vector< unsigned int >::value_type *arg3 = 0 ;
@@ -1000,7 +986,7 @@ void _wrap_UnsignedVector_set_routingkit_192513bd4d9cfeea(std::vector< unsigned 
 }
 
 
-void _wrap_delete_UnsignedVector_routingkit_192513bd4d9cfeea(std::vector< unsigned int > *_swig_go_0) {
+void _wrap_delete_UnsignedVector_routingkit_ce045163960071b9(std::vector< unsigned int > *_swig_go_0) {
   std::vector< unsigned int > *arg1 = (std::vector< unsigned int > *) 0 ;
   
   arg1 = *(std::vector< unsigned int > **)&_swig_go_0; 
@@ -1010,7 +996,7 @@ void _wrap_delete_UnsignedVector_routingkit_192513bd4d9cfeea(std::vector< unsign
 }
 
 
-std::vector< long > *_wrap_new_LongIntVector__SWIG_0_routingkit_192513bd4d9cfeea() {
+std::vector< long > *_wrap_new_LongIntVector__SWIG_0_routingkit_ce045163960071b9() {
   std::vector< long > *result = 0 ;
   std::vector< long > *_swig_go_result;
   
@@ -1021,7 +1007,7 @@ std::vector< long > *_wrap_new_LongIntVector__SWIG_0_routingkit_192513bd4d9cfeea
 }
 
 
-std::vector< long > *_wrap_new_LongIntVector__SWIG_1_routingkit_192513bd4d9cfeea(long long _swig_go_0) {
+std::vector< long > *_wrap_new_LongIntVector__SWIG_1_routingkit_ce045163960071b9(long long _swig_go_0) {
   std::vector< long >::size_type arg1 ;
   std::vector< long > *result = 0 ;
   std::vector< long > *_swig_go_result;
@@ -1034,7 +1020,7 @@ std::vector< long > *_wrap_new_LongIntVector__SWIG_1_routingkit_192513bd4d9cfeea
 }
 
 
-std::vector< long > *_wrap_new_LongIntVector__SWIG_2_routingkit_192513bd4d9cfeea(std::vector< long > *_swig_go_0) {
+std::vector< long > *_wrap_new_LongIntVector__SWIG_2_routingkit_ce045163960071b9(std::vector< long > *_swig_go_0) {
   std::vector< long > *arg1 = 0 ;
   std::vector< long > *result = 0 ;
   std::vector< long > *_swig_go_result;
@@ -1047,7 +1033,7 @@ std::vector< long > *_wrap_new_LongIntVector__SWIG_2_routingkit_192513bd4d9cfeea
 }
 
 
-long long _wrap_LongIntVector_size_routingkit_192513bd4d9cfeea(std::vector< long > *_swig_go_0) {
+long long _wrap_LongIntVector_size_routingkit_ce045163960071b9(std::vector< long > *_swig_go_0) {
   std::vector< long > *arg1 = (std::vector< long > *) 0 ;
   std::vector< long >::size_type result;
   long long _swig_go_result;
@@ -1060,7 +1046,7 @@ long long _wrap_LongIntVector_size_routingkit_192513bd4d9cfeea(std::vector< long
 }
 
 
-long long _wrap_LongIntVector_capacity_routingkit_192513bd4d9cfeea(std::vector< long > *_swig_go_0) {
+long long _wrap_LongIntVector_capacity_routingkit_ce045163960071b9(std::vector< long > *_swig_go_0) {
   std::vector< long > *arg1 = (std::vector< long > *) 0 ;
   std::vector< long >::size_type result;
   long long _swig_go_result;
@@ -1073,7 +1059,7 @@ long long _wrap_LongIntVector_capacity_routingkit_192513bd4d9cfeea(std::vector< 
 }
 
 
-void _wrap_LongIntVector_reserve_routingkit_192513bd4d9cfeea(std::vector< long > *_swig_go_0, long long _swig_go_1) {
+void _wrap_LongIntVector_reserve_routingkit_ce045163960071b9(std::vector< long > *_swig_go_0, long long _swig_go_1) {
   std::vector< long > *arg1 = (std::vector< long > *) 0 ;
   std::vector< long >::size_type arg2 ;
   
@@ -1085,7 +1071,7 @@ void _wrap_LongIntVector_reserve_routingkit_192513bd4d9cfeea(std::vector< long >
 }
 
 
-bool _wrap_LongIntVector_isEmpty_routingkit_192513bd4d9cfeea(std::vector< long > *_swig_go_0) {
+bool _wrap_LongIntVector_isEmpty_routingkit_ce045163960071b9(std::vector< long > *_swig_go_0) {
   std::vector< long > *arg1 = (std::vector< long > *) 0 ;
   bool result;
   bool _swig_go_result;
@@ -1098,7 +1084,7 @@ bool _wrap_LongIntVector_isEmpty_routingkit_192513bd4d9cfeea(std::vector< long >
 }
 
 
-void _wrap_LongIntVector_clear_routingkit_192513bd4d9cfeea(std::vector< long > *_swig_go_0) {
+void _wrap_LongIntVector_clear_routingkit_ce045163960071b9(std::vector< long > *_swig_go_0) {
   std::vector< long > *arg1 = (std::vector< long > *) 0 ;
   
   arg1 = *(std::vector< long > **)&_swig_go_0; 
@@ -1108,7 +1094,7 @@ void _wrap_LongIntVector_clear_routingkit_192513bd4d9cfeea(std::vector< long > *
 }
 
 
-void _wrap_LongIntVector_add_routingkit_192513bd4d9cfeea(std::vector< long > *_swig_go_0, long long _swig_go_1) {
+void _wrap_LongIntVector_add_routingkit_ce045163960071b9(std::vector< long > *_swig_go_0, long long _swig_go_1) {
   std::vector< long > *arg1 = (std::vector< long > *) 0 ;
   std::vector< long >::value_type *arg2 = 0 ;
   std::vector< long >::value_type temp2 ;
@@ -1122,7 +1108,7 @@ void _wrap_LongIntVector_add_routingkit_192513bd4d9cfeea(std::vector< long > *_s
 }
 
 
-long long _wrap_LongIntVector_get_routingkit_192513bd4d9cfeea(std::vector< long > *_swig_go_0, intgo _swig_go_1) {
+long long _wrap_LongIntVector_get_routingkit_ce045163960071b9(std::vector< long > *_swig_go_0, intgo _swig_go_1) {
   std::vector< long > *arg1 = (std::vector< long > *) 0 ;
   int arg2 ;
   std::vector< long >::value_type *result = 0 ;
@@ -1143,7 +1129,7 @@ long long _wrap_LongIntVector_get_routingkit_192513bd4d9cfeea(std::vector< long 
 }
 
 
-void _wrap_LongIntVector_set_routingkit_192513bd4d9cfeea(std::vector< long > *_swig_go_0, intgo _swig_go_1, long long _swig_go_2) {
+void _wrap_LongIntVector_set_routingkit_ce045163960071b9(std::vector< long > *_swig_go_0, intgo _swig_go_1, long long _swig_go_2) {
   std::vector< long > *arg1 = (std::vector< long > *) 0 ;
   int arg2 ;
   std::vector< long >::value_type *arg3 = 0 ;
@@ -1165,7 +1151,7 @@ void _wrap_LongIntVector_set_routingkit_192513bd4d9cfeea(std::vector< long > *_s
 }
 
 
-void _wrap_delete_LongIntVector_routingkit_192513bd4d9cfeea(std::vector< long > *_swig_go_0) {
+void _wrap_delete_LongIntVector_routingkit_ce045163960071b9(std::vector< long > *_swig_go_0) {
   std::vector< long > *arg1 = (std::vector< long > *) 0 ;
   
   arg1 = *(std::vector< long > **)&_swig_go_0; 
@@ -1175,168 +1161,7 @@ void _wrap_delete_LongIntVector_routingkit_192513bd4d9cfeea(std::vector< long > 
 }
 
 
-std::vector< WayFilter > *_wrap_new_WayFilterVector__SWIG_0_routingkit_192513bd4d9cfeea() {
-  std::vector< WayFilter > *result = 0 ;
-  std::vector< WayFilter > *_swig_go_result;
-  
-  
-  result = (std::vector< WayFilter > *)new std::vector< WayFilter >();
-  *(std::vector< WayFilter > **)&_swig_go_result = (std::vector< WayFilter > *)result; 
-  return _swig_go_result;
-}
-
-
-std::vector< WayFilter > *_wrap_new_WayFilterVector__SWIG_1_routingkit_192513bd4d9cfeea(long long _swig_go_0) {
-  std::vector< WayFilter >::size_type arg1 ;
-  std::vector< WayFilter > *result = 0 ;
-  std::vector< WayFilter > *_swig_go_result;
-  
-  arg1 = (size_t)_swig_go_0; 
-  
-  result = (std::vector< WayFilter > *)new std::vector< WayFilter >(arg1);
-  *(std::vector< WayFilter > **)&_swig_go_result = (std::vector< WayFilter > *)result; 
-  return _swig_go_result;
-}
-
-
-std::vector< WayFilter > *_wrap_new_WayFilterVector__SWIG_2_routingkit_192513bd4d9cfeea(std::vector< WayFilter > *_swig_go_0) {
-  std::vector< WayFilter > *arg1 = 0 ;
-  std::vector< WayFilter > *result = 0 ;
-  std::vector< WayFilter > *_swig_go_result;
-  
-  arg1 = *(std::vector< WayFilter > **)&_swig_go_0; 
-  
-  result = (std::vector< WayFilter > *)new std::vector< WayFilter >((std::vector< WayFilter > const &)*arg1);
-  *(std::vector< WayFilter > **)&_swig_go_result = (std::vector< WayFilter > *)result; 
-  return _swig_go_result;
-}
-
-
-long long _wrap_WayFilterVector_size_routingkit_192513bd4d9cfeea(std::vector< WayFilter > *_swig_go_0) {
-  std::vector< WayFilter > *arg1 = (std::vector< WayFilter > *) 0 ;
-  std::vector< WayFilter >::size_type result;
-  long long _swig_go_result;
-  
-  arg1 = *(std::vector< WayFilter > **)&_swig_go_0; 
-  
-  result = ((std::vector< WayFilter > const *)arg1)->size();
-  _swig_go_result = result; 
-  return _swig_go_result;
-}
-
-
-long long _wrap_WayFilterVector_capacity_routingkit_192513bd4d9cfeea(std::vector< WayFilter > *_swig_go_0) {
-  std::vector< WayFilter > *arg1 = (std::vector< WayFilter > *) 0 ;
-  std::vector< WayFilter >::size_type result;
-  long long _swig_go_result;
-  
-  arg1 = *(std::vector< WayFilter > **)&_swig_go_0; 
-  
-  result = ((std::vector< WayFilter > const *)arg1)->capacity();
-  _swig_go_result = result; 
-  return _swig_go_result;
-}
-
-
-void _wrap_WayFilterVector_reserve_routingkit_192513bd4d9cfeea(std::vector< WayFilter > *_swig_go_0, long long _swig_go_1) {
-  std::vector< WayFilter > *arg1 = (std::vector< WayFilter > *) 0 ;
-  std::vector< WayFilter >::size_type arg2 ;
-  
-  arg1 = *(std::vector< WayFilter > **)&_swig_go_0; 
-  arg2 = (size_t)_swig_go_1; 
-  
-  (arg1)->reserve(arg2);
-  
-}
-
-
-bool _wrap_WayFilterVector_isEmpty_routingkit_192513bd4d9cfeea(std::vector< WayFilter > *_swig_go_0) {
-  std::vector< WayFilter > *arg1 = (std::vector< WayFilter > *) 0 ;
-  bool result;
-  bool _swig_go_result;
-  
-  arg1 = *(std::vector< WayFilter > **)&_swig_go_0; 
-  
-  result = (bool)((std::vector< WayFilter > const *)arg1)->empty();
-  _swig_go_result = result; 
-  return _swig_go_result;
-}
-
-
-void _wrap_WayFilterVector_clear_routingkit_192513bd4d9cfeea(std::vector< WayFilter > *_swig_go_0) {
-  std::vector< WayFilter > *arg1 = (std::vector< WayFilter > *) 0 ;
-  
-  arg1 = *(std::vector< WayFilter > **)&_swig_go_0; 
-  
-  (arg1)->clear();
-  
-}
-
-
-void _wrap_WayFilterVector_add_routingkit_192513bd4d9cfeea(std::vector< WayFilter > *_swig_go_0, WayFilter *_swig_go_1) {
-  std::vector< WayFilter > *arg1 = (std::vector< WayFilter > *) 0 ;
-  std::vector< WayFilter >::value_type *arg2 = 0 ;
-  
-  arg1 = *(std::vector< WayFilter > **)&_swig_go_0; 
-  arg2 = *(std::vector< WayFilter >::value_type **)&_swig_go_1; 
-  
-  (arg1)->push_back((std::vector< WayFilter >::value_type const &)*arg2);
-  
-}
-
-
-WayFilter *_wrap_WayFilterVector_get_routingkit_192513bd4d9cfeea(std::vector< WayFilter > *_swig_go_0, intgo _swig_go_1) {
-  std::vector< WayFilter > *arg1 = (std::vector< WayFilter > *) 0 ;
-  int arg2 ;
-  std::vector< WayFilter >::value_type *result = 0 ;
-  WayFilter *_swig_go_result;
-  
-  arg1 = *(std::vector< WayFilter > **)&_swig_go_0; 
-  arg2 = (int)_swig_go_1; 
-  
-  try {
-    result = (std::vector< WayFilter >::value_type *) &std_vector_Sl_WayFilter_Sg__get(arg1,arg2);
-  } catch(std::out_of_range &_e) {
-    (void)_e;
-    _swig_gopanic("C++ std::out_of_range exception thrown");
-    
-  }
-  *(std::vector< WayFilter >::value_type **)&_swig_go_result = result; 
-  return _swig_go_result;
-}
-
-
-void _wrap_WayFilterVector_set_routingkit_192513bd4d9cfeea(std::vector< WayFilter > *_swig_go_0, intgo _swig_go_1, WayFilter *_swig_go_2) {
-  std::vector< WayFilter > *arg1 = (std::vector< WayFilter > *) 0 ;
-  int arg2 ;
-  std::vector< WayFilter >::value_type *arg3 = 0 ;
-  
-  arg1 = *(std::vector< WayFilter > **)&_swig_go_0; 
-  arg2 = (int)_swig_go_1; 
-  arg3 = *(std::vector< WayFilter >::value_type **)&_swig_go_2; 
-  
-  try {
-    std_vector_Sl_WayFilter_Sg__set(arg1,arg2,(WayFilter const &)*arg3);
-  } catch(std::out_of_range &_e) {
-    (void)_e;
-    _swig_gopanic("C++ std::out_of_range exception thrown");
-    
-  }
-  
-}
-
-
-void _wrap_delete_WayFilterVector_routingkit_192513bd4d9cfeea(std::vector< WayFilter > *_swig_go_0) {
-  std::vector< WayFilter > *arg1 = (std::vector< WayFilter > *) 0 ;
-  
-  arg1 = *(std::vector< WayFilter > **)&_swig_go_0; 
-  
-  delete arg1;
-  
-}
-
-
-void _wrap_Point_lon_set_routingkit_192513bd4d9cfeea(Point *_swig_go_0, float _swig_go_1) {
+void _wrap_Point_lon_set_routingkit_ce045163960071b9(Point *_swig_go_0, float _swig_go_1) {
   Point *arg1 = (Point *) 0 ;
   float arg2 ;
   
@@ -1348,7 +1173,7 @@ void _wrap_Point_lon_set_routingkit_192513bd4d9cfeea(Point *_swig_go_0, float _s
 }
 
 
-float _wrap_Point_lon_get_routingkit_192513bd4d9cfeea(Point *_swig_go_0) {
+float _wrap_Point_lon_get_routingkit_ce045163960071b9(Point *_swig_go_0) {
   Point *arg1 = (Point *) 0 ;
   float result;
   float _swig_go_result;
@@ -1361,7 +1186,7 @@ float _wrap_Point_lon_get_routingkit_192513bd4d9cfeea(Point *_swig_go_0) {
 }
 
 
-void _wrap_Point_lat_set_routingkit_192513bd4d9cfeea(Point *_swig_go_0, float _swig_go_1) {
+void _wrap_Point_lat_set_routingkit_ce045163960071b9(Point *_swig_go_0, float _swig_go_1) {
   Point *arg1 = (Point *) 0 ;
   float arg2 ;
   
@@ -1373,7 +1198,7 @@ void _wrap_Point_lat_set_routingkit_192513bd4d9cfeea(Point *_swig_go_0, float _s
 }
 
 
-float _wrap_Point_lat_get_routingkit_192513bd4d9cfeea(Point *_swig_go_0) {
+float _wrap_Point_lat_get_routingkit_ce045163960071b9(Point *_swig_go_0) {
   Point *arg1 = (Point *) 0 ;
   float result;
   float _swig_go_result;
@@ -1386,7 +1211,7 @@ float _wrap_Point_lat_get_routingkit_192513bd4d9cfeea(Point *_swig_go_0) {
 }
 
 
-Point *_wrap_new_Point_routingkit_192513bd4d9cfeea() {
+Point *_wrap_new_Point_routingkit_ce045163960071b9() {
   Point *result = 0 ;
   Point *_swig_go_result;
   
@@ -1397,7 +1222,7 @@ Point *_wrap_new_Point_routingkit_192513bd4d9cfeea() {
 }
 
 
-void _wrap_delete_Point_routingkit_192513bd4d9cfeea(Point *_swig_go_0) {
+void _wrap_delete_Point_routingkit_ce045163960071b9(Point *_swig_go_0) {
   Point *arg1 = (Point *) 0 ;
   
   arg1 = *(Point **)&_swig_go_0; 
@@ -1407,7 +1232,7 @@ void _wrap_delete_Point_routingkit_192513bd4d9cfeea(Point *_swig_go_0) {
 }
 
 
-void _wrap_QueryResponse_distance_set_routingkit_192513bd4d9cfeea(QueryResponse *_swig_go_0, intgo _swig_go_1) {
+void _wrap_QueryResponse_distance_set_routingkit_ce045163960071b9(QueryResponse *_swig_go_0, intgo _swig_go_1) {
   QueryResponse *arg1 = (QueryResponse *) 0 ;
   unsigned int arg2 ;
   
@@ -1419,7 +1244,7 @@ void _wrap_QueryResponse_distance_set_routingkit_192513bd4d9cfeea(QueryResponse 
 }
 
 
-intgo _wrap_QueryResponse_distance_get_routingkit_192513bd4d9cfeea(QueryResponse *_swig_go_0) {
+intgo _wrap_QueryResponse_distance_get_routingkit_ce045163960071b9(QueryResponse *_swig_go_0) {
   QueryResponse *arg1 = (QueryResponse *) 0 ;
   unsigned int result;
   intgo _swig_go_result;
@@ -1432,7 +1257,7 @@ intgo _wrap_QueryResponse_distance_get_routingkit_192513bd4d9cfeea(QueryResponse
 }
 
 
-void _wrap_QueryResponse_waypoints_set_routingkit_192513bd4d9cfeea(QueryResponse *_swig_go_0, std::vector< Point > *_swig_go_1) {
+void _wrap_QueryResponse_waypoints_set_routingkit_ce045163960071b9(QueryResponse *_swig_go_0, std::vector< Point > *_swig_go_1) {
   QueryResponse *arg1 = (QueryResponse *) 0 ;
   std::vector< Point > *arg2 = (std::vector< Point > *) 0 ;
   
@@ -1444,7 +1269,7 @@ void _wrap_QueryResponse_waypoints_set_routingkit_192513bd4d9cfeea(QueryResponse
 }
 
 
-std::vector< Point > *_wrap_QueryResponse_waypoints_get_routingkit_192513bd4d9cfeea(QueryResponse *_swig_go_0) {
+std::vector< Point > *_wrap_QueryResponse_waypoints_get_routingkit_ce045163960071b9(QueryResponse *_swig_go_0) {
   QueryResponse *arg1 = (QueryResponse *) 0 ;
   std::vector< Point > *result = 0 ;
   std::vector< Point > *_swig_go_result;
@@ -1457,7 +1282,7 @@ std::vector< Point > *_wrap_QueryResponse_waypoints_get_routingkit_192513bd4d9cf
 }
 
 
-QueryResponse *_wrap_new_QueryResponse_routingkit_192513bd4d9cfeea() {
+QueryResponse *_wrap_new_QueryResponse_routingkit_ce045163960071b9() {
   QueryResponse *result = 0 ;
   QueryResponse *_swig_go_result;
   
@@ -1468,7 +1293,7 @@ QueryResponse *_wrap_new_QueryResponse_routingkit_192513bd4d9cfeea() {
 }
 
 
-void _wrap_delete_QueryResponse_routingkit_192513bd4d9cfeea(QueryResponse *_swig_go_0) {
+void _wrap_delete_QueryResponse_routingkit_ce045163960071b9(QueryResponse *_swig_go_0) {
   QueryResponse *arg1 = (QueryResponse *) 0 ;
   
   arg1 = *(QueryResponse **)&_swig_go_0; 
@@ -1478,202 +1303,7 @@ void _wrap_delete_QueryResponse_routingkit_192513bd4d9cfeea(QueryResponse *_swig
 }
 
 
-void _wrap_WayFilter_tag_set_routingkit_192513bd4d9cfeea(WayFilter *_swig_go_0, _gostring_ _swig_go_1) {
-  WayFilter *arg1 = (WayFilter *) 0 ;
-  char *arg2 = (char *) 0 ;
-  
-  arg1 = *(WayFilter **)&_swig_go_0; 
-  
-  arg2 = (char *)malloc(_swig_go_1.n + 1);
-  memcpy(arg2, _swig_go_1.p, _swig_go_1.n);
-  arg2[_swig_go_1.n] = '\0';
-  
-  
-  {
-    if (arg2) {
-      arg1->tag = (char const *) (new char[strlen((const char *)arg2)+1]);
-      strcpy((char *)arg1->tag, (const char *)arg2);
-    } else {
-      arg1->tag = 0;
-    }
-  }
-  
-  free(arg2); 
-}
-
-
-_gostring_ _wrap_WayFilter_tag_get_routingkit_192513bd4d9cfeea(WayFilter *_swig_go_0) {
-  WayFilter *arg1 = (WayFilter *) 0 ;
-  char *result = 0 ;
-  _gostring_ _swig_go_result;
-  
-  arg1 = *(WayFilter **)&_swig_go_0; 
-  
-  result = (char *) ((arg1)->tag);
-  _swig_go_result = Swig_AllocateString((char*)result, result ? strlen((char*)result) : 0); 
-  return _swig_go_result;
-}
-
-
-void _wrap_WayFilter_matchTag_set_routingkit_192513bd4d9cfeea(WayFilter *_swig_go_0, bool _swig_go_1) {
-  WayFilter *arg1 = (WayFilter *) 0 ;
-  bool arg2 ;
-  
-  arg1 = *(WayFilter **)&_swig_go_0; 
-  arg2 = (bool)_swig_go_1; 
-  
-  if (arg1) (arg1)->matchTag = arg2;
-  
-}
-
-
-bool _wrap_WayFilter_matchTag_get_routingkit_192513bd4d9cfeea(WayFilter *_swig_go_0) {
-  WayFilter *arg1 = (WayFilter *) 0 ;
-  bool result;
-  bool _swig_go_result;
-  
-  arg1 = *(WayFilter **)&_swig_go_0; 
-  
-  result = (bool) ((arg1)->matchTag);
-  _swig_go_result = result; 
-  return _swig_go_result;
-}
-
-
-void _wrap_WayFilter_value_set_routingkit_192513bd4d9cfeea(WayFilter *_swig_go_0, _gostring_ _swig_go_1) {
-  WayFilter *arg1 = (WayFilter *) 0 ;
-  char *arg2 = (char *) 0 ;
-  
-  arg1 = *(WayFilter **)&_swig_go_0; 
-  
-  arg2 = (char *)malloc(_swig_go_1.n + 1);
-  memcpy(arg2, _swig_go_1.p, _swig_go_1.n);
-  arg2[_swig_go_1.n] = '\0';
-  
-  
-  {
-    if (arg2) {
-      arg1->value = (char const *) (new char[strlen((const char *)arg2)+1]);
-      strcpy((char *)arg1->value, (const char *)arg2);
-    } else {
-      arg1->value = 0;
-    }
-  }
-  
-  free(arg2); 
-}
-
-
-_gostring_ _wrap_WayFilter_value_get_routingkit_192513bd4d9cfeea(WayFilter *_swig_go_0) {
-  WayFilter *arg1 = (WayFilter *) 0 ;
-  char *result = 0 ;
-  _gostring_ _swig_go_result;
-  
-  arg1 = *(WayFilter **)&_swig_go_0; 
-  
-  result = (char *) ((arg1)->value);
-  _swig_go_result = Swig_AllocateString((char*)result, result ? strlen((char*)result) : 0); 
-  return _swig_go_result;
-}
-
-
-void _wrap_WayFilter_matchValue_set_routingkit_192513bd4d9cfeea(WayFilter *_swig_go_0, bool _swig_go_1) {
-  WayFilter *arg1 = (WayFilter *) 0 ;
-  bool arg2 ;
-  
-  arg1 = *(WayFilter **)&_swig_go_0; 
-  arg2 = (bool)_swig_go_1; 
-  
-  if (arg1) (arg1)->matchValue = arg2;
-  
-}
-
-
-bool _wrap_WayFilter_matchValue_get_routingkit_192513bd4d9cfeea(WayFilter *_swig_go_0) {
-  WayFilter *arg1 = (WayFilter *) 0 ;
-  bool result;
-  bool _swig_go_result;
-  
-  arg1 = *(WayFilter **)&_swig_go_0; 
-  
-  result = (bool) ((arg1)->matchValue);
-  _swig_go_result = result; 
-  return _swig_go_result;
-}
-
-
-void _wrap_WayFilter_allowed_set_routingkit_192513bd4d9cfeea(WayFilter *_swig_go_0, bool _swig_go_1) {
-  WayFilter *arg1 = (WayFilter *) 0 ;
-  bool arg2 ;
-  
-  arg1 = *(WayFilter **)&_swig_go_0; 
-  arg2 = (bool)_swig_go_1; 
-  
-  if (arg1) (arg1)->allowed = arg2;
-  
-}
-
-
-bool _wrap_WayFilter_allowed_get_routingkit_192513bd4d9cfeea(WayFilter *_swig_go_0) {
-  WayFilter *arg1 = (WayFilter *) 0 ;
-  bool result;
-  bool _swig_go_result;
-  
-  arg1 = *(WayFilter **)&_swig_go_0; 
-  
-  result = (bool) ((arg1)->allowed);
-  _swig_go_result = result; 
-  return _swig_go_result;
-}
-
-
-WayFilter *_wrap_new_WayFilter_routingkit_192513bd4d9cfeea() {
-  WayFilter *result = 0 ;
-  WayFilter *_swig_go_result;
-  
-  
-  result = (WayFilter *)new WayFilter();
-  *(WayFilter **)&_swig_go_result = (WayFilter *)result; 
-  return _swig_go_result;
-}
-
-
-void _wrap_delete_WayFilter_routingkit_192513bd4d9cfeea(WayFilter *_swig_go_0) {
-  WayFilter *arg1 = (WayFilter *) 0 ;
-  
-  arg1 = *(WayFilter **)&_swig_go_0; 
-  
-  delete arg1;
-  
-}
-
-
-void _wrap_Profile_wayfilters_set_routingkit_192513bd4d9cfeea(Profile *_swig_go_0, std::vector< WayFilter > *_swig_go_1) {
-  Profile *arg1 = (Profile *) 0 ;
-  std::vector< WayFilter > *arg2 = (std::vector< WayFilter > *) 0 ;
-  
-  arg1 = *(Profile **)&_swig_go_0; 
-  arg2 = *(std::vector< WayFilter > **)&_swig_go_1; 
-  
-  if (arg1) (arg1)->wayfilters = *arg2;
-  
-}
-
-
-std::vector< WayFilter > *_wrap_Profile_wayfilters_get_routingkit_192513bd4d9cfeea(Profile *_swig_go_0) {
-  Profile *arg1 = (Profile *) 0 ;
-  std::vector< WayFilter > *result = 0 ;
-  std::vector< WayFilter > *_swig_go_result;
-  
-  arg1 = *(Profile **)&_swig_go_0; 
-  
-  result = (std::vector< WayFilter > *)& ((arg1)->wayfilters);
-  *(std::vector< WayFilter > **)&_swig_go_result = (std::vector< WayFilter > *)result; 
-  return _swig_go_result;
-}
-
-
-void _wrap_Profile_allowedWayIds_set_routingkit_192513bd4d9cfeea(Profile *_swig_go_0, std::vector< int > *_swig_go_1) {
+void _wrap_Profile_allowedWayIds_set_routingkit_ce045163960071b9(Profile *_swig_go_0, std::vector< int > *_swig_go_1) {
   Profile *arg1 = (Profile *) 0 ;
   std::vector< int > *arg2 = (std::vector< int > *) 0 ;
   
@@ -1685,7 +1315,7 @@ void _wrap_Profile_allowedWayIds_set_routingkit_192513bd4d9cfeea(Profile *_swig_
 }
 
 
-std::vector< int > *_wrap_Profile_allowedWayIds_get_routingkit_192513bd4d9cfeea(Profile *_swig_go_0) {
+std::vector< int > *_wrap_Profile_allowedWayIds_get_routingkit_ce045163960071b9(Profile *_swig_go_0) {
   Profile *arg1 = (Profile *) 0 ;
   std::vector< int > *result = 0 ;
   std::vector< int > *_swig_go_result;
@@ -1698,32 +1328,7 @@ std::vector< int > *_wrap_Profile_allowedWayIds_get_routingkit_192513bd4d9cfeea(
 }
 
 
-void _wrap_Profile_forbiddenWayIds_set_routingkit_192513bd4d9cfeea(Profile *_swig_go_0, std::vector< int > *_swig_go_1) {
-  Profile *arg1 = (Profile *) 0 ;
-  std::vector< int > *arg2 = (std::vector< int > *) 0 ;
-  
-  arg1 = *(Profile **)&_swig_go_0; 
-  arg2 = *(std::vector< int > **)&_swig_go_1; 
-  
-  if (arg1) (arg1)->forbiddenWayIds = *arg2;
-  
-}
-
-
-std::vector< int > *_wrap_Profile_forbiddenWayIds_get_routingkit_192513bd4d9cfeea(Profile *_swig_go_0) {
-  Profile *arg1 = (Profile *) 0 ;
-  std::vector< int > *result = 0 ;
-  std::vector< int > *_swig_go_result;
-  
-  arg1 = *(Profile **)&_swig_go_0; 
-  
-  result = (std::vector< int > *)& ((arg1)->forbiddenWayIds);
-  *(std::vector< int > **)&_swig_go_result = (std::vector< int > *)result; 
-  return _swig_go_result;
-}
-
-
-void _wrap_Profile_name_set_routingkit_192513bd4d9cfeea(Profile *_swig_go_0, _gostring_ _swig_go_1) {
+void _wrap_Profile_name_set_routingkit_ce045163960071b9(Profile *_swig_go_0, _gostring_ _swig_go_1) {
   Profile *arg1 = (Profile *) 0 ;
   char *arg2 = (char *) 0 ;
   
@@ -1747,7 +1352,7 @@ void _wrap_Profile_name_set_routingkit_192513bd4d9cfeea(Profile *_swig_go_0, _go
 }
 
 
-_gostring_ _wrap_Profile_name_get_routingkit_192513bd4d9cfeea(Profile *_swig_go_0) {
+_gostring_ _wrap_Profile_name_get_routingkit_ce045163960071b9(Profile *_swig_go_0) {
   Profile *arg1 = (Profile *) 0 ;
   char *result = 0 ;
   _gostring_ _swig_go_result;
@@ -1760,7 +1365,7 @@ _gostring_ _wrap_Profile_name_get_routingkit_192513bd4d9cfeea(Profile *_swig_go_
 }
 
 
-void _wrap_Profile_travel_time_set_routingkit_192513bd4d9cfeea(Profile *_swig_go_0, bool _swig_go_1) {
+void _wrap_Profile_travel_time_set_routingkit_ce045163960071b9(Profile *_swig_go_0, bool _swig_go_1) {
   Profile *arg1 = (Profile *) 0 ;
   bool arg2 ;
   
@@ -1772,7 +1377,7 @@ void _wrap_Profile_travel_time_set_routingkit_192513bd4d9cfeea(Profile *_swig_go
 }
 
 
-bool _wrap_Profile_travel_time_get_routingkit_192513bd4d9cfeea(Profile *_swig_go_0) {
+bool _wrap_Profile_travel_time_get_routingkit_ce045163960071b9(Profile *_swig_go_0) {
   Profile *arg1 = (Profile *) 0 ;
   bool result;
   bool _swig_go_result;
@@ -1785,7 +1390,7 @@ bool _wrap_Profile_travel_time_get_routingkit_192513bd4d9cfeea(Profile *_swig_go
 }
 
 
-Profile *_wrap_new_Profile_routingkit_192513bd4d9cfeea() {
+Profile *_wrap_new_Profile_routingkit_ce045163960071b9() {
   Profile *result = 0 ;
   Profile *_swig_go_result;
   
@@ -1796,7 +1401,7 @@ Profile *_wrap_new_Profile_routingkit_192513bd4d9cfeea() {
 }
 
 
-void _wrap_delete_Profile_routingkit_192513bd4d9cfeea(Profile *_swig_go_0) {
+void _wrap_delete_Profile_routingkit_ce045163960071b9(Profile *_swig_go_0) {
   Profile *arg1 = (Profile *) 0 ;
   
   arg1 = *(Profile **)&_swig_go_0; 
@@ -1806,7 +1411,7 @@ void _wrap_delete_Profile_routingkit_192513bd4d9cfeea(Profile *_swig_go_0) {
 }
 
 
-intgo _wrap_max_distance_get_routingkit_192513bd4d9cfeea() {
+intgo _wrap_max_distance_get_routingkit_ce045163960071b9() {
   unsigned int result;
   intgo _swig_go_result;
   
@@ -1817,7 +1422,7 @@ intgo _wrap_max_distance_get_routingkit_192513bd4d9cfeea() {
 }
 
 
-void _wrap_RoutingGraph_first_out_set_routingkit_192513bd4d9cfeea(GoRoutingKit::RoutingGraph *_swig_go_0, std::vector< unsigned int > *_swig_go_1) {
+void _wrap_RoutingGraph_first_out_set_routingkit_ce045163960071b9(GoRoutingKit::RoutingGraph *_swig_go_0, std::vector< unsigned int > *_swig_go_1) {
   GoRoutingKit::RoutingGraph *arg1 = (GoRoutingKit::RoutingGraph *) 0 ;
   std::vector< unsigned int > *arg2 = (std::vector< unsigned int > *) 0 ;
   
@@ -1829,7 +1434,7 @@ void _wrap_RoutingGraph_first_out_set_routingkit_192513bd4d9cfeea(GoRoutingKit::
 }
 
 
-std::vector< unsigned int > *_wrap_RoutingGraph_first_out_get_routingkit_192513bd4d9cfeea(GoRoutingKit::RoutingGraph *_swig_go_0) {
+std::vector< unsigned int > *_wrap_RoutingGraph_first_out_get_routingkit_ce045163960071b9(GoRoutingKit::RoutingGraph *_swig_go_0) {
   GoRoutingKit::RoutingGraph *arg1 = (GoRoutingKit::RoutingGraph *) 0 ;
   std::vector< unsigned int > *result = 0 ;
   std::vector< unsigned int > *_swig_go_result;
@@ -1842,7 +1447,7 @@ std::vector< unsigned int > *_wrap_RoutingGraph_first_out_get_routingkit_192513b
 }
 
 
-void _wrap_RoutingGraph_head_set_routingkit_192513bd4d9cfeea(GoRoutingKit::RoutingGraph *_swig_go_0, std::vector< unsigned int > *_swig_go_1) {
+void _wrap_RoutingGraph_head_set_routingkit_ce045163960071b9(GoRoutingKit::RoutingGraph *_swig_go_0, std::vector< unsigned int > *_swig_go_1) {
   GoRoutingKit::RoutingGraph *arg1 = (GoRoutingKit::RoutingGraph *) 0 ;
   std::vector< unsigned int > *arg2 = (std::vector< unsigned int > *) 0 ;
   
@@ -1854,7 +1459,7 @@ void _wrap_RoutingGraph_head_set_routingkit_192513bd4d9cfeea(GoRoutingKit::Routi
 }
 
 
-std::vector< unsigned int > *_wrap_RoutingGraph_head_get_routingkit_192513bd4d9cfeea(GoRoutingKit::RoutingGraph *_swig_go_0) {
+std::vector< unsigned int > *_wrap_RoutingGraph_head_get_routingkit_ce045163960071b9(GoRoutingKit::RoutingGraph *_swig_go_0) {
   GoRoutingKit::RoutingGraph *arg1 = (GoRoutingKit::RoutingGraph *) 0 ;
   std::vector< unsigned int > *result = 0 ;
   std::vector< unsigned int > *_swig_go_result;
@@ -1867,7 +1472,7 @@ std::vector< unsigned int > *_wrap_RoutingGraph_head_get_routingkit_192513bd4d9c
 }
 
 
-void _wrap_RoutingGraph_travel_time_set_routingkit_192513bd4d9cfeea(GoRoutingKit::RoutingGraph *_swig_go_0, std::vector< unsigned int > *_swig_go_1) {
+void _wrap_RoutingGraph_travel_time_set_routingkit_ce045163960071b9(GoRoutingKit::RoutingGraph *_swig_go_0, std::vector< unsigned int > *_swig_go_1) {
   GoRoutingKit::RoutingGraph *arg1 = (GoRoutingKit::RoutingGraph *) 0 ;
   std::vector< unsigned int > *arg2 = (std::vector< unsigned int > *) 0 ;
   
@@ -1879,7 +1484,7 @@ void _wrap_RoutingGraph_travel_time_set_routingkit_192513bd4d9cfeea(GoRoutingKit
 }
 
 
-std::vector< unsigned int > *_wrap_RoutingGraph_travel_time_get_routingkit_192513bd4d9cfeea(GoRoutingKit::RoutingGraph *_swig_go_0) {
+std::vector< unsigned int > *_wrap_RoutingGraph_travel_time_get_routingkit_ce045163960071b9(GoRoutingKit::RoutingGraph *_swig_go_0) {
   GoRoutingKit::RoutingGraph *arg1 = (GoRoutingKit::RoutingGraph *) 0 ;
   std::vector< unsigned int > *result = 0 ;
   std::vector< unsigned int > *_swig_go_result;
@@ -1892,7 +1497,7 @@ std::vector< unsigned int > *_wrap_RoutingGraph_travel_time_get_routingkit_19251
 }
 
 
-void _wrap_RoutingGraph_geo_distance_set_routingkit_192513bd4d9cfeea(GoRoutingKit::RoutingGraph *_swig_go_0, std::vector< unsigned int > *_swig_go_1) {
+void _wrap_RoutingGraph_geo_distance_set_routingkit_ce045163960071b9(GoRoutingKit::RoutingGraph *_swig_go_0, std::vector< unsigned int > *_swig_go_1) {
   GoRoutingKit::RoutingGraph *arg1 = (GoRoutingKit::RoutingGraph *) 0 ;
   std::vector< unsigned int > *arg2 = (std::vector< unsigned int > *) 0 ;
   
@@ -1904,7 +1509,7 @@ void _wrap_RoutingGraph_geo_distance_set_routingkit_192513bd4d9cfeea(GoRoutingKi
 }
 
 
-std::vector< unsigned int > *_wrap_RoutingGraph_geo_distance_get_routingkit_192513bd4d9cfeea(GoRoutingKit::RoutingGraph *_swig_go_0) {
+std::vector< unsigned int > *_wrap_RoutingGraph_geo_distance_get_routingkit_ce045163960071b9(GoRoutingKit::RoutingGraph *_swig_go_0) {
   GoRoutingKit::RoutingGraph *arg1 = (GoRoutingKit::RoutingGraph *) 0 ;
   std::vector< unsigned int > *result = 0 ;
   std::vector< unsigned int > *_swig_go_result;
@@ -1917,7 +1522,7 @@ std::vector< unsigned int > *_wrap_RoutingGraph_geo_distance_get_routingkit_1925
 }
 
 
-void _wrap_RoutingGraph_latitude_set_routingkit_192513bd4d9cfeea(GoRoutingKit::RoutingGraph *_swig_go_0, std::vector< float > *_swig_go_1) {
+void _wrap_RoutingGraph_latitude_set_routingkit_ce045163960071b9(GoRoutingKit::RoutingGraph *_swig_go_0, std::vector< float > *_swig_go_1) {
   GoRoutingKit::RoutingGraph *arg1 = (GoRoutingKit::RoutingGraph *) 0 ;
   std::vector< float > *arg2 = (std::vector< float > *) 0 ;
   
@@ -1929,7 +1534,7 @@ void _wrap_RoutingGraph_latitude_set_routingkit_192513bd4d9cfeea(GoRoutingKit::R
 }
 
 
-std::vector< float > *_wrap_RoutingGraph_latitude_get_routingkit_192513bd4d9cfeea(GoRoutingKit::RoutingGraph *_swig_go_0) {
+std::vector< float > *_wrap_RoutingGraph_latitude_get_routingkit_ce045163960071b9(GoRoutingKit::RoutingGraph *_swig_go_0) {
   GoRoutingKit::RoutingGraph *arg1 = (GoRoutingKit::RoutingGraph *) 0 ;
   std::vector< float > *result = 0 ;
   std::vector< float > *_swig_go_result;
@@ -1942,7 +1547,7 @@ std::vector< float > *_wrap_RoutingGraph_latitude_get_routingkit_192513bd4d9cfee
 }
 
 
-void _wrap_RoutingGraph_longitude_set_routingkit_192513bd4d9cfeea(GoRoutingKit::RoutingGraph *_swig_go_0, std::vector< float > *_swig_go_1) {
+void _wrap_RoutingGraph_longitude_set_routingkit_ce045163960071b9(GoRoutingKit::RoutingGraph *_swig_go_0, std::vector< float > *_swig_go_1) {
   GoRoutingKit::RoutingGraph *arg1 = (GoRoutingKit::RoutingGraph *) 0 ;
   std::vector< float > *arg2 = (std::vector< float > *) 0 ;
   
@@ -1954,7 +1559,7 @@ void _wrap_RoutingGraph_longitude_set_routingkit_192513bd4d9cfeea(GoRoutingKit::
 }
 
 
-std::vector< float > *_wrap_RoutingGraph_longitude_get_routingkit_192513bd4d9cfeea(GoRoutingKit::RoutingGraph *_swig_go_0) {
+std::vector< float > *_wrap_RoutingGraph_longitude_get_routingkit_ce045163960071b9(GoRoutingKit::RoutingGraph *_swig_go_0) {
   GoRoutingKit::RoutingGraph *arg1 = (GoRoutingKit::RoutingGraph *) 0 ;
   std::vector< float > *result = 0 ;
   std::vector< float > *_swig_go_result;
@@ -1967,7 +1572,7 @@ std::vector< float > *_wrap_RoutingGraph_longitude_get_routingkit_192513bd4d9cfe
 }
 
 
-void _wrap_RoutingGraph_forbidden_turn_from_arc_set_routingkit_192513bd4d9cfeea(GoRoutingKit::RoutingGraph *_swig_go_0, std::vector< unsigned int > *_swig_go_1) {
+void _wrap_RoutingGraph_forbidden_turn_from_arc_set_routingkit_ce045163960071b9(GoRoutingKit::RoutingGraph *_swig_go_0, std::vector< unsigned int > *_swig_go_1) {
   GoRoutingKit::RoutingGraph *arg1 = (GoRoutingKit::RoutingGraph *) 0 ;
   std::vector< unsigned int > *arg2 = (std::vector< unsigned int > *) 0 ;
   
@@ -1979,7 +1584,7 @@ void _wrap_RoutingGraph_forbidden_turn_from_arc_set_routingkit_192513bd4d9cfeea(
 }
 
 
-std::vector< unsigned int > *_wrap_RoutingGraph_forbidden_turn_from_arc_get_routingkit_192513bd4d9cfeea(GoRoutingKit::RoutingGraph *_swig_go_0) {
+std::vector< unsigned int > *_wrap_RoutingGraph_forbidden_turn_from_arc_get_routingkit_ce045163960071b9(GoRoutingKit::RoutingGraph *_swig_go_0) {
   GoRoutingKit::RoutingGraph *arg1 = (GoRoutingKit::RoutingGraph *) 0 ;
   std::vector< unsigned int > *result = 0 ;
   std::vector< unsigned int > *_swig_go_result;
@@ -1992,7 +1597,7 @@ std::vector< unsigned int > *_wrap_RoutingGraph_forbidden_turn_from_arc_get_rout
 }
 
 
-void _wrap_RoutingGraph_forbidden_turn_to_arc_set_routingkit_192513bd4d9cfeea(GoRoutingKit::RoutingGraph *_swig_go_0, std::vector< unsigned int > *_swig_go_1) {
+void _wrap_RoutingGraph_forbidden_turn_to_arc_set_routingkit_ce045163960071b9(GoRoutingKit::RoutingGraph *_swig_go_0, std::vector< unsigned int > *_swig_go_1) {
   GoRoutingKit::RoutingGraph *arg1 = (GoRoutingKit::RoutingGraph *) 0 ;
   std::vector< unsigned int > *arg2 = (std::vector< unsigned int > *) 0 ;
   
@@ -2004,7 +1609,7 @@ void _wrap_RoutingGraph_forbidden_turn_to_arc_set_routingkit_192513bd4d9cfeea(Go
 }
 
 
-std::vector< unsigned int > *_wrap_RoutingGraph_forbidden_turn_to_arc_get_routingkit_192513bd4d9cfeea(GoRoutingKit::RoutingGraph *_swig_go_0) {
+std::vector< unsigned int > *_wrap_RoutingGraph_forbidden_turn_to_arc_get_routingkit_ce045163960071b9(GoRoutingKit::RoutingGraph *_swig_go_0) {
   GoRoutingKit::RoutingGraph *arg1 = (GoRoutingKit::RoutingGraph *) 0 ;
   std::vector< unsigned int > *result = 0 ;
   std::vector< unsigned int > *_swig_go_result;
@@ -2017,7 +1622,7 @@ std::vector< unsigned int > *_wrap_RoutingGraph_forbidden_turn_to_arc_get_routin
 }
 
 
-intgo _wrap_RoutingGraph_node_count_routingkit_192513bd4d9cfeea(GoRoutingKit::RoutingGraph *_swig_go_0) {
+intgo _wrap_RoutingGraph_node_count_routingkit_ce045163960071b9(GoRoutingKit::RoutingGraph *_swig_go_0) {
   GoRoutingKit::RoutingGraph *arg1 = (GoRoutingKit::RoutingGraph *) 0 ;
   unsigned int result;
   intgo _swig_go_result;
@@ -2030,7 +1635,7 @@ intgo _wrap_RoutingGraph_node_count_routingkit_192513bd4d9cfeea(GoRoutingKit::Ro
 }
 
 
-intgo _wrap_RoutingGraph_arc_count_routingkit_192513bd4d9cfeea(GoRoutingKit::RoutingGraph *_swig_go_0) {
+intgo _wrap_RoutingGraph_arc_count_routingkit_ce045163960071b9(GoRoutingKit::RoutingGraph *_swig_go_0) {
   GoRoutingKit::RoutingGraph *arg1 = (GoRoutingKit::RoutingGraph *) 0 ;
   unsigned int result;
   intgo _swig_go_result;
@@ -2043,7 +1648,7 @@ intgo _wrap_RoutingGraph_arc_count_routingkit_192513bd4d9cfeea(GoRoutingKit::Rou
 }
 
 
-GoRoutingKit::RoutingGraph *_wrap_new_RoutingGraph_routingkit_192513bd4d9cfeea() {
+GoRoutingKit::RoutingGraph *_wrap_new_RoutingGraph_routingkit_ce045163960071b9() {
   GoRoutingKit::RoutingGraph *result = 0 ;
   GoRoutingKit::RoutingGraph *_swig_go_result;
   
@@ -2054,7 +1659,7 @@ GoRoutingKit::RoutingGraph *_wrap_new_RoutingGraph_routingkit_192513bd4d9cfeea()
 }
 
 
-void _wrap_delete_RoutingGraph_routingkit_192513bd4d9cfeea(GoRoutingKit::RoutingGraph *_swig_go_0) {
+void _wrap_delete_RoutingGraph_routingkit_ce045163960071b9(GoRoutingKit::RoutingGraph *_swig_go_0) {
   GoRoutingKit::RoutingGraph *arg1 = (GoRoutingKit::RoutingGraph *) 0 ;
   
   arg1 = *(GoRoutingKit::RoutingGraph **)&_swig_go_0; 
@@ -2064,7 +1669,7 @@ void _wrap_delete_RoutingGraph_routingkit_192513bd4d9cfeea(GoRoutingKit::Routing
 }
 
 
-QueryResponse *_wrap_Client_query_routingkit_192513bd4d9cfeea(GoRoutingKit::Client *_swig_go_0, intgo _swig_go_1, float _swig_go_2, float _swig_go_3, float _swig_go_4, float _swig_go_5, float _swig_go_6, bool _swig_go_7) {
+QueryResponse *_wrap_Client_query_routingkit_ce045163960071b9(GoRoutingKit::Client *_swig_go_0, intgo _swig_go_1, float _swig_go_2, float _swig_go_3, float _swig_go_4, float _swig_go_5, float _swig_go_6, bool _swig_go_7) {
   GoRoutingKit::Client *arg1 = (GoRoutingKit::Client *) 0 ;
   int arg2 ;
   float arg3 ;
@@ -2091,7 +1696,7 @@ QueryResponse *_wrap_Client_query_routingkit_192513bd4d9cfeea(GoRoutingKit::Clie
 }
 
 
-std::vector< unsigned int > *_wrap_Client_distances_routingkit_192513bd4d9cfeea(GoRoutingKit::Client *_swig_go_0, intgo _swig_go_1, float _swig_go_2, Point *_swig_go_3, std::vector< Point > *_swig_go_4) {
+std::vector< unsigned int > *_wrap_Client_distances_routingkit_ce045163960071b9(GoRoutingKit::Client *_swig_go_0, intgo _swig_go_1, float _swig_go_2, Point *_swig_go_3, std::vector< Point > *_swig_go_4) {
   GoRoutingKit::Client *arg1 = (GoRoutingKit::Client *) 0 ;
   int arg2 ;
   float arg3 ;
@@ -2126,7 +1731,7 @@ std::vector< unsigned int > *_wrap_Client_distances_routingkit_192513bd4d9cfeea(
 }
 
 
-Point *_wrap_Client_nearest_routingkit_192513bd4d9cfeea(GoRoutingKit::Client *_swig_go_0, intgo _swig_go_1, float _swig_go_2, float _swig_go_3, float _swig_go_4) {
+Point *_wrap_Client_nearest_routingkit_ce045163960071b9(GoRoutingKit::Client *_swig_go_0, intgo _swig_go_1, float _swig_go_2, float _swig_go_3, float _swig_go_4) {
   GoRoutingKit::Client *arg1 = (GoRoutingKit::Client *) 0 ;
   int arg2 ;
   float arg3 ;
@@ -2147,7 +1752,7 @@ Point *_wrap_Client_nearest_routingkit_192513bd4d9cfeea(GoRoutingKit::Client *_s
 }
 
 
-GoRoutingKit::Client *_wrap_new_Client_routingkit_192513bd4d9cfeea(intgo _swig_go_0, _gostring_ _swig_go_1, _gostring_ _swig_go_2, Profile *_swig_go_3) {
+GoRoutingKit::Client *_wrap_new_Client_routingkit_ce045163960071b9(intgo _swig_go_0, _gostring_ _swig_go_1, _gostring_ _swig_go_2, Profile *_swig_go_3) {
   int arg1 ;
   char *arg2 = (char *) 0 ;
   char *arg3 = (char *) 0 ;
@@ -2183,7 +1788,7 @@ GoRoutingKit::Client *_wrap_new_Client_routingkit_192513bd4d9cfeea(intgo _swig_g
 }
 
 
-void _wrap_delete_Client_routingkit_192513bd4d9cfeea(GoRoutingKit::Client *_swig_go_0) {
+void _wrap_delete_Client_routingkit_ce045163960071b9(GoRoutingKit::Client *_swig_go_0) {
   GoRoutingKit::Client *arg1 = (GoRoutingKit::Client *) 0 ;
   
   arg1 = *(GoRoutingKit::Client **)&_swig_go_0; 

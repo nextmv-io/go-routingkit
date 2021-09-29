@@ -44,12 +44,6 @@ namespace GoRoutingKit
 			auto wayId = profile.allowedWayIds[i];
 			allowedWayIds.insert(wayId);
 		}
-		std::unordered_set<uint64_t> forbiddenWayIds;
-		for (int i = 0; i < profile.forbiddenWayIds.size(); i++)
-		{
-			auto wayId = profile.forbiddenWayIds[i];
-			forbiddenWayIds.insert(wayId);
-		}
 
 		auto mapping = load_osm_id_mapping_from_pbf(
 			pbf_file,
@@ -60,47 +54,7 @@ namespace GoRoutingKit
 				{
 					return true;
 				}
-				if (forbiddenWayIds.find(osm_way_id) != forbiddenWayIds.end())
-				{
-					return false;
-				}
-				for (int i = 0; i < profile.wayfilters.size(); i++)
-				{
-					auto filter = profile.wayfilters[i];
-					const char *route = tags[filter.tag];
-					// we want that the tag matches
-					if (filter.matchTag)
-					{
-						// if it did match
-						if (route)
-						{
-							// we want the value to match
-							if (filter.matchValue)
-							{
-								if (filter.value == nullptr || str_eq(route, filter.value))
-								{
-									return filter.allowed;
-								}
-							}
-							else
-							{
-								if (filter.value == nullptr || !str_eq(route, filter.value))
-								{
-									return filter.allowed;
-								}
-							}
-						}
-					}
-					else
-					{
-						// tag did not match and that is what the filter defined
-						if (route == nullptr)
-						{
-							return filter.allowed;
-						}
-					}
-				}
-				return true;
+				return false;
 			},
 			log_message,
 			all_modelling_nodes_are_routing_nodes);
