@@ -451,10 +451,13 @@ func withSwigProfile(p Profile, f func(routingkit.Profile)) {
 	}
 	customProfile.SetWaySpeeds(waySpeeds)
 
+	defer func() {
+		routingkit.DeleteIntVector(allowedWayIds)
+		routingkit.DeleteIntIntMap(waySpeeds)
+		routingkit.DeleteProfile(customProfile)
+	}()
+
 	f(customProfile)
-	routingkit.DeleteIntVector(allowedWayIds)
-	routingkit.DeleteIntIntMap(waySpeeds)
-	routingkit.DeleteProfile(customProfile)
 }
 
 func init() {
@@ -676,11 +679,11 @@ func NewTravelTimeClient(mapFile string, profileGenerator ProfileGenerator) (Tra
 	}
 	concurrentQueries := runtime.GOMAXPROCS(0)
 	var c routingkit.Client
-	withSwigProfile(profile, func(customProfile routingkit.Profile) {
-		c = routingkit.NewClient(concurrentQueries, mapFile, chFile, customProfile)
-		customProfile.SetTravel_time(true)
+	withSwigProfile(profile, func(swigProfile routingkit.Profile) {
+		c = routingkit.NewClient(concurrentQueries, mapFile, chFile, swigProfile)
+		// sets that we are interested in the travel time rather than the distance
+		swigProfile.SetTravel_time(true)
 	})
-	// sets that we are interested in the travel time rather than the distance
 
 	channel := make(chan int, concurrentQueries)
 	for i := 0; i < concurrentQueries; i++ {
