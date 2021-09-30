@@ -24,7 +24,7 @@ func parsePBF(osmFile string, tagMapFilter TagMapFilter, speedMapper SpeedMapper
 	defer file.Close()
 
 	// The third parameter is the number of parallel decoders to use.
-	scanner := osmpbf.New(context.Background(), file, 1)
+	scanner := osmpbf.New(context.Background(), file, runtime.GOMAXPROCS(0))
 	scanner.SkipNodes = true
 	scanner.SkipRelations = true
 	defer scanner.Close()
