@@ -92,7 +92,7 @@ func TestDistances(t *testing.T) {
 		source       []float32
 		destinations [][]float32
 		snap         float32
-		profile      routingkit.ProfileGenerator
+		profile      routingkit.Profile
 		ch           string
 
 		expected []uint32
@@ -175,7 +175,7 @@ func TestMatrix(t *testing.T) {
 	tests := []struct {
 		sources      [][]float32
 		destinations [][]float32
-		profile      routingkit.ProfileGenerator
+		profile      routingkit.Profile
 		ch           string
 
 		expected [][]uint32
@@ -256,7 +256,7 @@ func TestDistance(t *testing.T) {
 		source      []float32
 		destination []float32
 		snap        float32
-		profile     routingkit.ProfileGenerator
+		profile     routingkit.Profile
 		ch          string
 
 		expectedDistance  uint32

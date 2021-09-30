@@ -417,16 +417,16 @@ func bikeSpeedMapper(_ int, tagMap map[string]string) int {
 	return maxSpeed
 }
 
-func Car() ProfileGenerator {
-	return NewProfileGenerator("car", VehicleMode, false, carTagMapFilter, carSpeedMapper)
+func Car() Profile {
+	return NewProfile("car", VehicleMode, false, carTagMapFilter, carSpeedMapper)
 }
 
-func Bike() ProfileGenerator {
-	return NewProfileGenerator("bike", BikeMode, false, bikeTagMapFilter, bikeSpeedMapper)
+func Bike() Profile {
+	return NewProfile("bike", BikeMode, false, bikeTagMapFilter, bikeSpeedMapper)
 }
 
-func Pedestrian() ProfileGenerator {
-	return NewProfileGenerator(
+func Pedestrian() Profile {
+	return NewProfile(
 		"pedestrian",
 		PedestrianMode,
 		false,
@@ -443,7 +443,7 @@ var (
 	PedestrianMode TransportMode = TransportMode(routingkit.Pedestrian)
 )
 
-type Profile struct {
+type profile struct {
 	AllowedWayIds    map[int]bool
 	WaySpeeds        map[int]int
 	Name             string
@@ -451,18 +451,18 @@ type Profile struct {
 	PreventLeftTurns bool
 }
 
-type ProfileGenerator func(osmFile string) Profile
+type Profile func(osmFile string) profile
 
-func NewProfileGenerator(
+func NewProfile(
 	name string,
 	transportMode TransportMode,
 	preventLeftTurns bool,
 	filter TagMapFilter,
 	speedMapper SpeedMapper,
-) ProfileGenerator {
-	return func(osmFile string) Profile {
+) Profile {
+	return func(osmFile string) profile {
 		allowedWayIDS, waySpeeds := parsePBF(osmFile, carTagMapFilter, carSpeedMapper)
-		return Profile{
+		return profile{
 			Name:             name,
 			AllowedWayIds:    allowedWayIDS,
 			WaySpeeds:        waySpeeds,
@@ -472,7 +472,7 @@ func NewProfileGenerator(
 	}
 }
 
-func withSwigProfile(p Profile, f func(routingkit.Profile)) {
+func withSwigProfile(p profile, f func(routingkit.Profile)) {
 	customProfile := routingkit.NewProfile()
 	customProfile.SetName(p.Name)
 	customProfile.SetTransportMode(routingkit.Transport_mode(p.TransportMode))
@@ -506,12 +506,12 @@ func init() {
 // NewDistanceClient initializes a DistanceClient using the provided .osm.pbf file and
 // .ch file. The .ch file will be created if it does not already exist. It is the caller's
 // responsibility to call Delete on the client when it is no longer needed.
-func NewDistanceClient(mapFile string, profileGenerator ProfileGenerator) (DistanceClient, error) {
+func NewDistanceClient(mapFile string, profile Profile) (DistanceClient, error) {
 	if _, err := os.Stat(mapFile); os.IsNotExist(err) {
 		return DistanceClient{}, fmt.Errorf("could not find map file at %v", mapFile)
 	}
 
-	p := profileGenerator(mapFile)
+	p := profile(mapFile)
 	chFile, err := chFileName(mapFile, p, false)
 	if err != nil {
 		return DistanceClient{}, err
@@ -536,7 +536,7 @@ func NewDistanceClient(mapFile string, profileGenerator ProfileGenerator) (Dista
 		}}, nil
 }
 
-func chFileName(mapFile string, profile Profile, duration bool) (string, error) {
+func chFileName(mapFile string, profile profile, duration bool) (string, error) {
 	extension := profile.Name
 	if profile.Name == "" {
 		return "", fmt.Errorf("profile name was empty")
@@ -742,18 +742,18 @@ type TravelTimeClient struct {
 // NewTravelTimeClient initializes a TravelTimeClient using the provided .osm.pbf file and
 // .ch file. The .ch file will be created if it does not already exist. It is the caller's
 // responsibility to call Delete on the client when it is no longer needed.
-func NewTravelTimeClient(mapFile string, profileGenerator ProfileGenerator) (TravelTimeClient, error) {
+func NewTravelTimeClient(mapFile string, profile Profile) (TravelTimeClient, error) {
 	if _, err := os.Stat(mapFile); os.IsNotExist(err) {
 		return TravelTimeClient{}, fmt.Errorf("could not find map file at %v", mapFile)
 	}
-	profile := profileGenerator(mapFile)
-	chFile, err := chFileName(mapFile, profile, true)
+	p := profile(mapFile)
+	chFile, err := chFileName(mapFile, p, true)
 	if err != nil {
 		return TravelTimeClient{}, err
 	}
 	concurrentQueries := runtime.GOMAXPROCS(0)
 	var c routingkit.Client
-	withSwigProfile(profile, func(swigProfile routingkit.Profile) {
+	withSwigProfile(p, func(swigProfile routingkit.Profile) {
 		// sets that we are interested in the travel time rather than the distance
 		swigProfile.SetTravel_time(true)
 		c = routingkit.NewClient(concurrentQueries, mapFile, chFile, swigProfile)

@@ -22,7 +22,7 @@ type parameters struct {
 	out     *os.File
 	mapFile string
 	measure string
-	profile routingkit.ProfileGenerator
+	profile routingkit.Profile
 }
 
 var measureEnum = struct {
