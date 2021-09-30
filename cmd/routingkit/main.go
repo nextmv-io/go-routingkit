@@ -133,7 +133,7 @@ func parseFlags() (params parameters, err error) {
 		&profile,
 		"profile",
 		profileEnum.CAR,
-		"car|bike|pedestrian - bike and pedestrian only work with measure=distance",
+		"car|bike|pedestrian",
 	)
 	flag.StringVar(
 		&params.measure,
