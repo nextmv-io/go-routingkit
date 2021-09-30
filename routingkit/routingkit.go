@@ -443,15 +443,13 @@ var (
 	PedestrianMode TransportMode = TransportMode(routingkit.Pedestrian)
 )
 
-type profile struct {
-	AllowedWayIds    map[int]bool
-	WaySpeeds        map[int]int
+type Profile struct {
 	Name             string
 	TransportMode    TransportMode
 	PreventLeftTurns bool
+	Filter           TagMapFilter
+	SpeedMapper      SpeedMapper
 }
-
-type Profile func(osmFile string) profile
 
 func NewProfile(
 	name string,
@@ -460,39 +458,36 @@ func NewProfile(
 	filter TagMapFilter,
 	speedMapper SpeedMapper,
 ) Profile {
-	return func(osmFile string) profile {
-		allowedWayIDS, waySpeeds := parsePBF(osmFile, carTagMapFilter, carSpeedMapper)
-		return profile{
-			Name:             name,
-			AllowedWayIds:    allowedWayIDS,
-			WaySpeeds:        waySpeeds,
-			TransportMode:    transportMode,
-			PreventLeftTurns: preventLeftTurns,
-		}
+	return Profile{
+		Name:             name,
+		TransportMode:    transportMode,
+		PreventLeftTurns: preventLeftTurns,
+		Filter:           filter,
+		SpeedMapper:      speedMapper,
 	}
 }
 
-func withSwigProfile(p profile, f func(routingkit.Profile)) {
+func withSwigProfile(p Profile, allowedWayIDs map[int]bool, waySpeeds map[int]int, f func(routingkit.Profile)) {
 	customProfile := routingkit.NewProfile()
 	customProfile.SetName(p.Name)
 	customProfile.SetTransportMode(routingkit.Transport_mode(p.TransportMode))
 	customProfile.SetPrevent_left_turns(p.PreventLeftTurns)
 
 	allowedWayIds := routingkit.NewIntVector()
-	for wayId := range p.AllowedWayIds {
+	for wayId := range allowedWayIDs {
 		allowedWayIds.Add(wayId)
 	}
 	customProfile.SetAllowedWayIds(allowedWayIds)
 
-	waySpeeds := routingkit.NewIntIntMap()
-	for wayId, speed := range p.WaySpeeds {
-		waySpeeds.Set(int(wayId), speed)
+	rkWaySpeeds := routingkit.NewIntIntMap()
+	for wayId, speed := range waySpeeds {
+		rkWaySpeeds.Set(int(wayId), speed)
 	}
-	customProfile.SetWaySpeeds(waySpeeds)
+	customProfile.SetWaySpeeds(rkWaySpeeds)
 
 	defer func() {
 		routingkit.DeleteIntVector(allowedWayIds)
-		routingkit.DeleteIntIntMap(waySpeeds)
+		routingkit.DeleteIntIntMap(rkWaySpeeds)
 		routingkit.DeleteProfile(customProfile)
 	}()
 
@@ -511,15 +506,16 @@ func NewDistanceClient(mapFile string, profile Profile) (DistanceClient, error) 
 		return DistanceClient{}, fmt.Errorf("could not find map file at %v", mapFile)
 	}
 
-	p := profile(mapFile)
-	chFile, err := chFileName(mapFile, p, false)
+	allowedWayIDs, waySpeeds := parsePBF(mapFile, carTagMapFilter, carSpeedMapper)
+
+	chFile, err := chFileName(mapFile, profile, allowedWayIDs, waySpeeds, false)
 	if err != nil {
 		return DistanceClient{}, err
 	}
 
 	concurrentQueries := runtime.GOMAXPROCS(0)
 	var c routingkit.Client
-	withSwigProfile(p, func(customProfile routingkit.Profile) {
+	withSwigProfile(profile, allowedWayIDs, waySpeeds, func(customProfile routingkit.Profile) {
 		c = routingkit.NewClient(concurrentQueries, mapFile, chFile, customProfile)
 	})
 
@@ -536,7 +532,7 @@ func NewDistanceClient(mapFile string, profile Profile) (DistanceClient, error) 
 		}}, nil
 }
 
-func chFileName(mapFile string, profile profile, duration bool) (string, error) {
+func chFileName(mapFile string, profile Profile, allowedWayIDs map[int]bool, waySpeeds map[int]int, duration bool) (string, error) {
 	extension := profile.Name
 	if profile.Name == "" {
 		return "", fmt.Errorf("profile name was empty")
@@ -552,7 +548,7 @@ func chFileName(mapFile string, profile profile, duration bool) (string, error) 
 
 	// iterate over profile.AllowedWayIds in order
 	keys := make([]int, 0)
-	for k := range profile.AllowedWayIds {
+	for k := range allowedWayIDs {
 		keys = append(keys, k)
 	}
 	sort.Ints(keys)
@@ -563,13 +559,13 @@ func chFileName(mapFile string, profile profile, duration bool) (string, error) 
 
 	// iterate over profile.WaySpeeds in order
 	keys = make([]int, 0)
-	for k := range profile.WaySpeeds {
+	for k := range waySpeeds {
 		keys = append(keys, k)
 	}
 	sort.Ints(keys)
 	for _, s := range keys {
 		_, _ = io.WriteString(h, "-")
-		_, _ = io.WriteString(h, strconv.Itoa(profile.WaySpeeds[s]))
+		_, _ = io.WriteString(h, strconv.Itoa(waySpeeds[s]))
 		_, _ = io.WriteString(h, "-")
 		_, _ = io.WriteString(h, strconv.Itoa(s))
 	}
@@ -746,14 +742,16 @@ func NewTravelTimeClient(mapFile string, profile Profile) (TravelTimeClient, err
 	if _, err := os.Stat(mapFile); os.IsNotExist(err) {
 		return TravelTimeClient{}, fmt.Errorf("could not find map file at %v", mapFile)
 	}
-	p := profile(mapFile)
-	chFile, err := chFileName(mapFile, p, true)
+
+	allowedWayIDs, waySpeeds := parsePBF(mapFile, carTagMapFilter, carSpeedMapper)
+	chFile, err := chFileName(mapFile, profile, allowedWayIDs, waySpeeds, true)
 	if err != nil {
 		return TravelTimeClient{}, err
 	}
+
 	concurrentQueries := runtime.GOMAXPROCS(0)
 	var c routingkit.Client
-	withSwigProfile(p, func(swigProfile routingkit.Profile) {
+	withSwigProfile(profile, allowedWayIDs, waySpeeds, func(swigProfile routingkit.Profile) {
 		// sets that we are interested in the travel time rather than the distance
 		swigProfile.SetTravel_time(true)
 		c = routingkit.NewClient(concurrentQueries, mapFile, chFile, swigProfile)
