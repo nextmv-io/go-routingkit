@@ -55,8 +55,9 @@ func parsePBF(osmFile string, tagMapFilter TagMapFilter, speedMapper SpeedMapper
 
 type SpeedMapper func(wayId int, tagMap map[string]string) int
 
+var intRegex = regexp.MustCompile(`^\d+`)
+
 func carSpeedMapper(_ int, tagMap map[string]string) int {
-	intRegex := regexp.MustCompile(`^\d+`)
 	maxspeed, maxspeedOk := tagMap["maxspeed"]
 	if maxspeedOk && maxspeed != "unposted" {
 		// The implementation in routingkit seems to split on spaces, \0, and ;, then
