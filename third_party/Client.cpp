@@ -37,7 +37,7 @@ namespace GoRoutingKit
 	}
 
 	RoutingGraph load_custom_osm_routing_graph_from_pbf(
-	    const std::string &pbf_file, Profile profile)
+		const std::string &pbf_file, Profile profile)
 	{
 		bool all_modelling_nodes_are_routing_nodes = false;
 		bool file_is_ordered_even_though_file_header_says_that_it_is_unordered = false;
@@ -50,43 +50,53 @@ namespace GoRoutingKit
 		}
 
 		auto mapping = load_osm_id_mapping_from_pbf(
-		    pbf_file,
-		    nullptr,
-		    [&](uint64_t osm_way_id, const TagMap &tags)
-		    {
-			    if (allowedWayIds.find(osm_way_id) != allowedWayIds.end())
-			    {
-				    return true;
-			    }
-			    return false;
-		    },
-		    log_message,
-		    all_modelling_nodes_are_routing_nodes);
+			pbf_file,
+			nullptr,
+			[&](uint64_t osm_way_id, const TagMap &tags)
+			{
+				if (allowedWayIds.find(osm_way_id) != allowedWayIds.end())
+				{
+					return true;
+				}
+				return false;
+			},
+			log_message,
+			all_modelling_nodes_are_routing_nodes);
 
 		unsigned routing_way_count = mapping.is_routing_way.population_count();
 
 		auto waySpeeds = std::vector<unsigned>(routing_way_count);
 
 		auto routing_graph = load_osm_routing_graph_from_pbf(
-		    pbf_file,
-		    mapping,
-		    [&](uint64_t osm_way_id, unsigned routing_way_id, const TagMap &way_tags)
-		    {
-			    if (profile.waySpeeds.find(osm_way_id) == profile.waySpeeds.end())
-			    {
-				    waySpeeds[routing_way_id] = get_osm_way_speed(osm_way_id, way_tags, log_message);
-			    }
-			    else
-			    {
-				    waySpeeds[routing_way_id] = profile.waySpeeds[osm_way_id];
-			    }
-			    return get_osm_car_direction_category(osm_way_id, way_tags, log_message);
-		    },
-		    [&](uint64_t osm_relation_id, const std::vector<OSMRelationMember> &member_list, const TagMap &tags, std::function<void(OSMTurnRestriction)> on_new_restriction)
-		    {
-			    return decode_osm_car_turn_restrictions(osm_relation_id, member_list, tags, on_new_restriction, log_message);
-		    },
-		    log_message);
+			pbf_file,
+			mapping,
+			[&](uint64_t osm_way_id, unsigned routing_way_id, const TagMap &way_tags)
+			{
+				if (profile.waySpeeds.find(osm_way_id) == profile.waySpeeds.end())
+				{
+					waySpeeds[routing_way_id] = get_osm_way_speed(osm_way_id, way_tags, log_message);
+				}
+				else
+				{
+					waySpeeds[routing_way_id] = profile.waySpeeds[osm_way_id];
+				}
+				switch (profile.transportMode)
+				{
+				case vehicle:
+					return get_osm_car_direction_category(osm_way_id, way_tags, log_message);
+				case bike:
+					return get_osm_bicycle_direction_category(osm_way_id, way_tags, log_message);
+				}
+				return OSMWayDirectionCategory::open_in_both;
+			},
+			[&](uint64_t osm_relation_id, const std::vector<OSMRelationMember> &member_list, const TagMap &tags, std::function<void(OSMTurnRestriction)> on_new_restriction)
+			{
+				if (profile.transportMode == vehicle)
+				{
+					return decode_osm_car_turn_restrictions(osm_relation_id, member_list, tags, on_new_restriction, log_message);
+				}
+			},
+			log_message);
 
 		mapping = OSMRoutingIDMapping(); // release memory
 
@@ -191,7 +201,7 @@ Point Client::point(int i)
 {
 	return Point{
 		lon :
-		    graph.longitude[i],
+			graph.longitude[i],
 		lat : graph.latitude[i]
 	};
 }

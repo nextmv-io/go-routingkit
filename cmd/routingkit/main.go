@@ -22,7 +22,7 @@ type parameters struct {
 	out     *os.File
 	mapFile string
 	measure string
-	profile routingkit.Profile
+	profile routingkit.ProfileGenerator
 }
 
 var measureEnum = struct {
@@ -63,11 +63,6 @@ func main() {
 		}
 		client = c
 	case measureEnum.TRAVELTIME:
-		if params.profile.Name != "car" {
-			fmt.Fprintf(os.Stderr, "invalid parameter combination. "+
-				"This profile can only be used with measure=distance.\n")
-			os.Exit(1)
-		}
 		c, err := routingkit.NewTravelTimeClient(
 			params.mapFile,
 			params.profile,
@@ -158,11 +153,11 @@ func parseFlags() (params parameters, err error) {
 
 	switch profile {
 	case profileEnum.CAR:
-		params.profile = routingkit.Car(params.mapFile)
+		params.profile = routingkit.Car()
 	case profileEnum.BIKE:
-		params.profile = routingkit.Bike(params.mapFile)
+		params.profile = routingkit.Bike()
 	case profileEnum.PEDESTRIAN:
-		params.profile = routingkit.Pedestrian(params.mapFile)
+		params.profile = routingkit.Pedestrian()
 	default:
 		return parameters{}, errors.New("invalid option for profile" + profile)
 	}

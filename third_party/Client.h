@@ -18,10 +18,18 @@ struct QueryResponse
         std::vector<Point> waypoints;
 };
 
+enum transport_mode
+{
+        vehicle,
+        bike,
+        pedestrian
+};
+
 struct Profile
 {
         std::vector<int> allowedWayIds;
         std::map<uint64_t, unsigned int> waySpeeds;
+        transport_mode transportMode;
         const char *name;
         bool travel_time;
 };

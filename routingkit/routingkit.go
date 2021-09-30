@@ -401,28 +401,51 @@ func pedestrianTagMapFilter(_ int, tagMap map[string]string) bool {
 	return false
 }
 
+func pedestrianSpeedMapper(_ int, tagMap map[string]string) int {
+	return 5
+}
+
+func bikeSpeedMapper(_ int, tagMap map[string]string) int {
+	maxSpeed := carSpeedMapper(0, tagMap)
+	if maxSpeed > 25 {
+		maxSpeed = 25
+	}
+	return maxSpeed
+}
+
 func Car() ProfileGenerator {
-	return NewProfileGenerator("car", carTagMapFilter, carSpeedMapper)
+	return NewProfileGenerator("car", VehicleMode, carTagMapFilter, carSpeedMapper)
 }
 
 func Bike() ProfileGenerator {
-	return NewProfileGenerator("bike", bikeTagMapFilter, nil)
+	return NewProfileGenerator("bike", BikeMode, bikeTagMapFilter, bikeSpeedMapper)
 }
 
 func Pedestrian() ProfileGenerator {
-	return NewProfileGenerator("pedestrian", pedestrianTagMapFilter, nil)
+	return NewProfileGenerator(
+		"pedestrian",
+		PedestrianMode,
+		pedestrianTagMapFilter,
+		pedestrianSpeedMapper,
+	)
 }
+
+type TransportMode routingkit.Transport_mode
+
+var VehicleMode, BikeMode, PedestrianMode TransportMode
 
 type Profile struct {
 	AllowedWayIds map[int]bool
 	WaySpeeds     map[int]int
 	Name          string
+	TransportMode TransportMode
 }
 
 type ProfileGenerator func(osmFile string) Profile
 
 func NewProfileGenerator(
 	name string,
+	transportMode TransportMode,
 	filter TagMapFilter,
 	speedMapper SpeedMapper,
 ) ProfileGenerator {
@@ -432,6 +455,7 @@ func NewProfileGenerator(
 			Name:          name,
 			AllowedWayIds: allowedWayIDS,
 			WaySpeeds:     waySpeeds,
+			TransportMode: transportMode,
 		}
 	}
 }
@@ -439,6 +463,7 @@ func NewProfileGenerator(
 func withSwigProfile(p Profile, f func(routingkit.Profile)) {
 	customProfile := routingkit.NewProfile()
 	customProfile.SetName(p.Name)
+	customProfile.SetTransportMode(routingkit.Transport_mode(p.TransportMode))
 
 	allowedWayIds := routingkit.NewIntVector()
 	for wayId := range p.AllowedWayIds {
