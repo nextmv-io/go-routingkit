@@ -297,6 +297,8 @@ namespace GoRoutingKit
 					return get_osm_car_direction_category(osm_way_id, way_tags, log_message);
 				case bike:
 					return get_osm_bicycle_direction_category(osm_way_id, way_tags, log_message);
+				case pedestrian:
+					return OSMWayDirectionCategory::open_in_both;
 				}
 				return OSMWayDirectionCategory::open_in_both;
 			},
