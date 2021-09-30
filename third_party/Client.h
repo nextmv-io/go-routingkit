@@ -1,6 +1,7 @@
 #ifndef __MYCLASS_H
 #define __MYCLASS_H
 #include <vector>
+#include <map>
 #include <routingkit/osm_simple.h>
 #include <routingkit/contraction_hierarchy.h>
 #include <routingkit/geo_position_to_node.h>
@@ -20,6 +21,7 @@ struct QueryResponse
 struct Profile
 {
         std::vector<int> allowedWayIds;
+        std::map<uint64_t, unsigned int> waySpeeds;
         const char *name;
         bool travel_time;
 };
@@ -29,27 +31,27 @@ namespace GoRoutingKit
         extern const unsigned max_distance;
 
         struct RoutingGraph
-	{
-		std::vector<unsigned> first_out;
-		std::vector<unsigned> head;
-		std::vector<unsigned> travel_time;
-		std::vector<unsigned> geo_distance;
-		std::vector<float> latitude;
-		std::vector<float> longitude;
-		std::vector<unsigned> forbidden_turn_from_arc;
-		std::vector<unsigned> forbidden_turn_to_arc;
+        {
+                std::vector<unsigned> first_out;
+                std::vector<unsigned> head;
+                std::vector<unsigned> travel_time;
+                std::vector<unsigned> geo_distance;
+                std::vector<float> latitude;
+                std::vector<float> longitude;
+                std::vector<unsigned> forbidden_turn_from_arc;
+                std::vector<unsigned> forbidden_turn_to_arc;
 
-		unsigned node_count() const
-		{
-			return first_out.size() - 1;
-		}
+                unsigned node_count() const
+                {
+                        return first_out.size() - 1;
+                }
 
-		unsigned arc_count() const
-		{
-			return head.size();
-		}
-	};
-        
+                unsigned arc_count() const
+                {
+                        return head.size();
+                }
+        };
+
         class Client
         {
                 Point point(int i);

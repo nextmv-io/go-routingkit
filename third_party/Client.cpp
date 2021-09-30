@@ -13,6 +13,10 @@
 #include <future>
 #include <unordered_set>
 #include <vector>
+#include <execinfo.h>
+#include <signal.h>
+#include <unistd.h>
+#include <stdexcept>
 
 using namespace RoutingKit;
 using namespace GoRoutingKit;
@@ -33,7 +37,7 @@ namespace GoRoutingKit
 	}
 
 	RoutingGraph load_custom_osm_routing_graph_from_pbf(
-		const std::string &pbf_file, Profile profile)
+	    const std::string &pbf_file, Profile profile)
 	{
 		bool all_modelling_nodes_are_routing_nodes = false;
 		bool file_is_ordered_even_though_file_header_says_that_it_is_unordered = false;
@@ -46,35 +50,43 @@ namespace GoRoutingKit
 		}
 
 		auto mapping = load_osm_id_mapping_from_pbf(
-			pbf_file,
-			nullptr,
-			[&](uint64_t osm_way_id, const TagMap &tags)
-			{
-				if (allowedWayIds.find(osm_way_id) != allowedWayIds.end())
-				{
-					return true;
-				}
-				return false;
-			},
-			log_message,
-			all_modelling_nodes_are_routing_nodes);
+		    pbf_file,
+		    nullptr,
+		    [&](uint64_t osm_way_id, const TagMap &tags)
+		    {
+			    if (allowedWayIds.find(osm_way_id) != allowedWayIds.end())
+			    {
+				    return true;
+			    }
+			    return false;
+		    },
+		    log_message,
+		    all_modelling_nodes_are_routing_nodes);
 
 		unsigned routing_way_count = mapping.is_routing_way.population_count();
-		std::vector<unsigned> way_speed(routing_way_count);
+
+		auto waySpeeds = std::vector<unsigned>(routing_way_count);
 
 		auto routing_graph = load_osm_routing_graph_from_pbf(
-			pbf_file,
-			mapping,
-			[&](uint64_t osm_way_id, unsigned routing_way_id, const TagMap &way_tags)
-			{
-				way_speed[routing_way_id] = get_osm_way_speed(osm_way_id, way_tags, log_message);
-				return get_osm_car_direction_category(osm_way_id, way_tags, log_message);
-			},
-			[&](uint64_t osm_relation_id, const std::vector<OSMRelationMember> &member_list, const TagMap &tags, std::function<void(OSMTurnRestriction)> on_new_restriction)
-			{
-				return decode_osm_car_turn_restrictions(osm_relation_id, member_list, tags, on_new_restriction, log_message);
-			},
-			log_message);
+		    pbf_file,
+		    mapping,
+		    [&](uint64_t osm_way_id, unsigned routing_way_id, const TagMap &way_tags)
+		    {
+			    if (profile.waySpeeds.find(osm_way_id) == profile.waySpeeds.end())
+			    {
+				    waySpeeds[routing_way_id] = get_osm_way_speed(osm_way_id, way_tags, log_message);
+			    }
+			    else
+			    {
+				    waySpeeds[routing_way_id] = profile.waySpeeds[osm_way_id];
+			    }
+			    return get_osm_car_direction_category(osm_way_id, way_tags, log_message);
+		    },
+		    [&](uint64_t osm_relation_id, const std::vector<OSMRelationMember> &member_list, const TagMap &tags, std::function<void(OSMTurnRestriction)> on_new_restriction)
+		    {
+			    return decode_osm_car_turn_restrictions(osm_relation_id, member_list, tags, on_new_restriction, log_message);
+		    },
+		    log_message);
 
 		mapping = OSMRoutingIDMapping(); // release memory
 
@@ -89,7 +101,7 @@ namespace GoRoutingKit
 		for (unsigned a = 0; a < ret.travel_time.size(); ++a)
 		{
 			ret.travel_time[a] *= 18000;
-			ret.travel_time[a] /= way_speed[routing_graph.way[a]];
+			ret.travel_time[a] /= waySpeeds[routing_graph.way[a]];
 			ret.travel_time[a] /= 5;
 		}
 
@@ -108,8 +120,47 @@ bool file_exists(char *file)
 	return !!f;
 }
 
+namespace ErrorHandler
+{
+	void dump_stack(int sig)
+	{
+		fprintf(stderr, "Error: signal %d:\n", sig);
+
+		void *array[20];
+		size_t size;
+
+		// get void*'s for all entries on the stack
+		size = backtrace(array, sizeof(array));
+
+		// print out all the frames to stderr
+		backtrace_symbols_fd(array, size, STDERR_FILENO);
+	}
+
+	void exception_handler(int sig)
+	{
+		dump_stack(sig);
+		exit(1);
+	}
+
+	void install_exception_handlers()
+	{
+		signal(SIGSEGV, exception_handler);
+		signal(SIGBUS, exception_handler);
+		signal(SIGINT, exception_handler);
+		signal(SIGQUIT, exception_handler);
+		signal(SIGILL, exception_handler);
+		signal(SIGABRT, exception_handler);
+		signal(SIGFPE, exception_handler);
+		signal(SIGTERM, exception_handler);
+		signal(SIGSYS, exception_handler);
+
+		signal(SIGUSR1, dump_stack);
+	}
+}
+
 Client::Client(int conc, char *pbf_file, char *ch_file, Profile profile)
 {
+	ErrorHandler::install_exception_handlers();
 	vector<unsigned int> tail;
 
 	bool ch_exists = file_exists(ch_file);
@@ -140,7 +191,7 @@ Point Client::point(int i)
 {
 	return Point{
 		lon :
-			graph.longitude[i],
+		    graph.longitude[i],
 		lat : graph.latitude[i]
 	};
 }

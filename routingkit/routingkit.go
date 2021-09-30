@@ -4,7 +4,9 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"regexp"
 	"runtime"
+	"strconv"
 
 	"github.com/nextmv-io/go-routingkit/routingkit/internal/routingkit"
 	"github.com/paulmach/osm"
@@ -14,7 +16,7 @@ import (
 // MaxDistance represents the maximum possible route distance.
 var MaxDistance uint32
 
-func ParsePBF(osmFile string, tagMapFilter TagMapFilter) map[int]bool {
+func parsePBF(osmFile string, tagMapFilter TagMapFilter, speedMapper SpeedMapper) (map[int]bool, map[int]int) {
 	file, err := os.Open(osmFile)
 	if err != nil {
 		panic(err)
@@ -28,12 +30,17 @@ func ParsePBF(osmFile string, tagMapFilter TagMapFilter) map[int]bool {
 	defer scanner.Close()
 
 	allowed := map[int]bool{}
+	waySpeeds := map[int]int{}
+
 	for scanner.Scan() {
 		switch o := scanner.Object().(type) {
 		case *osm.Way:
 			tagMap := o.Tags.Map()
-			if tagMapFilter(tagMap) {
+			if tagMapFilter != nil && tagMapFilter(tagMap) {
 				allowed[int(o.ID)] = true
+			}
+			if speedMapper != nil {
+				waySpeeds[int(o.ID)] = speedMapper(o.ID, tagMap)
 			}
 		}
 	}
@@ -42,7 +49,80 @@ func ParsePBF(osmFile string, tagMapFilter TagMapFilter) map[int]bool {
 		panic(err)
 	}
 
-	return allowed
+	return allowed, waySpeeds
+}
+
+type SpeedMapper func(wayID osm.WayID, tagMap map[string]string) int
+
+func carSpeedMapper(wayID osm.WayID, tagMap map[string]string) int {
+	intRegex := regexp.MustCompile(`^\d+`)
+	maxspeed, maxspeedOk := tagMap["maxspeed"]
+	if maxspeedOk && maxspeed != "unposted" {
+		// The implementation in routingkit seems to split on spaces, \0, and ;, then
+		// take the minimum value - there doesn't really seem to be any basis in
+		// https://wiki.openstreetmap.org/wiki/Key:maxspeed for doing that...
+		// that page also suggests it's a bit more complicated (with possible units)
+		// so probably better to use OSRM's implementation as a model.
+		// For now, I will just try to parse the first value seen as an int
+		intString := intRegex.FindString(maxspeed)
+		speed, err := strconv.Atoi(intString)
+		if err == nil {
+			if speed == 0 {
+				return 1
+			}
+			return speed
+		}
+	}
+	highway, highwayOk := tagMap["highway"]
+	if highwayOk {
+		switch highway {
+		case "motorway":
+			return 90
+		case "motorway_link":
+			return 45
+		case "trunk":
+			return 85
+		case "trunk_link":
+			return 40
+		case "primary":
+			return 65
+		case "primary_link":
+			return 30
+		case "secondary":
+			return 55
+		case "secondary_link":
+			return 25
+		case "tertiary":
+			return 40
+		case "tertiary_link":
+			return 20
+		case "unclassified":
+			return 25
+		case "residential":
+			return 25
+		case "living_street":
+			return 10
+		case "service":
+			return 8
+		case "track":
+			return 8
+		case "ferry":
+			return 5
+		}
+	}
+
+	if _, ok := tagMap["junction"]; ok {
+		return 20
+	}
+
+	if val, ok := tagMap["route"]; ok && val == "ferry" {
+		return 5
+	}
+	if _, ok := tagMap["ferry"]; ok {
+		return 5
+	}
+
+	return 50
 }
 
 type TagMapFilter func(tagMap map[string]string) bool
@@ -320,35 +400,42 @@ func pedestrianTagMapFilter(tagMap map[string]string) bool {
 }
 
 func Car(osmFile string) Profile {
+	allowedWayIDS, waySpeeds := parsePBF(osmFile, carTagMapFilter, carSpeedMapper)
 	profile := Profile{
 		Name:          "car",
-		AllowedWayIds: ParsePBF(osmFile, carTagMapFilter),
+		AllowedWayIds: allowedWayIDS,
+		WaySpeeds:     waySpeeds,
 	}
 	return profile
 }
 
 func Bike(osmFile string) Profile {
+	allowedWayIDS, waySpeeds := parsePBF(osmFile, bikeTagMapFilter, nil)
 	profile := Profile{
 		Name:          "bike",
-		AllowedWayIds: ParsePBF(osmFile, bikeTagMapFilter),
+		AllowedWayIds: allowedWayIDS,
+		WaySpeeds:     waySpeeds,
 	}
 	return profile
 }
 
 func Pedestrian(osmFile string) Profile {
+	allowedWayIDS, waySpeeds := parsePBF(osmFile, pedestrianTagMapFilter, nil)
 	profile := Profile{
 		Name:          "pedestrian",
-		AllowedWayIds: ParsePBF(osmFile, pedestrianTagMapFilter),
+		AllowedWayIds: allowedWayIDS,
+		WaySpeeds:     waySpeeds,
 	}
 	return profile
 }
 
 type Profile struct {
 	AllowedWayIds map[int]bool
+	WaySpeeds     map[int]int
 	Name          string
 }
 
-func (p Profile) swigProfile() routingkit.Profile {
+func withSwigProfile(p Profile, f func(routingkit.Profile)) {
 	customProfile := routingkit.NewProfile()
 	customProfile.SetName(p.Name)
 
@@ -358,7 +445,16 @@ func (p Profile) swigProfile() routingkit.Profile {
 	}
 	customProfile.SetAllowedWayIds(allowedWayIds)
 
-	return customProfile
+	waySpeeds := routingkit.NewIntIntMap()
+	for wayId, speed := range p.WaySpeeds {
+		waySpeeds.Set(int(wayId), speed)
+	}
+	customProfile.SetWaySpeeds(waySpeeds)
+
+	f(customProfile)
+	routingkit.DeleteIntVector(allowedWayIds)
+	routingkit.DeleteIntIntMap(waySpeeds)
+	routingkit.DeleteProfile(customProfile)
 }
 
 func init() {
@@ -379,11 +475,10 @@ func NewDistanceClient(mapFile string, p Profile) (DistanceClient, error) {
 	}
 
 	concurrentQueries := runtime.GOMAXPROCS(0)
-	customProfile := p.swigProfile()
-	defer func() {
-		routingkit.DeleteProfile(customProfile)
-	}()
-	c := routingkit.NewClient(concurrentQueries, mapFile, chFile, customProfile)
+	var c routingkit.Client
+	withSwigProfile(p, func(customProfile routingkit.Profile) {
+		c = routingkit.NewClient(concurrentQueries, mapFile, chFile, customProfile)
+	})
 
 	channel := make(chan int, concurrentQueries)
 	for i := 0; i < concurrentQueries; i++ {
@@ -578,13 +673,12 @@ func NewTravelTimeClient(mapFile string, profile Profile) (TravelTimeClient, err
 		return TravelTimeClient{}, err
 	}
 	concurrentQueries := runtime.GOMAXPROCS(0)
-	customProfile := profile.swigProfile()
+	var c routingkit.Client
+	withSwigProfile(profile, func(customProfile routingkit.Profile) {
+		c = routingkit.NewClient(concurrentQueries, mapFile, chFile, customProfile)
+		customProfile.SetTravel_time(true)
+	})
 	// sets that we are interested in the travel time rather than the distance
-	customProfile.SetTravel_time(true)
-	defer func() {
-		routingkit.DeleteProfile(customProfile)
-	}()
-	c := routingkit.NewClient(concurrentQueries, mapFile, chFile, customProfile)
 
 	channel := make(chan int, concurrentQueries)
 	for i := 0; i < concurrentQueries; i++ {
