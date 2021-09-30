@@ -414,17 +414,18 @@ func bikeSpeedMapper(_ int, tagMap map[string]string) int {
 }
 
 func Car() ProfileGenerator {
-	return NewProfileGenerator("car", VehicleMode, carTagMapFilter, carSpeedMapper)
+	return NewProfileGenerator("car", VehicleMode, false, carTagMapFilter, carSpeedMapper)
 }
 
 func Bike() ProfileGenerator {
-	return NewProfileGenerator("bike", BikeMode, bikeTagMapFilter, bikeSpeedMapper)
+	return NewProfileGenerator("bike", BikeMode, false, bikeTagMapFilter, bikeSpeedMapper)
 }
 
 func Pedestrian() ProfileGenerator {
 	return NewProfileGenerator(
 		"pedestrian",
 		PedestrianMode,
+		false,
 		pedestrianTagMapFilter,
 		pedestrianSpeedMapper,
 	)
@@ -435,10 +436,11 @@ type TransportMode routingkit.Transport_mode
 var VehicleMode, BikeMode, PedestrianMode TransportMode
 
 type Profile struct {
-	AllowedWayIds map[int]bool
-	WaySpeeds     map[int]int
-	Name          string
-	TransportMode TransportMode
+	AllowedWayIds    map[int]bool
+	WaySpeeds        map[int]int
+	Name             string
+	TransportMode    TransportMode
+	PreventLeftTurns bool
 }
 
 type ProfileGenerator func(osmFile string) Profile
@@ -446,16 +448,18 @@ type ProfileGenerator func(osmFile string) Profile
 func NewProfileGenerator(
 	name string,
 	transportMode TransportMode,
+	preventLeftTurns bool,
 	filter TagMapFilter,
 	speedMapper SpeedMapper,
 ) ProfileGenerator {
 	return func(osmFile string) Profile {
 		allowedWayIDS, waySpeeds := parsePBF(osmFile, carTagMapFilter, carSpeedMapper)
 		return Profile{
-			Name:          name,
-			AllowedWayIds: allowedWayIDS,
-			WaySpeeds:     waySpeeds,
-			TransportMode: transportMode,
+			Name:             name,
+			AllowedWayIds:    allowedWayIDS,
+			WaySpeeds:        waySpeeds,
+			TransportMode:    transportMode,
+			PreventLeftTurns: preventLeftTurns,
 		}
 	}
 }
@@ -464,6 +468,7 @@ func withSwigProfile(p Profile, f func(routingkit.Profile)) {
 	customProfile := routingkit.NewProfile()
 	customProfile.SetName(p.Name)
 	customProfile.SetTransportMode(routingkit.Transport_mode(p.TransportMode))
+	customProfile.SetPrevent_left_turns(p.PreventLeftTurns)
 
 	allowedWayIds := routingkit.NewIntVector()
 	for wayId := range p.AllowedWayIds {

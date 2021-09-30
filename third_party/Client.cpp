@@ -36,6 +36,201 @@ namespace GoRoutingKit
 		return !strcmp(l, r);
 	}
 
+	bool starts_with(const char *prefix, const char *str)
+	{
+		while (*prefix != '\0' && *str == *prefix)
+		{
+			++prefix;
+			++str;
+		}
+		return *prefix == '\0';
+	}
+
+	void decode_osm_car_turn_restrictions_custom(
+		uint64_t osm_relation_id, const std::vector<OSMRelationMember> &member_list,
+		const TagMap &tags,
+		std::function<void(OSMTurnRestriction)> on_new_turn_restriction,
+		std::function<void(const std::string &)> log_message, bool prevent_left_turns)
+	{
+		const char *restriction = tags["restriction"];
+		if (restriction == nullptr)
+			return;
+
+		OSMTurnRestrictionCategory restriction_type;
+
+		int direction_offset;
+
+		if (starts_with("only_", restriction))
+		{
+			restriction_type = OSMTurnRestrictionCategory::mandatory;
+			direction_offset = 5;
+		}
+		else if (starts_with("no_", restriction))
+		{
+			restriction_type = OSMTurnRestrictionCategory::prohibitive;
+			direction_offset = 3;
+		}
+		else
+		{
+			if (log_message)
+				log_message("Unknown OSM turn restriction with ID " + std::to_string(osm_relation_id) + " and value \"" + restriction + "\", ignoring restriction");
+			return;
+		}
+
+		OSMTurnDirection turn_direction;
+
+		if (str_eq("left_turn", restriction + direction_offset))
+		{
+			turn_direction = OSMTurnDirection::left_turn;
+		}
+		else if (str_eq("right_turn", restriction + direction_offset))
+		{
+			turn_direction = OSMTurnDirection::right_turn;
+		}
+		else if (str_eq("straight_on", restriction + direction_offset))
+		{
+			turn_direction = OSMTurnDirection::straight_on;
+		}
+		else if (str_eq("u_turn", restriction + direction_offset))
+		{
+			turn_direction = OSMTurnDirection::u_turn;
+		}
+		else
+		{
+			if (log_message)
+				log_message("Unknown OSM turn restriction with ID " + std::to_string(osm_relation_id) + " and value \"" + restriction + "\", ignoring restriction");
+			return;
+		}
+
+		std::vector<unsigned> from_member_list;
+		std::vector<unsigned> to_member_list;
+		unsigned via_member = invalid_id;
+
+		for (unsigned i = 0; i < member_list.size(); ++i)
+		{
+			if (str_eq(member_list[i].role, "via"))
+			{
+				if (via_member != invalid_id)
+				{
+					if (log_message)
+						log_message("OSM turn restriction with ID " + std::to_string(osm_relation_id) + " has several \"via\" roles, ignoring restriction");
+					return;
+				}
+				via_member = i;
+			}
+			else if (str_eq(member_list[i].role, "from"))
+			{
+				from_member_list.push_back(i);
+			}
+			else if (str_eq(member_list[i].role, "to"))
+			{
+				to_member_list.push_back(i);
+			}
+			else if (str_eq(member_list[i].role, "location_hint"))
+			{
+				// ignore
+			}
+			else
+			{
+				if (log_message)
+					log_message("OSM turn restriction with ID " + std::to_string(osm_relation_id) + " and unknown role \"" + member_list[i].role + "\", ignoring role");
+			}
+		}
+
+		if (via_member != invalid_id && member_list[via_member].type == OSMIDType::relation)
+		{
+			if (log_message)
+				log_message("OSM turn restriction with ID " + std::to_string(osm_relation_id) + " has a relation as \"via\"-role, this is invalid, ignoring restriction");
+			return;
+		}
+
+		if (via_member != invalid_id && member_list[via_member].type == OSMIDType::way)
+		{
+			//log_message("OSM turn restriction with ID "+std::to_string(osm_relation_id)+" and name \""+restriction+"\" has a relation as \"way\"-role, this feature is not supported, ignoring restriction");
+			return;
+		}
+
+		uint64_t via_node = (uint64_t)-1;
+		if (via_member != invalid_id)
+		{
+			via_node = member_list[via_member].id;
+		}
+
+		from_member_list.erase(
+			std::remove_if(
+				from_member_list.begin(), from_member_list.end(),
+				[&](unsigned member)
+				{
+					if (member_list[member].type != OSMIDType::way)
+					{
+						if (log_message)
+							log_message("OSM turn restriction with ID " + std::to_string(osm_relation_id) + " has \"from\"-role that is not a way, ignoring role");
+						return true;
+					}
+					else
+					{
+						return false;
+					}
+				}),
+			from_member_list.end());
+
+		to_member_list.erase(
+			std::remove_if(
+				to_member_list.begin(), to_member_list.end(),
+				[&](unsigned member)
+				{
+					if (member_list[member].type != OSMIDType::way)
+					{
+						if (log_message)
+							log_message("OSM turn restriction with ID " + std::to_string(osm_relation_id) + " has \"to\"-role that is not a way, ignoring role");
+						return true;
+					}
+					else
+					{
+						return false;
+					}
+				}),
+			to_member_list.end());
+
+		if (to_member_list.empty())
+		{
+			if (log_message)
+				log_message("OSM turn restriction with ID " + std::to_string(osm_relation_id) + " is missing \"to\" role, ignoring restriction");
+			return;
+		}
+
+		if (from_member_list.empty())
+		{
+			if (log_message)
+				log_message("OSM turn restriction with ID " + std::to_string(osm_relation_id) + " is missing \"from\" role, ignoring restriction");
+			return;
+		}
+
+		if (restriction_type == OSMTurnRestrictionCategory::mandatory && to_member_list.size() != 1)
+		{
+			if (log_message)
+				log_message("OSM turn restriction with ID " + std::to_string(osm_relation_id) + " is mandatory but has several \"to\" roles, ignoring restriction");
+			return;
+		}
+
+		if (restriction_type == OSMTurnRestrictionCategory::mandatory && from_member_list.size() != 1)
+		{
+			if (log_message)
+				log_message("OSM turn restriction with ID " + std::to_string(osm_relation_id) + " is mandatory but has several \"to\" roles, ignoring restriction");
+			return;
+		}
+
+		// override the restriction_type in case we want to forbid left turns
+		if (prevent_left_turns == true && turn_direction == OSMTurnDirection::left_turn)
+		{
+			restriction_type = OSMTurnRestrictionCategory::prohibitive;
+		}
+
+		for (unsigned from_member : from_member_list)
+			for (unsigned to_member : to_member_list)
+				on_new_turn_restriction(OSMTurnRestriction{osm_relation_id, restriction_type, turn_direction, member_list[from_member].id, via_node, member_list[to_member].id});
+	}
+
 	RoutingGraph load_custom_osm_routing_graph_from_pbf(
 		const std::string &pbf_file, Profile profile)
 	{
@@ -67,6 +262,22 @@ namespace GoRoutingKit
 
 		auto waySpeeds = std::vector<unsigned>(routing_way_count);
 
+		std::function<
+			void(
+				uint64_t osm_relation_id,
+				const std::vector<OSMRelationMember> &member_list,
+				const TagMap &tags,
+				std::function<void(OSMTurnRestriction)>)>
+			turn_restriction_decoder = nullptr;
+
+		if (profile.transportMode == vehicle)
+		{
+			turn_restriction_decoder = [&](uint64_t osm_relation_id, const std::vector<OSMRelationMember> &member_list, const TagMap &tags, std::function<void(OSMTurnRestriction)> on_new_restriction)
+			{
+				return decode_osm_car_turn_restrictions_custom(osm_relation_id, member_list, tags, on_new_restriction, log_message, profile.prevent_left_turns);
+			};
+		}
+
 		auto routing_graph = load_osm_routing_graph_from_pbf(
 			pbf_file,
 			mapping,
@@ -89,13 +300,7 @@ namespace GoRoutingKit
 				}
 				return OSMWayDirectionCategory::open_in_both;
 			},
-			[&](uint64_t osm_relation_id, const std::vector<OSMRelationMember> &member_list, const TagMap &tags, std::function<void(OSMTurnRestriction)> on_new_restriction)
-			{
-				if (profile.transportMode == vehicle)
-				{
-					return decode_osm_car_turn_restrictions(osm_relation_id, member_list, tags, on_new_restriction, log_message);
-				}
-			},
+			turn_restriction_decoder,
 			log_message);
 
 		mapping = OSMRoutingIDMapping(); // release memory

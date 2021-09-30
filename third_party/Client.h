@@ -31,6 +31,7 @@ struct Profile
         std::map<uint64_t, unsigned int> waySpeeds;
         transport_mode transportMode;
         const char *name;
+        bool prevent_left_turns;
         bool travel_time;
 };
 
