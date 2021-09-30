@@ -2,10 +2,14 @@ package routingkit
 
 import (
 	"context"
+	"crypto/sha1"
+	"encoding/hex"
 	"fmt"
+	"io"
 	"os"
 	"regexp"
 	"runtime"
+	"sort"
 	"strconv"
 
 	"github.com/nextmv-io/go-routingkit/routingkit/internal/routingkit"
@@ -538,7 +542,42 @@ func chFileName(mapFile string, profile Profile, duration bool) (string, error) 
 	if duration {
 		distOrDuration = "duration"
 	}
-	return mapFile + "_" + extension + "_" + distOrDuration + ".ch", nil
+
+	// compute a hash based on the contents of the profile
+	h := sha1.New()
+
+	// iterate over profile.AllowedWayIds in order
+	keys := make([]int, 0)
+	for k := range profile.AllowedWayIds {
+		keys = append(keys, k)
+	}
+	sort.Ints(keys)
+	for _, s := range keys {
+		_, _ = io.WriteString(h, "-")
+		_, _ = io.WriteString(h, strconv.Itoa(s))
+	}
+
+	// iterate over profile.WaySpeeds in order
+	keys = make([]int, 0)
+	for k := range profile.WaySpeeds {
+		keys = append(keys, k)
+	}
+	sort.Ints(keys)
+	for _, s := range keys {
+		_, _ = io.WriteString(h, "-")
+		_, _ = io.WriteString(h, strconv.Itoa(profile.WaySpeeds[s]))
+		_, _ = io.WriteString(h, "-")
+		_, _ = io.WriteString(h, strconv.Itoa(s))
+	}
+
+	// add simple fields
+	_, _ = io.WriteString(h, "-")
+	_, _ = io.WriteString(h, strconv.FormatBool(profile.PreventLeftTurns))
+	_, _ = io.WriteString(h, "-")
+	_, _ = io.WriteString(h, strconv.Itoa(int(profile.TransportMode)))
+	hash := hex.EncodeToString(h.Sum(nil))
+
+	return mapFile + "_" + extension + "_" + distOrDuration + "_" + hash + ".ch", nil
 }
 
 // Delete deletes the client, releasing memory allocated for C++ routing data structures
