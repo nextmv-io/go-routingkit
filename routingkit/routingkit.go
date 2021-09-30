@@ -35,12 +35,13 @@ func parsePBF(osmFile string, tagMapFilter TagMapFilter, speedMapper SpeedMapper
 	for scanner.Scan() {
 		switch o := scanner.Object().(type) {
 		case *osm.Way:
+			id := int(o.ID)
 			tagMap := o.Tags.Map()
-			if tagMapFilter != nil && tagMapFilter(tagMap) {
-				allowed[int(o.ID)] = true
+			if tagMapFilter != nil && tagMapFilter(id, tagMap) {
+				allowed[id] = true
 			}
 			if speedMapper != nil {
-				waySpeeds[int(o.ID)] = speedMapper(o.ID, tagMap)
+				waySpeeds[id] = speedMapper(id, tagMap)
 			}
 		}
 	}
@@ -52,9 +53,9 @@ func parsePBF(osmFile string, tagMapFilter TagMapFilter, speedMapper SpeedMapper
 	return allowed, waySpeeds
 }
 
-type SpeedMapper func(wayID osm.WayID, tagMap map[string]string) int
+type SpeedMapper func(wayId int, tagMap map[string]string) int
 
-func carSpeedMapper(wayID osm.WayID, tagMap map[string]string) int {
+func carSpeedMapper(_ int, tagMap map[string]string) int {
 	intRegex := regexp.MustCompile(`^\d+`)
 	maxspeed, maxspeedOk := tagMap["maxspeed"]
 	if maxspeedOk && maxspeed != "unposted" {
@@ -125,9 +126,9 @@ func carSpeedMapper(wayID osm.WayID, tagMap map[string]string) int {
 	return 50
 }
 
-type TagMapFilter func(tagMap map[string]string) bool
+type TagMapFilter func(wayId int, tagMap map[string]string) bool
 
-func carTagMapFilter(tagMap map[string]string) bool {
+func carTagMapFilter(_ int, tagMap map[string]string) bool {
 	if _, ok := tagMap["junction"]; ok {
 		return true
 	}
@@ -207,7 +208,7 @@ func carTagMapFilter(tagMap map[string]string) bool {
 	return false
 }
 
-func bikeTagMapFilter(tagMap map[string]string) bool {
+func bikeTagMapFilter(_ int, tagMap map[string]string) bool {
 	if _, ok := tagMap["junction"]; ok {
 		return true
 	}
@@ -301,7 +302,7 @@ func bikeTagMapFilter(tagMap map[string]string) bool {
 	return false
 }
 
-func pedestrianTagMapFilter(tagMap map[string]string) bool {
+func pedestrianTagMapFilter(_ int, tagMap map[string]string) bool {
 	if _, ok := tagMap["junction"]; ok {
 		return true
 	}
@@ -399,40 +400,39 @@ func pedestrianTagMapFilter(tagMap map[string]string) bool {
 	return false
 }
 
-func Car(osmFile string) Profile {
-	allowedWayIDS, waySpeeds := parsePBF(osmFile, carTagMapFilter, carSpeedMapper)
-	profile := Profile{
-		Name:          "car",
-		AllowedWayIds: allowedWayIDS,
-		WaySpeeds:     waySpeeds,
-	}
-	return profile
+func Car() ProfileGenerator {
+	return NewProfileGenerator("car", carTagMapFilter, carSpeedMapper)
 }
 
-func Bike(osmFile string) Profile {
-	allowedWayIDS, waySpeeds := parsePBF(osmFile, bikeTagMapFilter, nil)
-	profile := Profile{
-		Name:          "bike",
-		AllowedWayIds: allowedWayIDS,
-		WaySpeeds:     waySpeeds,
-	}
-	return profile
+func Bike() ProfileGenerator {
+	return NewProfileGenerator("bike", bikeTagMapFilter, nil)
 }
 
-func Pedestrian(osmFile string) Profile {
-	allowedWayIDS, waySpeeds := parsePBF(osmFile, pedestrianTagMapFilter, nil)
-	profile := Profile{
-		Name:          "pedestrian",
-		AllowedWayIds: allowedWayIDS,
-		WaySpeeds:     waySpeeds,
-	}
-	return profile
+func Pedestrian() ProfileGenerator {
+	return NewProfileGenerator("pedestrian", pedestrianTagMapFilter, nil)
 }
 
 type Profile struct {
 	AllowedWayIds map[int]bool
 	WaySpeeds     map[int]int
 	Name          string
+}
+
+type ProfileGenerator func(osmFile string) Profile
+
+func NewProfileGenerator(
+	name string,
+	filter TagMapFilter,
+	speedMapper SpeedMapper,
+) ProfileGenerator {
+	return func(osmFile string) Profile {
+		allowedWayIDS, waySpeeds := parsePBF(osmFile, carTagMapFilter, carSpeedMapper)
+		return Profile{
+			Name:          name,
+			AllowedWayIds: allowedWayIDS,
+			WaySpeeds:     waySpeeds,
+		}
+	}
 }
 
 func withSwigProfile(p Profile, f func(routingkit.Profile)) {
@@ -464,11 +464,12 @@ func init() {
 // NewDistanceClient initializes a DistanceClient using the provided .osm.pbf file and
 // .ch file. The .ch file will be created if it does not already exist. It is the caller's
 // responsibility to call Delete on the client when it is no longer needed.
-func NewDistanceClient(mapFile string, p Profile) (DistanceClient, error) {
+func NewDistanceClient(mapFile string, profileGenerator ProfileGenerator) (DistanceClient, error) {
 	if _, err := os.Stat(mapFile); os.IsNotExist(err) {
 		return DistanceClient{}, fmt.Errorf("could not find map file at %v", mapFile)
 	}
 
+	p := profileGenerator(mapFile)
 	chFile, err := chFileName(mapFile, p, false)
 	if err != nil {
 		return DistanceClient{}, err
@@ -664,10 +665,11 @@ type TravelTimeClient struct {
 // NewTravelTimeClient initializes a TravelTimeClient using the provided .osm.pbf file and
 // .ch file. The .ch file will be created if it does not already exist. It is the caller's
 // responsibility to call Delete on the client when it is no longer needed.
-func NewTravelTimeClient(mapFile string, profile Profile) (TravelTimeClient, error) {
+func NewTravelTimeClient(mapFile string, profileGenerator ProfileGenerator) (TravelTimeClient, error) {
 	if _, err := os.Stat(mapFile); os.IsNotExist(err) {
 		return TravelTimeClient{}, fmt.Errorf("could not find map file at %v", mapFile)
 	}
+	profile := profileGenerator(mapFile)
 	chFile, err := chFileName(mapFile, profile, true)
 	if err != nil {
 		return TravelTimeClient{}, err
