@@ -6,11 +6,13 @@ import (
 	"encoding/hex"
 	"fmt"
 	"io"
+	"math"
 	"os"
 	"regexp"
 	"runtime"
 	"sort"
 	"strconv"
+	"strings"
 
 	"github.com/nextmv-io/go-routingkit/routingkit/internal/routingkit"
 	"github.com/paulmach/osm"
@@ -59,25 +61,95 @@ func parsePBF(osmFile string, tagMapFilter TagMapFilter, speedMapper SpeedMapper
 
 type SpeedMapper func(wayId int, tagMap map[string]string) int
 
-var intRegex = regexp.MustCompile(`^\d+`)
+var osmTagWithCountryCode = regexp.MustCompile(`^(\w{2}):(.*)$`)
+var maxSpeedAndUnits = regexp.MustCompile(`^([0-9][\.0-9]+?)(?:[ ]?(km/h|kmh|kph|mph|knots))?$`)
+
+func parseMaxspeed(maxspeed string) int {
+	if maxspeed == "signals" || maxspeed == "variable" {
+		return math.MaxInt64
+	}
+	if maxspeed == "none" || maxspeed == "unlimited" {
+		return 130
+	}
+	withoutCountryCode := osmTagWithCountryCode.ReplaceAllString(maxspeed, "${1}")
+	if withoutCountryCode == "walk" || maxspeed == "foot" {
+		return 5
+	}
+	if withoutCountryCode == "urban" {
+		return 40
+	}
+	if withoutCountryCode == "living_street" {
+		return 10
+	}
+	if maxspeed == "rural" || maxspeed == "de:rural" || maxspeed == "at:rural" || maxspeed == "ro:rural" {
+		return 100
+	}
+	if maxspeed == "ru:rural" || maxspeed == "ua:rural" {
+		return 90
+	}
+	if maxspeed == "ru:motorway" {
+		return 110
+	}
+	if maxspeed == "at:motorway" || maxspeed == "ro:motorway" {
+		return 130
+	}
+	if maxspeed == "national" {
+		return 100
+	}
+	if maxspeed == "ro:trunk" {
+		return 100
+	}
+	if maxspeed == "dk:rural" || maxspeed == "ch:rural" || maxspeed == "fr:rural" {
+		return 80
+	}
+	if maxspeed == "it:rural" || maxspeed == "hu:rural" {
+		return 90
+	}
+	if maxspeed == "de:zone:30" || maxspeed == "de:zone30" {
+		return 30
+	}
+
+	speedUnitsMatch := maxSpeedAndUnits.FindStringSubmatch(maxspeed)
+	if len(speedUnitsMatch) == 3 {
+		speedStr, units := speedUnitsMatch[1], speedUnitsMatch[2]
+		speed, err := strconv.Atoi(speedStr)
+		if err != nil {
+			// This should not be possible due to the contruction of the regexp
+			panic(fmt.Errorf("extracted an invalid integer from maxspeed tag %s: %v", maxspeed, err))
+		}
+		if units == "" || units == "km/h" || units == "kmh" || units == "kph" {
+			return speed
+		}
+		if units == "mph" {
+			return speed * 1609 / 1000
+		}
+		if units == "knots" {
+			return speed * 1852 / 1000
+		}
+		// TODO: logging... we don't have a strategy for how a consumer should inject a logger
+		return speed
+	}
+	// TODO: logging... we don't have a strategy for how a consumer should inject a logger
+
+	return math.MaxInt64
+}
 
 func carSpeedMapper(_ int, tagMap map[string]string) int {
 	maxspeed, maxspeedOk := tagMap["maxspeed"]
 	if maxspeedOk && maxspeed != "unposted" {
-		// The implementation in routingkit seems to split on spaces, \0, and ;, then
-		// take the minimum value - there doesn't really seem to be any basis in
-		// https://wiki.openstreetmap.org/wiki/Key:maxspeed for doing that...
-		// that page also suggests it's a bit more complicated (with possible units)
-		// so probably better to use OSRM's implementation as a model.
-		// For now, I will just try to parse the first value seen as an int
-		intString := intRegex.FindString(maxspeed)
-		speed, err := strconv.Atoi(intString)
-		if err == nil {
-			if speed == 0 {
-				return 1
+		entries := strings.Split(maxspeed, ";")
+		minSpeed := math.MaxInt64
+		for _, entry := range entries {
+			speed := parseMaxspeed(strings.TrimLeft(entry, " "))
+			if speed < minSpeed {
+				minSpeed = speed
 			}
-			return speed
 		}
+
+		if minSpeed == math.MaxInt64 {
+			return 1
+		}
+		return minSpeed
 	}
 	highway, highwayOk := tagMap["highway"]
 	if highwayOk {
