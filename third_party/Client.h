@@ -20,9 +20,9 @@ struct QueryResponse
 
 enum transport_mode
 {
-        vehicle,
-        bike,
-        pedestrian
+        vehicle = 1,
+        bike = 2,
+        pedestrian = 3
 };
 
 struct Profile

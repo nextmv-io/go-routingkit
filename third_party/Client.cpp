@@ -268,14 +268,14 @@ namespace GoRoutingKit
 				const std::vector<OSMRelationMember> &member_list,
 				const TagMap &tags,
 				std::function<void(OSMTurnRestriction)>)>
-			turn_restriction_decoder = nullptr;
-
-		if (profile.transportMode == vehicle)
-		{
 			turn_restriction_decoder = [&](uint64_t osm_relation_id, const std::vector<OSMRelationMember> &member_list, const TagMap &tags, std::function<void(OSMTurnRestriction)> on_new_restriction)
-			{
-				return decode_osm_car_turn_restrictions_custom(osm_relation_id, member_list, tags, on_new_restriction, log_message, profile.prevent_left_turns);
-			};
+		{
+			return decode_osm_car_turn_restrictions_custom(osm_relation_id, member_list, tags, on_new_restriction, log_message, profile.prevent_left_turns);
+		};
+
+		if (profile.transportMode == bike || profile.transportMode == pedestrian)
+		{
+			turn_restriction_decoder = nullptr;
 		}
 
 		auto routing_graph = load_osm_routing_graph_from_pbf(
@@ -300,7 +300,7 @@ namespace GoRoutingKit
 				case pedestrian:
 					return OSMWayDirectionCategory::open_in_both;
 				}
-				return OSMWayDirectionCategory::open_in_both;
+				return get_osm_car_direction_category(osm_way_id, way_tags, log_message);
 			},
 			turn_restriction_decoder,
 			log_message);

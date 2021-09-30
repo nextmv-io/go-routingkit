@@ -437,7 +437,11 @@ func Pedestrian() ProfileGenerator {
 
 type TransportMode routingkit.Transport_mode
 
-var VehicleMode, BikeMode, PedestrianMode TransportMode
+var (
+	VehicleMode    TransportMode = TransportMode(routingkit.Vehicle)
+	BikeMode       TransportMode = TransportMode(routingkit.Bike)
+	PedestrianMode TransportMode = TransportMode(routingkit.Pedestrian)
+)
 
 type Profile struct {
 	AllowedWayIds    map[int]bool
@@ -750,9 +754,9 @@ func NewTravelTimeClient(mapFile string, profileGenerator ProfileGenerator) (Tra
 	concurrentQueries := runtime.GOMAXPROCS(0)
 	var c routingkit.Client
 	withSwigProfile(profile, func(swigProfile routingkit.Profile) {
-		c = routingkit.NewClient(concurrentQueries, mapFile, chFile, swigProfile)
 		// sets that we are interested in the travel time rather than the distance
 		swigProfile.SetTravel_time(true)
+		c = routingkit.NewClient(concurrentQueries, mapFile, chFile, swigProfile)
 	})
 
 	channel := make(chan int, concurrentQueries)
