@@ -1620,6 +1620,31 @@ bool _wrap_Profile_prevent_left_turns_get_routingkit_63036892ee4a2312(Profile *_
 }
 
 
+void _wrap_Profile_prevent_u_turns_set_routingkit_63036892ee4a2312(Profile *_swig_go_0, bool _swig_go_1) {
+  Profile *arg1 = (Profile *) 0 ;
+  bool arg2 ;
+  
+  arg1 = *(Profile **)&_swig_go_0; 
+  arg2 = (bool)_swig_go_1; 
+  
+  if (arg1) (arg1)->prevent_u_turns = arg2;
+  
+}
+
+
+bool _wrap_Profile_prevent_u_turns_get_routingkit_63036892ee4a2312(Profile *_swig_go_0) {
+  Profile *arg1 = (Profile *) 0 ;
+  bool result;
+  bool _swig_go_result;
+  
+  arg1 = *(Profile **)&_swig_go_0; 
+  
+  result = (bool) ((arg1)->prevent_u_turns);
+  _swig_go_result = result; 
+  return _swig_go_result;
+}
+
+
 void _wrap_Profile_travel_time_set_routingkit_63036892ee4a2312(Profile *_swig_go_0, bool _swig_go_1) {
   Profile *arg1 = (Profile *) 0 ;
   bool arg2 ;

@@ -32,6 +32,7 @@ struct Profile
         transport_mode transportMode;
         const char *name;
         bool prevent_left_turns;
+        bool prevent_u_turns;
         bool travel_time;
 };
 

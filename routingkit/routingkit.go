@@ -519,6 +519,7 @@ type Profile struct {
 	Name             string
 	TransportMode    TransportMode
 	PreventLeftTurns bool
+	PreventUTurns    bool
 	Filter           TagMapFilter
 	SpeedMapper      SpeedMapper
 }
@@ -544,6 +545,7 @@ func withSwigProfile(p Profile, allowedWayIDs map[int]bool, waySpeeds map[int]in
 	customProfile.SetName(p.Name)
 	customProfile.SetTransportMode(routingkit.Transport_mode(p.TransportMode))
 	customProfile.SetPrevent_left_turns(p.PreventLeftTurns)
+	customProfile.SetPrevent_u_turns(p.PreventUTurns)
 
 	allowedWayIds := routingkit.NewIntVector()
 	for wayId := range allowedWayIDs {

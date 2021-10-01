@@ -156,6 +156,8 @@ extern void _wrap_Profile_name_set_routingkit_63036892ee4a2312(uintptr_t arg1, s
 extern swig_type_25 _wrap_Profile_name_get_routingkit_63036892ee4a2312(uintptr_t arg1);
 extern void _wrap_Profile_prevent_left_turns_set_routingkit_63036892ee4a2312(uintptr_t arg1, _Bool arg2);
 extern _Bool _wrap_Profile_prevent_left_turns_get_routingkit_63036892ee4a2312(uintptr_t arg1);
+extern void _wrap_Profile_prevent_u_turns_set_routingkit_63036892ee4a2312(uintptr_t arg1, _Bool arg2);
+extern _Bool _wrap_Profile_prevent_u_turns_get_routingkit_63036892ee4a2312(uintptr_t arg1);
 extern void _wrap_Profile_travel_time_set_routingkit_63036892ee4a2312(uintptr_t arg1, _Bool arg2);
 extern _Bool _wrap_Profile_travel_time_get_routingkit_63036892ee4a2312(uintptr_t arg1);
 extern uintptr_t _wrap_new_Profile_routingkit_63036892ee4a2312(void);
@@ -1130,6 +1132,19 @@ func (arg1 SwigcptrProfile) GetPrevent_left_turns() (_swig_ret bool) {
 	return swig_r
 }
 
+func (arg1 SwigcptrProfile) SetPrevent_u_turns(arg2 bool) {
+	_swig_i_0 := arg1
+	_swig_i_1 := arg2
+	C._wrap_Profile_prevent_u_turns_set_routingkit_63036892ee4a2312(C.uintptr_t(_swig_i_0), C._Bool(_swig_i_1))
+}
+
+func (arg1 SwigcptrProfile) GetPrevent_u_turns() (_swig_ret bool) {
+	var swig_r bool
+	_swig_i_0 := arg1
+	swig_r = (bool)(C._wrap_Profile_prevent_u_turns_get_routingkit_63036892ee4a2312(C.uintptr_t(_swig_i_0)))
+	return swig_r
+}
+
 func (arg1 SwigcptrProfile) SetTravel_time(arg2 bool) {
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2
@@ -1167,6 +1182,8 @@ type Profile interface {
 	GetName() (_swig_ret string)
 	SetPrevent_left_turns(arg2 bool)
 	GetPrevent_left_turns() (_swig_ret bool)
+	SetPrevent_u_turns(arg2 bool)
+	GetPrevent_u_turns() (_swig_ret bool)
 	SetTravel_time(arg2 bool)
 	GetTravel_time() (_swig_ret bool)
 }

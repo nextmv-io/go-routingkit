@@ -50,7 +50,8 @@ namespace GoRoutingKit
 		uint64_t osm_relation_id, const std::vector<OSMRelationMember> &member_list,
 		const TagMap &tags,
 		std::function<void(OSMTurnRestriction)> on_new_turn_restriction,
-		std::function<void(const std::string &)> log_message, bool prevent_left_turns)
+		std::function<void(const std::string &)> log_message,
+		bool prevent_left_turns, bool prevent_u_turns)
 	{
 		const char *restriction = tags["restriction"];
 		if (restriction == nullptr)
@@ -226,6 +227,12 @@ namespace GoRoutingKit
 			restriction_type = OSMTurnRestrictionCategory::prohibitive;
 		}
 
+		// override the restriction_type in case we want to forbid u-turns
+		if (prevent_u_turns == true && turn_direction == OSMTurnDirection::u_turn)
+		{
+			restriction_type = OSMTurnRestrictionCategory::prohibitive;
+		}
+
 		for (unsigned from_member : from_member_list)
 			for (unsigned to_member : to_member_list)
 				on_new_turn_restriction(OSMTurnRestriction{osm_relation_id, restriction_type, turn_direction, member_list[from_member].id, via_node, member_list[to_member].id});
@@ -270,7 +277,12 @@ namespace GoRoutingKit
 				std::function<void(OSMTurnRestriction)>)>
 			turn_restriction_decoder = [&](uint64_t osm_relation_id, const std::vector<OSMRelationMember> &member_list, const TagMap &tags, std::function<void(OSMTurnRestriction)> on_new_restriction)
 		{
-			return decode_osm_car_turn_restrictions_custom(osm_relation_id, member_list, tags, on_new_restriction, log_message, profile.prevent_left_turns);
+			return decode_osm_car_turn_restrictions_custom(
+				osm_relation_id,
+				member_list, tags,
+				on_new_restriction,
+				log_message,
+				profile.prevent_left_turns, profile.prevent_u_turns);
 		};
 
 		if (profile.transportMode == bike || profile.transportMode == pedestrian)
