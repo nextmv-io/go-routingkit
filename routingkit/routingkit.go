@@ -481,20 +481,66 @@ func pedestrianSpeedMapper(_ int, tagMap map[string]string) int {
 	return 5
 }
 
-func bikeSpeedMapper(_ int, tagMap map[string]string) int {
-	maxSpeed := carSpeedMapper(0, tagMap)
-	if maxSpeed > 25 {
-		maxSpeed = 25
+func maxSpeedMapper(maxSpeed int) SpeedMapper {
+	return func(_ int, tagMap map[string]string) int {
+		speed := carSpeedMapper(0, tagMap)
+		if speed > maxSpeed {
+			speed = maxSpeed
+		}
+		return speed
 	}
-	return maxSpeed
+}
+
+// to handle the units and filter by actual values, we need to mirror this:
+// https://github.com/Project-OSRM/osrm-profiles-contrib/blob/master/5/21/truck-soft/lib/measure.lua
+func truckTagMapFilter(maxHeight, maxWidth, maxLength, maxWeight float64) TagMapFilter {
+	return func(wayId int, tagMap map[string]string) bool {
+		//see https://wiki.openstreetmap.org/wiki/Key:maxheight
+		_, maxHeightOk := tagMap["maxheight"]
+		_, maxPhysicalHeightOk := tagMap["maxheight:physical"]
+		if maxHeightOk || maxPhysicalHeightOk {
+			return false
+		}
+
+		// see https://wiki.openstreetmap.org/wiki/Key:maxwidth
+		_, maxWidthOk := tagMap["maxwidth"]
+		_, maxPhysicalWidthOk := tagMap["maxwidth:physical"]
+		_, widthOk := tagMap["width"]
+
+		if maxWidthOk || maxPhysicalWidthOk || widthOk {
+			return false
+		}
+
+		// there is also maxlength:hgv_articulated, see:
+		// https://wiki.openstreetmap.org/wiki/Key:maxlength
+		_, maxLengthOk := tagMap["maxlength"]
+		if maxLengthOk {
+			return false
+		}
+
+		// see https://wiki.openstreetmap.org/wiki/Key:maxweight
+		_, maxWeightOk := tagMap["maxweight"]
+		if maxWeightOk {
+			return false
+		}
+
+		// TODO: there are more things to filter out ways for certain trucks:
+		// https://wiki.openstreetmap.org/wiki/Key:maxweightrating
+		// https://wiki.openstreetmap.org/wiki/Key:hgv_articulated
+		// https://wiki.openstreetmap.org/wiki/Key:maxaxleload
+		// https://wiki.openstreetmap.org/wiki/Key:maxbogieweight
+
+		// car is the default for trucks
+		return carTagMapFilter(wayId, tagMap)
+	}
 }
 
 func Car() Profile {
-	return NewProfile("car", VehicleMode, false, carTagMapFilter, carSpeedMapper)
+	return NewProfile("car", VehicleMode, false, false, carTagMapFilter, carSpeedMapper)
 }
 
 func Bike() Profile {
-	return NewProfile("bike", BikeMode, false, bikeTagMapFilter, bikeSpeedMapper)
+	return NewProfile("bike", BikeMode, false, false, bikeTagMapFilter, maxSpeedMapper(25))
 }
 
 func Pedestrian() Profile {
@@ -502,8 +548,22 @@ func Pedestrian() Profile {
 		"pedestrian",
 		PedestrianMode,
 		false,
+		false,
 		pedestrianTagMapFilter,
 		pedestrianSpeedMapper,
+	)
+}
+
+func Truck(maxHeight, maxWidth, maxLength, maxWeight float64, maxSpeed int) Profile {
+	return NewProfile(
+		"truck",
+		VehicleMode,
+		false,
+		true,
+		truckTagMapFilter(maxHeight, maxWidth, maxLength, maxWeight),
+		// TODO: instead of reusing the car max speed and capping it at a given
+		// maxSpeed, we could/should also react to maxspeed:hgv
+		maxSpeedMapper(maxSpeed),
 	)
 }
 
@@ -528,6 +588,7 @@ func NewProfile(
 	name string,
 	transportMode TransportMode,
 	preventLeftTurns bool,
+	preventUTurns bool,
 	filter TagMapFilter,
 	speedMapper SpeedMapper,
 ) Profile {
@@ -535,6 +596,7 @@ func NewProfile(
 		Name:             name,
 		TransportMode:    transportMode,
 		PreventLeftTurns: preventLeftTurns,
+		PreventUTurns:    preventUTurns,
 		Filter:           filter,
 		SpeedMapper:      speedMapper,
 	}
