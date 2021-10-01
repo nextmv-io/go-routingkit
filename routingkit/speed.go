@@ -58,29 +58,37 @@ func parseMaxspeed(maxspeed string) int {
 		return 30
 	}
 
-	speedUnitsMatch := maxSpeedAndUnits.FindStringSubmatch(maxspeed)
-	if len(speedUnitsMatch) == 3 {
-		speedStr, units := speedUnitsMatch[1], speedUnitsMatch[2]
-		speed, err := strconv.Atoi(speedStr)
-		if err != nil {
-			// This should not be possible due to the contruction of the regexp
-			panic(fmt.Errorf("extracted an invalid integer from maxspeed tag %s: %v", maxspeed, err))
-		}
-		if units == "" || units == "km/h" || units == "kmh" || units == "kph" {
-			return speed
-		}
-		if units == "mph" {
-			return speed * 1609 / 1000
-		}
-		if units == "knots" {
-			return speed * 1852 / 1000
-		}
-		// TODO: logging... we don't have a strategy for how a consumer should inject a logger
+	if speed, ok := ParseOSMSpeedToKM(maxspeed); ok {
 		return speed
 	}
+
 	// TODO: logging... we don't have a strategy for how a consumer should inject a logger
 
 	return math.MaxInt64
+}
+
+func ParseOSMSpeedToKM(str string) (int, bool) {
+	speedUnitsMatch := maxSpeedAndUnits.FindStringSubmatch(str)
+	if len(speedUnitsMatch) != 3 {
+		return 0, false
+	}
+	speedStr, units := speedUnitsMatch[1], speedUnitsMatch[2]
+	speed, err := strconv.Atoi(speedStr)
+	if err != nil {
+		// This should not be possible due to the contruction of the regexp
+		panic(fmt.Errorf("extracted an invalid integer from maxspeed tag %s: %v", str, err))
+	}
+	if units == "" || units == "km/h" || units == "kmh" || units == "kph" {
+		return speed, true
+	}
+	if units == "mph" {
+		return speed * 1609 / 1000, true
+	}
+	if units == "knots" {
+		return speed * 1852 / 1000, true
+	}
+	// TODO: logging... we don't have a strategy for how a consumer should inject a logger
+	return speed, true
 }
 
 func carSpeedMapper(_ int, tagMap map[string]string) int {
