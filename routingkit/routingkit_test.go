@@ -21,6 +21,12 @@ import (
 // -76.60735000000001,39.28971 to -76.57749,39.31587
 var marylandMap string = "testdata/maryland.osm.pbf"
 
+// This is another small map of Maryland that contains data for the
+// bounding box from -76.663640,39.240043 to -76.605023,39.269623.
+// A low overpass with a max height of 13'11" is found at -76.638449,39.254932
+// (way ID 456490563), where Annapolis Rd. passes under a train line
+var marylandMapWithHeightRestriction = "testdata/maryland_height_restriction.osm.pbf"
+
 // tempFile returns the location of a temporary file. It uses ioutil.TempFile
 // under the hood, but if the file exists (but does not contain a valid
 // contraction hierarchy), we'll get an error from routingkit, so we need to
@@ -323,6 +329,7 @@ func TestDistance(t *testing.T) {
 		snap        float32
 		profile     routingkit.Profile
 		ch          string
+		osmFile     string
 
 		expectedDistance uint32
 		waypointsFile    string
@@ -340,6 +347,7 @@ func TestDistance(t *testing.T) {
 			destination:      []float32{-76.584897, 39.280774},
 			snap:             1000,
 			expectedDistance: 1897,
+			osmFile:          marylandMap,
 			waypointsFile:    "waypoints_0.json",
 			profile:          routingkit.Car(),
 		},
@@ -348,6 +356,7 @@ func TestDistance(t *testing.T) {
 			destination:      []float32{-76.584897, 39.280774},
 			snap:             1000,
 			expectedDistance: 1897,
+			osmFile:          marylandMap,
 			waypointsFile:    "waypoints_1.json",
 			profile:          routingkit.Bike(),
 		},
@@ -356,6 +365,7 @@ func TestDistance(t *testing.T) {
 			destination:      []float32{-76.584897, 39.280774},
 			snap:             1000,
 			expectedDistance: 1777,
+			osmFile:          marylandMap,
 			waypointsFile:    "waypoints_2.json",
 			profile:          routingkit.Pedestrian(),
 		},
@@ -364,6 +374,7 @@ func TestDistance(t *testing.T) {
 			destination:      []float32{-76.582855, 39.309095},
 			snap:             1000,
 			profile:          routingkit.Car(),
+			osmFile:          marylandMap,
 			expectedDistance: 1496,
 			waypointsFile:    "waypoints_3.json",
 		},
@@ -372,6 +383,7 @@ func TestDistance(t *testing.T) {
 			destination:      []float32{-76.582855, 39.309095},
 			snap:             1000,
 			profile:          routingkit.Bike(),
+			osmFile:          marylandMap,
 			expectedDistance: 1496,
 			waypointsFile:    "waypoints_4.json",
 		},
@@ -380,6 +392,7 @@ func TestDistance(t *testing.T) {
 			destination:      []float32{-76.582855, 39.309095},
 			snap:             1000,
 			profile:          routingkit.Pedestrian(),
+			osmFile:          marylandMap,
 			expectedDistance: 1429,
 			waypointsFile:    "waypoints_5.json",
 		},
@@ -388,6 +401,7 @@ func TestDistance(t *testing.T) {
 			destination:      []float32{-76.591286, 39.298443},
 			snap:             1000,
 			profile:          routingkit.Car(),
+			osmFile:          marylandMap,
 			expectedDistance: 617,
 			waypointsFile:    "waypoints_6.json",
 		},
@@ -396,6 +410,7 @@ func TestDistance(t *testing.T) {
 			destination:      []float32{-76.591286, 39.298443},
 			snap:             1000,
 			profile:          routingkit.Bike(),
+			osmFile:          marylandMap,
 			expectedDistance: 617,
 			waypointsFile:    "waypoints_7.json",
 		},
@@ -404,6 +419,7 @@ func TestDistance(t *testing.T) {
 			destination:      []float32{-76.591286, 39.298443},
 			snap:             912,
 			profile:          routingkit.Pedestrian(),
+			osmFile:          marylandMap,
 			expectedDistance: 428,
 			waypointsFile:    "waypoints_8.json",
 		},
@@ -412,14 +428,25 @@ func TestDistance(t *testing.T) {
 			// point is in a river so should not snap
 			destination:      []float32{-76.584897, 39.280774},
 			snap:             10,
+			osmFile:          marylandMap,
 			expectedDistance: routingkit.MaxDistance,
 			waypointsFile:    "waypoints_9.json",
 			profile:          routingkit.Car(),
 		},
+		// a truck with this height will need to go around the train overpass
+		{
+			source:           []float32{-76.638843, 39.254254},
+			destination:      []float32{-76.637647, 39.256933},
+			snap:             1000,
+			osmFile:          marylandMapWithHeightRestriction,
+			expectedDistance: 1972,
+			waypointsFile:    "waypoints_10.json",
+			profile:          routingkit.Truck(4.25, 0, 0, 0, 100),
+		},
 	}
 
 	for i, test := range tests {
-		cli, err := routingkit.NewDistanceClient(marylandMap, test.profile)
+		cli, err := routingkit.NewDistanceClient(test.osmFile, test.profile)
 		if err != nil {
 			t.Fatalf("creating Client: %v", err)
 		}

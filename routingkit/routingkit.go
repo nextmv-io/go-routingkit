@@ -75,16 +75,16 @@ func Pedestrian() Profile {
 	)
 }
 
-func Truck(maxHeight, maxWidth, maxLength, maxWeight float64, maxSpeed int) Profile {
+func Truck(height, width, length, weight float64, speed int) Profile {
 	return NewProfile(
 		"truck",
 		VehicleMode,
 		false,
 		true,
-		truckTagMapFilter(maxHeight, maxWidth, maxLength, maxWeight),
+		truckTagMapFilter(height, width, length, weight),
 		// TODO: instead of reusing the car max speed and capping it at a given
 		// maxSpeed, we could/should also react to maxspeed:hgv
-		maxSpeedMapper(maxSpeed),
+		maxSpeedMapper(speed),
 	)
 }
 
