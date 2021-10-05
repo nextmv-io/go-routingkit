@@ -391,9 +391,6 @@ func TestDistance(t *testing.T) {
 			expectedDistance: 617,
 			waypointsFile:    "waypoints_6.json",
 		},
-		// RoutingKit does not recognize that it should be able to go West on a bike on
-		// E. Monument St. (it has a bike lane in both directions). It incorrectly treats
-		// the bike the same as a car
 		{
 			source:           []float32{-76.587490, 39.299710},
 			destination:      []float32{-76.591286, 39.298443},
@@ -567,6 +564,7 @@ func TestTravelTime(t *testing.T) {
 		destination []float32
 		snap        float32
 		ch          string
+		profile     routingkit.Profile
 
 		expectedTravelTime uint32
 		waypointsFile      string
@@ -577,11 +575,20 @@ func TestTravelTime(t *testing.T) {
 			snap:               1000,
 			expectedTravelTime: 213405,
 			waypointsFile:      "travel_time_waypoints_0.json",
+			profile:            routingkit.Car(),
+		},
+		{
+			source:             []float32{-76.587490, 39.299710},
+			destination:        []float32{-76.591286, 39.298443},
+			snap:               1000,
+			expectedTravelTime: 53712,
+			waypointsFile:      "travel_time_waypoints_1.json",
+			profile:            routingkit.Bike(),
 		},
 	}
 
 	for i, test := range tests {
-		cli, err := routingkit.NewTravelTimeClient(marylandMap, routingkit.Car())
+		cli, err := routingkit.NewTravelTimeClient(marylandMap, test.profile)
 		if err != nil {
 			t.Fatalf("creating Client: %v", err)
 		}

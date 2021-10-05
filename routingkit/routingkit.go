@@ -163,7 +163,7 @@ func NewDistanceClient(mapFile string, profile Profile) (DistanceClient, error) 
 		return DistanceClient{}, fmt.Errorf("could not find map file at %v", mapFile)
 	}
 
-	allowedWayIDs, waySpeeds := parsePBF(mapFile, carTagMapFilter, carSpeedMapper)
+	allowedWayIDs, waySpeeds := parsePBF(mapFile, profile.Filter, profile.SpeedMapper)
 
 	chFile, err := chFileName(mapFile, profile, allowedWayIDs, waySpeeds, false)
 	if err != nil {
@@ -400,7 +400,7 @@ func NewTravelTimeClient(mapFile string, profile Profile) (TravelTimeClient, err
 		return TravelTimeClient{}, fmt.Errorf("could not find map file at %v", mapFile)
 	}
 
-	allowedWayIDs, waySpeeds := parsePBF(mapFile, carTagMapFilter, carSpeedMapper)
+	allowedWayIDs, waySpeeds := parsePBF(mapFile, profile.Filter, profile.SpeedMapper)
 	chFile, err := chFileName(mapFile, profile, allowedWayIDs, waySpeeds, true)
 	if err != nil {
 		return TravelTimeClient{}, err
