@@ -276,8 +276,6 @@ func pedestrianTagMapFilter(_ int, tagMap map[string]string) bool {
 		return false
 	}
 
-	// TODO: curious about lack of handling for one-way streets
-
 	return false
 }
 
@@ -316,62 +314,101 @@ func parseAsMeters(val string) (float64, error) {
 	return 0, fmt.Errorf("could not parse %s as meter value", val)
 }
 
+var weightMeasure = regexp.MustCompile(`^(\d+(?:\.\d*)?)(?: (t|kg|st|lt|lbs|cwt))?$`)
+
+const tonnesPerShortTon = .9071847
+const tonnesPerLbs = 0.00045359237
+const tonnesPerKG = 0.001
+const tonnesPerLongTon = 1.016047
+const tonnesPerLongHundredWeights = .05080
+
+func parseAsTonnes(val string) (float64, error) {
+	weight := weightMeasure.FindStringSubmatch(val)
+	if len(weight) == 3 {
+		f, err := strconv.ParseFloat(weight[1], 64)
+		if err != nil {
+			return 0, fmt.Errorf("invalid weight value %s: %v", val, err)
+		}
+		switch weight[2] {
+		case "":
+			return f, nil
+		case "t":
+			return f, nil
+		case "st":
+			return f * tonnesPerShortTon, nil
+		case "lbs":
+			return f * tonnesPerLbs, nil
+		case "kg":
+			return f * tonnesPerKG, nil
+		case "lt":
+			return f * tonnesPerLongTon, nil
+		case "cwt":
+			return f * tonnesPerLongHundredWeights, nil
+		}
+	}
+	return 0, fmt.Errorf("could not parse %s as tonnes value", val)
+}
+
 // to handle the units and filter by actual values, we need to mirror this:
 // https://github.com/Project-OSRM/osrm-profiles-contrib/blob/master/5/21/truck-soft/lib/measure.lua
 func truckTagMapFilter(truckHeight, truckWidth, truckLength, truckWeight float64) TagMapFilter {
 	return func(wayId int, tagMap map[string]string) bool {
+		parseMeterTag := func(tag string) float64 {
+			str, ok := tagMap[tag]
+			if !ok {
+				return 0.0
+			}
+			if str == "default" ||
+				str == "below_default" ||
+				str == "no_indications" ||
+				str == "no_sign" ||
+				str == "none" ||
+				str == "unsigned" {
+				return 0.0
+			}
+			meters, err := parseAsMeters(str)
+			if err != nil {
+				// TODO: decide on a real logging strategy
+				fmt.Fprintf(os.Stderr, "invalid %s tag %s: %v\n", tag, str, err)
+				return 0.0
+			}
+			return meters
+		}
+		min := func(a, b float64) float64 {
+			if b > a {
+				return b
+			}
+			return a
+		}
+
 		//see https://wiki.openstreetmap.org/wiki/Key:maxheight
-		maxHeightStr, maxHeightOk := tagMap["maxheight"]
-		var heightLimit float64
-		if maxHeightOk {
-			maxHeight, err := parseAsMeters(maxHeightStr)
-			if err != nil {
-				// TODO: decide on a real logging strategy
-				fmt.Fprintf(os.Stderr, "invalid maxheight tag: %v", err)
-				maxHeightOk = false
-			} else {
-				heightLimit = maxHeight
-			}
-		}
-
-		maxPhysicalHeightStr, maxPhysicalHeightOk := tagMap["maxheight:physical"]
-		if maxPhysicalHeightOk {
-			maxPhysicalHeight, err := parseAsMeters(maxPhysicalHeightStr)
-			if err != nil {
-				// TODO: decide on a real logging strategy
-				fmt.Fprintf(os.Stderr, "invalid maxheight:physical tag: %v", err)
-			} else {
-				if !maxHeightOk || maxPhysicalHeight < heightLimit {
-					heightLimit = maxPhysicalHeight
-				}
-			}
-		}
-
+		heightLimit := min(parseMeterTag("maxheight"), parseMeterTag("maxheight:physical"))
 		if heightLimit > 0.0 && truckHeight > heightLimit {
 			return false
 		}
 
-		//// see https://wiki.openstreetmap.org/wiki/Key:maxwidth
-		//_, maxWidthOk := tagMap["maxwidth"]
-		//_, maxPhysicalWidthOk := tagMap["maxwidth:physical"]
-		//_, widthOk := tagMap["width"]
-
-		//if maxWidthOk || maxPhysicalWidthOk || widthOk {
-		//	return false
-		//}
+		widthLimit := min(parseMeterTag("maxwidth"), parseMeterTag("maxwidth:physical"))
+		if widthLimit > 0.0 && truckWidth > widthLimit {
+			return false
+		}
 
 		//// there is also maxlength:hgv_articulated, see:
 		//// https://wiki.openstreetmap.org/wiki/Key:maxlength
-		//_, maxLengthOk := tagMap["maxlength"]
-		//if maxLengthOk {
-		//	return false
-		//}
+		lengthLimit := parseMeterTag("maxlength")
+		if lengthLimit > 0.0 && truckLength > lengthLimit {
+			return false
+		}
 
 		//// see https://wiki.openstreetmap.org/wiki/Key:maxweight
-		//_, maxWeightOk := tagMap["maxweight"]
-		//if maxWeightOk {
-		//	return false
-		//}
+		if maxweight, ok := tagMap["maxweight"]; ok {
+			weightLimit, err := parseAsTonnes(maxweight)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "invalid maxweight tag %s: %v\n", tagMap["maxweight"], err)
+			}
+			if weightLimit > 0.0 && truckWeight > weightLimit {
+				return false
+			}
+		}
 
 		// TODO: there are more things to filter out ways for certain trucks:
 		// https://wiki.openstreetmap.org/wiki/Key:maxweightrating

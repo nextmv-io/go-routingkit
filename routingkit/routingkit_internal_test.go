@@ -76,7 +76,77 @@ func TestParseAsMeters(t *testing.T) {
 			t.Errorf("[%d] expected a parsing error but got none", i)
 			continue
 		}
-		if diff := cmp.Diff(val, test.expectedVal, floatComparer); diff != "" {
+		if diff := cmp.Diff(test.expectedVal, val, floatComparer); diff != "" {
+			t.Errorf("[%d]: (-want, +got):\n%s", i, diff)
+		}
+	}
+}
+
+func TestParseAsTonnes(t *testing.T) {
+	tests := []struct {
+		val         string
+		expectedVal float64
+		expectErr   bool
+	}{
+		// tonnes
+		{
+			val:         `3`,
+			expectedVal: 3.0,
+		},
+		{
+			val:         `3.0`,
+			expectedVal: 3.0,
+		},
+		{
+			val:         `3 t`,
+			expectedVal: 3.0,
+		},
+		{
+			val:         `3.1 t`,
+			expectedVal: 3.1,
+		},
+		{
+			val:         `3 st`,
+			expectedVal: 2.72155,
+		},
+		{
+			val:         `10000 lbs`,
+			expectedVal: 4.535924,
+		},
+		{
+			val:         `10000 kg`,
+			expectedVal: 10,
+		},
+		{
+			val:         `12 lt`,
+			expectedVal: 12.1926,
+		},
+		{
+			val:         `30 cwt`,
+			expectedVal: 1.524,
+		},
+		{
+			val:       `30cwt`,
+			expectErr: true,
+		},
+		{
+			val:       `30 dogs`,
+			expectErr: true,
+		},
+	}
+	for i, test := range tests {
+		val, err := parseAsTonnes(test.val)
+		if err != nil && test.expectErr {
+			continue
+		}
+		if err != nil && !test.expectErr {
+			t.Errorf("[%d] did not expect a parsing error, got %v", i, err)
+			continue
+		} else if err == nil && test.expectErr {
+			t.Errorf("[%d] expected a parsing error but got none", i)
+			continue
+		}
+		if diff := cmp.Diff(test.expectedVal, val, floatComparer); diff != "" {
 			t.Errorf("[%d]: (-want, +got):\n%s", i, diff)
 		}
 	}
@@ -88,5 +158,5 @@ var floatComparer = cmp.Comparer(func(x, y float64) bool {
 	if math.IsNaN(diff / mean) {
 		return true
 	}
-	return (diff / mean) < 0.000001
+	return (diff / mean) < 0.00001
 })

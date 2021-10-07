@@ -17,7 +17,7 @@ import (
 	"github.com/nextmv-io/go-routingkit/routingkit"
 )
 
-// This is a small map file containing data for the boudning box from
+// This is a small map file containing data for the bounding box from
 // -76.60735000000001,39.28971 to -76.57749,39.31587
 var marylandMap string = "testdata/maryland.osm.pbf"
 
@@ -26,6 +26,19 @@ var marylandMap string = "testdata/maryland.osm.pbf"
 // A low overpass with a max height of 13'11" is found at -76.638449,39.254932
 // (way ID 456490563), where Annapolis Rd. passes under a train line
 var marylandMapWithHeightRestriction = "testdata/maryland_height_restriction.osm.pbf"
+
+// This is a small area of England, covering data from 0.301445,51.363350 to
+// 0.371563,51.392494. There is a narrow pass on Harley Bottom Road that a
+// vehicle with a width larger than 6'6" will need to go around.
+var englandMapWithWidthRestriction = "testdata/england_width_restriction.osm.pbf"
+
+// This is a part of London, covering data from -0.121322,51.508732 to -0.088926,51.525289.
+// There is a 40' length restriction on Fleet and Farringdon Streets.
+var englandMapWithLengthRestriction = "testdata/england_length_restriction.osm.pbf"
+
+// This is a section of London, covering -0.100959,51.487403 to -0.083680,51.496247.
+// Larcom Street has a weight limit of 7.5 tonnes
+var englandMapWithWeightRestriction = "testdata/england_weight_restriction.osm.pbf"
 
 // tempFile returns the location of a temporary file. It uses ioutil.TempFile
 // under the hood, but if the file exists (but does not contain a valid
@@ -175,7 +188,7 @@ func TestDistances(t *testing.T) {
 			snap:    1000,
 			profile: routingkit.Bike(),
 
-			expected: []uint32{1496, 617},
+			expected: []uint32{1440, 617},
 		},
 		{
 			source: []float32{-76.587490, 39.299710},
@@ -186,7 +199,7 @@ func TestDistances(t *testing.T) {
 			snap:    1000,
 			profile: routingkit.Pedestrian(),
 
-			expected: []uint32{1429, 428},
+			expected: []uint32{1588, 912},
 		},
 		{
 			// should receive MaxDistance for invalid destinations
@@ -269,10 +282,10 @@ func TestMatrix(t *testing.T) {
 				{-76.599388, 39.302014},
 			},
 			expected: [][]uint32{
-				{1496, 1259},
-				{1831, 575},
-				{2372, 2224},
-				{3399, 1548},
+				{1440, 1242},
+				{1792, 558},
+				{2370, 2192},
+				{3354, 1547},
 			},
 			profile: routingkit.Bike(),
 		},
@@ -288,10 +301,10 @@ func TestMatrix(t *testing.T) {
 				{-76.599388, 39.302014},
 			},
 			expected: [][]uint32{
-				{1429, 1259},
-				{1589, 575},
-				{2367, 2221},
-				{3157, 1535},
+				{1588, 1404},
+				{1589, 558},
+				{2368, 2209},
+				{3151, 1544},
 			},
 			profile: routingkit.Pedestrian(),
 		},
@@ -355,7 +368,7 @@ func TestDistance(t *testing.T) {
 			source:           []float32{-76.587490, 39.299710},
 			destination:      []float32{-76.584897, 39.280774},
 			snap:             1000,
-			expectedDistance: 1897,
+			expectedDistance: 1893,
 			osmFile:          marylandMap,
 			waypointsFile:    "waypoints_1.json",
 			profile:          routingkit.Bike(),
@@ -384,7 +397,7 @@ func TestDistance(t *testing.T) {
 			snap:             1000,
 			profile:          routingkit.Bike(),
 			osmFile:          marylandMap,
-			expectedDistance: 1496,
+			expectedDistance: 1440,
 			waypointsFile:    "waypoints_4.json",
 		},
 		{
@@ -393,7 +406,7 @@ func TestDistance(t *testing.T) {
 			snap:             1000,
 			profile:          routingkit.Pedestrian(),
 			osmFile:          marylandMap,
-			expectedDistance: 1429,
+			expectedDistance: 1588,
 			waypointsFile:    "waypoints_5.json",
 		},
 		{
@@ -417,10 +430,10 @@ func TestDistance(t *testing.T) {
 		{
 			source:           []float32{-76.587490, 39.299710},
 			destination:      []float32{-76.591286, 39.298443},
-			snap:             912,
+			snap:             1000,
 			profile:          routingkit.Pedestrian(),
 			osmFile:          marylandMap,
-			expectedDistance: 428,
+			expectedDistance: 912,
 			waypointsFile:    "waypoints_8.json",
 		},
 		{
@@ -442,6 +455,36 @@ func TestDistance(t *testing.T) {
 			expectedDistance: 1972,
 			waypointsFile:    "waypoints_10.json",
 			profile:          routingkit.Truck(4.25, 0, 0, 0, 100),
+		},
+		// a truck with this width will need to go around the narrow pass
+		{
+			source:           []float32{0.328562, 51.387527},
+			destination:      []float32{0.328830, 51.389174},
+			snap:             1000,
+			osmFile:          englandMapWithWidthRestriction,
+			expectedDistance: 9303,
+			waypointsFile:    "waypoints_11.json",
+			profile:          routingkit.Truck(4.25, 2.0, 0, 0, 100),
+		},
+		// Truck should avoid going down Fleet St. due to the length restriction
+		{
+			source:           []float32{-0.106210, 51.514208},
+			destination:      []float32{-0.103678, 51.514181},
+			snap:             1000,
+			osmFile:          englandMapWithLengthRestriction,
+			expectedDistance: 527,
+			waypointsFile:    "waypoints_12.json",
+			profile:          routingkit.Truck(4.25, 2.0, 13.0, 0, 100),
+		},
+		// Truck should avoid going down Larcom St. due to the weight restriction
+		{
+			source:           []float32{-0.096975, 51.490302},
+			destination:      []float32{-0.093553, 51.491785},
+			snap:             1000,
+			osmFile:          englandMapWithWeightRestriction,
+			expectedDistance: 942,
+			waypointsFile:    "waypoints_13.json",
+			profile:          routingkit.Truck(4.25, 2.0, 13.0, 8.0, 100),
 		},
 	}
 
