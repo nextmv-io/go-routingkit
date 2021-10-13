@@ -61,7 +61,7 @@ func Car() Profile {
 }
 
 func Bike() Profile {
-	return NewProfile("bike", BikeMode, false, false, bikeTagMapFilter, maxSpeedMapper(25))
+	return NewProfile("bike", BikeMode, false, false, bikeTagMapFilter, bikeSpeedMapper)
 }
 
 func Pedestrian() Profile {

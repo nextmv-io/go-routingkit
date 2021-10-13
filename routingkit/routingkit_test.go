@@ -80,13 +80,28 @@ func plotWaypoints(
 	type waypoints struct {
 		Waypoints [][]float32 `json:"waypoints"`
 	}
-	if err := json.NewEncoder(expectedFile).Encode(waypoints{expectedWaypoints}); err != nil {
-		return "", "", fmt.Errorf("writing expected points: %v", err)
+	var pathsToPlot []string
+
+	if len(expectedWaypoints) > 0 {
+		if err := json.NewEncoder(expectedFile).Encode(waypoints{expectedWaypoints}); err != nil {
+			return "", "", fmt.Errorf("writing expected points: %v", err)
+		}
+		pathsToPlot = append(pathsToPlot, expectedPath)
+		expectedPath = expectedPath + ".html"
+	} else {
+		expectedPath = ""
 	}
-	if err := json.NewEncoder(gotFile).Encode(waypoints{gotWaypoints}); err != nil {
-		return "", "", fmt.Errorf("writing expected points: %v", err)
+	if len(gotWaypoints) > 0 {
+		if err := json.NewEncoder(gotFile).Encode(waypoints{gotWaypoints}); err != nil {
+			return "", "", fmt.Errorf("writing expected points: %v", err)
+		}
+		pathsToPlot = append(pathsToPlot, gotPath)
+		gotPath = gotPath + ".html"
+	} else {
+		gotPath = ""
 	}
-	for _, path := range []string{expectedPath, gotPath} {
+
+	for _, path := range pathsToPlot {
 		out, err := exec.Command(
 			"nextplot",
 			"route",
@@ -100,7 +115,7 @@ func plotWaypoints(
 		}
 	}
 
-	return expectedPath + ".html", gotPath + ".html", nil
+	return expectedPath, gotPath, nil
 }
 
 func TestCreateCH(t *testing.T) {
@@ -199,7 +214,7 @@ func TestDistances(t *testing.T) {
 			snap:    1000,
 			profile: routingkit.Pedestrian(),
 
-			expected: []uint32{1588, 912},
+			expected: []uint32{1429, 428},
 		},
 		{
 			// should receive MaxDistance for invalid destinations
@@ -282,10 +297,10 @@ func TestMatrix(t *testing.T) {
 				{-76.599388, 39.302014},
 			},
 			expected: [][]uint32{
-				{1440, 1242},
-				{1792, 558},
-				{2370, 2192},
-				{3354, 1547},
+				{1440, 1259},
+				{1796, 575},
+				{2372, 2216},
+				{3364, 1548},
 			},
 			profile: routingkit.Bike(),
 		},
@@ -301,10 +316,10 @@ func TestMatrix(t *testing.T) {
 				{-76.599388, 39.302014},
 			},
 			expected: [][]uint32{
-				{1588, 1404},
+				{1429, 1242},
 				{1589, 558},
-				{2368, 2209},
-				{3151, 1544},
+				{2367, 2189},
+				{3151, 1533},
 			},
 			profile: routingkit.Pedestrian(),
 		},
@@ -368,7 +383,7 @@ func TestDistance(t *testing.T) {
 			source:           []float32{-76.587490, 39.299710},
 			destination:      []float32{-76.584897, 39.280774},
 			snap:             1000,
-			expectedDistance: 1893,
+			expectedDistance: 1897,
 			osmFile:          marylandMap,
 			waypointsFile:    "waypoints_1.json",
 			profile:          routingkit.Bike(),
@@ -406,7 +421,7 @@ func TestDistance(t *testing.T) {
 			snap:             1000,
 			profile:          routingkit.Pedestrian(),
 			osmFile:          marylandMap,
-			expectedDistance: 1588,
+			expectedDistance: 1429,
 			waypointsFile:    "waypoints_5.json",
 		},
 		{
@@ -433,7 +448,7 @@ func TestDistance(t *testing.T) {
 			snap:             1000,
 			profile:          routingkit.Pedestrian(),
 			osmFile:          marylandMap,
-			expectedDistance: 912,
+			expectedDistance: 428,
 			waypointsFile:    "waypoints_8.json",
 		},
 		{
@@ -448,8 +463,9 @@ func TestDistance(t *testing.T) {
 		},
 		// a truck with this height will need to go around the train overpass
 		{
-			source:           []float32{-76.638843, 39.254254},
-			destination:      []float32{-76.637647, 39.256933},
+			source:      []float32{-76.638843, 39.254254},
+			destination: []float32{-76.637647, 39.256933},
+			//destination:      []float32{-76.636088, 39.260697},
 			snap:             1000,
 			osmFile:          marylandMapWithHeightRestriction,
 			expectedDistance: 1972,
@@ -486,6 +502,24 @@ func TestDistance(t *testing.T) {
 			waypointsFile:    "waypoints_13.json",
 			profile:          routingkit.Truck(4.25, 2.0, 13.0, 8.0, 100),
 		},
+		{
+			source:           []float32{-76.594045, 39.300524},
+			destination:      []float32{-76.582855, 39.309095},
+			snap:             1000,
+			osmFile:          marylandMap,
+			expectedDistance: 1589,
+			waypointsFile:    "waypoints_14.json",
+			profile:          routingkit.Pedestrian(),
+		},
+		{
+			source:           []float32{-76.598423, 39.289484},
+			destination:      []float32{-76.599388, 39.302014},
+			snap:             1000,
+			osmFile:          marylandMap,
+			expectedDistance: 1533,
+			waypointsFile:    "waypoints_15.json",
+			profile:          routingkit.Pedestrian(),
+		},
 	}
 
 	for i, test := range tests {
@@ -496,7 +530,7 @@ func TestDistance(t *testing.T) {
 		cli.SetSnapRadius(test.snap)
 		distance, waypoints := cli.Route(test.source, test.destination)
 		if test.expectedDistance != distance {
-			t.Errorf("[%d] expected distance %v, got %v", i, test.expectedDistance, distance)
+			t.Errorf("[%d] route: expected distance %v, got %v", i, test.expectedDistance, distance)
 		}
 
 		waypointsFile, err := os.OpenFile(
@@ -529,27 +563,22 @@ func TestDistance(t *testing.T) {
 				}
 			}
 			expectedPlot, gotPlot, err := plotWaypoints(i, expectedWaypoints, waypoints)
+			msg := fmt.Sprintf("[%d] waypoints mismatch (-want +got)\n%s\n", i, diff)
 			if err == nil {
-				t.Errorf(
-					"[%d] waypoints mismatch (-want +got):\n%s\nsee expected path at %s and actual path at %s",
-					i,
-					diff,
-					expectedPlot,
-					gotPlot,
-				)
+				if expectedPlot != "" {
+					msg += fmt.Sprintf("see expected path at %s\n", expectedPlot)
+				}
+				if gotPlot != "" {
+					msg += fmt.Sprintf("see actual path at %s\n", gotPlot)
+				}
 			} else {
-				t.Errorf(
-					"[%d] expected waypoints %v, got %v\nerror plotting paths: %v",
-					i,
-					expectedWaypoints,
-					waypoints,
-					err,
-				)
+				msg += fmt.Sprintf("error plotting paths: %v", err)
 			}
+			t.Errorf(msg)
 		}
 		distance = cli.Distance(test.source, test.destination)
 		if test.expectedDistance != distance {
-			t.Errorf("[%d] expected distance %v, got %v", i, test.expectedDistance, distance)
+			t.Errorf("[%d] distance: expected distance %v, got %v", i, test.expectedDistance, distance)
 		}
 	}
 }
@@ -610,7 +639,7 @@ func TestTravelTimeMatrix(t *testing.T) {
 			expected: [][]uint32{
 				{134910, 113043},
 				{157170, 53118},
-				{210945, 190230},
+				{210945, 189960},
 				{295634, 129178},
 			},
 		},
@@ -698,23 +727,18 @@ func TestTravelTime(t *testing.T) {
 				}
 			}
 			expectedPlot, gotPlot, err := plotWaypoints(i, expectedWaypoints, waypoints)
+			msg := fmt.Sprintf("[%d] waypoints mismatch (-want +got)\n%s\n", i, diff)
 			if err == nil {
-				t.Errorf(
-					"[%d] waypoints mismatch (-want +got):\n%s\nsee expected path at %s and actual path at %s",
-					i,
-					diff,
-					expectedPlot,
-					gotPlot,
-				)
-			} else {
-				t.Errorf(
-					"[%d] expected waypoints %v, got %v\nerror plotting paths: %v",
-					i,
-					expectedWaypoints,
-					waypoints,
-					err,
-				)
+				msg += fmt.Sprintf("error plotting paths: %v", err)
+				continue
 			}
+			if expectedPlot != "" {
+				msg += fmt.Sprintf("see expected path at %s.\n", expectedPlot)
+			}
+			if gotPlot != "" {
+				msg += fmt.Sprintf("see actual path at %s.\n", gotPlot)
+			}
+			t.Errorf(msg)
 		}
 		travelTime = cli.TravelTime(test.source, test.destination)
 		if test.expectedTravelTime != travelTime {

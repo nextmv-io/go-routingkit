@@ -5,275 +5,344 @@ import (
 	"os"
 	"regexp"
 	"strconv"
+	"strings"
 )
 
 type TagMapFilter func(wayId int, tagMap map[string]string) bool
 
-func carTagMapFilter(_ int, tagMap map[string]string) bool {
-	if _, ok := tagMap["junction"]; ok {
-		return true
-	}
-	if val, ok := tagMap["route"]; ok && val == "ferry" {
-		return true
-	}
-	if val, ok := tagMap["ferry"]; ok && val == "yes" {
-		return true
-	}
-	highway, ok := tagMap["highway"]
-	if !ok {
-		return false
-	}
-	if val, ok := tagMap["motorcar"]; ok && val == "no" {
-		return false
-	}
-	if val, ok := tagMap["motor_vehicle"]; ok && val == "no" {
-		return false
-	}
-
-	if val, ok := tagMap["access"]; ok {
-		if !(val == "yes" || val == "permissive" || val == "delivery" || val == "designated" || val == "destination") {
+func allLanesAreHOV(tags map[string]string) bool {
+	lanes := strings.Split(tags["hov:lanes"], "|")
+	for _, lane := range lanes {
+		if lane != "designated" {
 			return false
 		}
 	}
+	return true
+}
 
+func carTagMapFilter(id int, tags map[string]string) bool {
+	highway := tags["highway"]
+	route := tags["route"]
+	if highway == "" && route == "" {
+		return false
+	}
+
+	if tags["area"] == "yes" {
+		return false
+	}
+
+	if val, ok := tags["route"]; ok && val == "shuttle_train" {
+		return true
+	}
+	// TODO: make this configurable
+	if tags["toll"] == "yes" {
+		return false
+	}
+	if highway == "steps" {
+		return false
+	}
+	if highway == "construction" || tags["railway"] == "construction" {
+		return false
+	}
+	if construction, ok := tags["construction"]; ok && !(construction == "no" ||
+		construction == "widening" ||
+		construction == "minor") {
+		return false
+	}
+	if tags["proposed"] != "" {
+		return false
+	}
+	// TODO: if we are time-aware we may be able to handle this better
+	if tags["oneway"] == "reversible" {
+		return false
+	}
+	if tags["impassable"] == "yes" || tags["status"] == "impassable" {
+		return false
+	}
+
+	if highway == "area" ||
+		highway == "reversible" ||
+		highway == "impassable" ||
+		highway == "hov_lanes" ||
+		highway == "steps" ||
+		highway == "construction" ||
+		highway == "proposed" {
+		return false
+	}
+
+	var access string
+	if motorcar, ok := tags["motorcar"]; ok {
+		access = motorcar
+	} else if motorVehicle, ok := tags["motor_vehicle"]; ok {
+		access = motorVehicle
+	} else if vehicle, ok := tags["vehicle"]; ok {
+		access = vehicle
+	} else if accessVal, ok := tags["access"]; ok {
+		access = accessVal
+	}
+	if access == "no" ||
+		access == "agricultural" ||
+		access == "forestry" ||
+		access == "emergency" ||
+		access == "psv" ||
+		access == "private" {
+		return false
+	}
+	// TODO: the following access tags should only be usable if the way is needed to reach
+	// the destination: "customers", "private", "delivery", "destination".
+	// To implement this, we can set the edge weight to be very high.
+	if highway == "service" {
+		return true
+	}
 	if highway == "motorway" ||
+		highway == "motorway_link" ||
 		highway == "trunk" ||
+		highway == "trunk_link" ||
 		highway == "primary" ||
+		highway == "primary_link" ||
 		highway == "secondary" ||
+		highway == "secondary_link" ||
 		highway == "tertiary" ||
+		highway == "tertiary_link" ||
 		highway == "unclassified" ||
 		highway == "residential" ||
-		highway == "service" ||
-		highway == "motorway_link" ||
-		highway == "trunk_link" ||
-		highway == "primary_link" ||
-		highway == "secondary_link" ||
-		highway == "tertiary_link" ||
-		highway == "motorway_junction" ||
 		highway == "living_street" ||
-		highway == "track" ||
-		highway == "ferry" {
+		highway == "service" {
+		return true
+	}
+	if val, ok := tags["route"]; ok && val == "ferry" {
+		return true
+	}
+	if tags["bridge"] == "movable" && tags["capacity:car"] != "0" {
 		return true
 	}
 
-	if highway == "bicycle_road" {
-		if val, ok := tagMap["motorcar"]; ok && val == "yes" {
-			return true
-		}
+	if tags["service"] == "emergency_access" {
 		return false
 	}
 
-	if highway == "construction" ||
-		highway == "path" ||
-		highway == "footway" ||
-		highway == "cycleway" ||
-		highway == "bridleway" ||
-		highway == "pedestrian" ||
-		highway == "bus_guideway" ||
-		highway == "raceway" ||
-		highway == "escape" ||
-		highway == "steps" ||
-		highway == "proposed" ||
-		highway == "conveying" {
+	//TODO: should be configurable whether the vehicle can travel in HOV lanes
+	if allLanesAreHOV(tags) {
 		return false
 	}
-
-	if val, ok := tagMap["oneway"]; ok && val == "reversible" || val == "alternating" {
-		return false
-	}
-
-	if _, ok := tagMap["maxspeed"]; ok {
+	if access == "yes" ||
+		access == "motorcar" ||
+		access == "motor_vehicle" ||
+		access == "vehicle" ||
+		access == "permissive" ||
+		access == "designated" ||
+		access == "hov" {
 		return true
 	}
 
 	return false
 }
 
-func bikeTagMapFilter(_ int, tagMap map[string]string) bool {
-	if _, ok := tagMap["junction"]; ok {
-		return true
-	}
-	if val, ok := tagMap["route"]; ok && val == "ferry" {
-		return true
-	}
-	// TODO: I noticed this is different from cars, where the val is "yes" instead of "ferry".
-	// This matches what RoutingKit does but I'd like to double check this
-	if val, ok := tagMap["ferry"]; ok && val == "ferry" {
-		return true
-	}
-	highway, ok := tagMap["highway"]
-	if !ok {
+// TODO: make it configurable whether to use public transit - now we assume yes
+func bikeTagMapFilter(_ int, tags map[string]string) bool {
+	if tags["impassable"] == "yes" {
 		return false
 	}
-	// TODO: proposed highways aren't filtered out until later in the car profile,
-	// which seems wrong...
-	if highway == "proposed" {
+	if construction, ok := tags["construction"]; ok && !(construction == "no" ||
+		construction == "widening" ||
+		construction == "minor") {
+		return false
+	}
+	highway := tags["highway"]
+	route := tags["route"]
+	railway := tags["railway"]
+	amenity := tags["amenity"]
+	manMade := tags["man_made"]
+	publicTransport := tags["public_transport"]
+	bridge := tags["bridge"]
+	if highway == "" &&
+		route == "" &&
+		railway == "" &&
+		amenity == "" &&
+		manMade == "" &&
+		publicTransport == "" &&
+		bridge == "" {
 		return false
 	}
 
-	if val, ok := tagMap["access"]; ok {
-		if !(val == "yes" ||
-			val == "permissive" ||
-			val == "delivery" ||
-			val == "designated" ||
-			val == "destination" ||
-			val == "agricultural" ||
-			val == "forestry" ||
-			val == "public") {
+	var access string
+	if bicycle, ok := tags["bicycle"]; ok {
+		access = bicycle
+	} else if vehicle, ok := tags["vehicle"]; ok {
+		access = vehicle
+	} else if accessTag, ok := tags["access"]; ok {
+		access = accessTag
+	}
+	if access == "no" ||
+		access == "private" ||
+		access == "agricultural" ||
+		access == "forestry" ||
+		access == "delivery" ||
+		access == "use_sidepath" {
+		return false
+	}
+	if access == "yes" ||
+		access == "permissive" ||
+		access == "designated" {
+		return true
+	}
+	if val, ok := tags["route"]; ok && val == "ferry" {
+		return true
+	}
+	if tags["bridge"] == "movable" {
+		return true
+	}
+	if railway == "platform" || publicTransport == "platform" {
+		return true
+	}
+	if railway == "train" ||
+		railway == "railway" ||
+		railway == "subway" ||
+		railway == "light_rail" ||
+		railway == "monorail" ||
+		railway == "tram" {
+		return true
+	}
+	if amenity == "parking" || amenity == "parking_entrance" {
+		return true
+	}
+	if _, ok := tags["cycleway"]; ok {
+		return true
+	}
+	if _, ok := tags["cycleway:left"]; ok {
+		return true
+	}
+	if _, ok := tags["cycleway:right"]; ok {
+		return true
+	}
+	if _, ok := tags["cycleway:both"]; ok {
+		return true
+	}
+	if highway == "cycleway" ||
+		highway == "primary" ||
+		highway == "primary_link" ||
+		highway == "secondary" ||
+		highway == "secondary_link" ||
+		highway == "tertiary" ||
+		highway == "tertiary_link" ||
+		highway == "residential" ||
+		highway == "unclassified" ||
+		highway == "living_street" ||
+		highway == "road" ||
+		highway == "service" ||
+		highway == "track" ||
+		highway == "path" {
+		return true
+	}
+
+	return false
+}
+
+func pedestrianTagMapFilter(id int, tags map[string]string) bool {
+	{
+		var routable bool
+		for _, tag := range []string{
+			"highway",
+			"bridge",
+			"route",
+			"leisure",
+			"man_made",
+			"railway",
+			"platform",
+			"amenity",
+			"public_transport",
+		} {
+			if tags[tag] != "" {
+				routable = true
+				break
+			}
+		}
+		if !routable {
 			return false
 		}
 	}
 
-	if val, ok := tagMap["bicycle"]; ok && val == "no" || val == "use_sidepath" {
+	if tags["impassable"] == "yes" {
+		return false
+	}
+	if tags["status"] == "impassable" {
 		return false
 	}
 
-	if _, ok := tagMap["cycleway"]; ok {
+	var access string
+	if foot, ok := tags["foot"]; ok {
+		access = foot
+	} else if accessTag, ok := tags["access"]; ok {
+		access = accessTag
+	}
+
+	if access == "no" ||
+		access == "agricultural" ||
+		access == "forestry" ||
+		access == "private" {
+		return false
+	}
+	if access == "yes" ||
+		access == "foot" ||
+		access == "permissive" ||
+		access == "destination" ||
+		access == "delivery" ||
+		access == "designated" {
 		return true
 	}
-	if _, ok := tagMap["cycleway:left"]; ok {
+	if tags["bridge"] == "movable" {
 		return true
 	}
-	if _, ok := tagMap["cycleway:right"]; ok {
+	railway := tags["railway"]
+	publicTransport := tags["public_transport"]
+	if railway == "platform" || publicTransport == "platform" {
 		return true
 	}
-	if _, ok := tagMap["cycleway:both"]; ok {
+	if railway == "train" ||
+		railway == "railway" ||
+		railway == "subway" ||
+		railway == "light_rail" ||
+		railway == "monorail" ||
+		railway == "tram" {
 		return true
 	}
 
-	if highway == "secondary" ||
-		highway == "tertiary" ||
-		highway == "unclassified" ||
-		highway == "residential" ||
-		highway == "service" ||
-		highway == "secondary_link" ||
-		highway == "tertiary_link" ||
-		highway == "living_street" ||
-		highway == "track" ||
-		highway == "bicycle_road" ||
-		highway == "primary" ||
+	if val := tags["route"]; val == "ferry" {
+		return true
+	}
+	highway := tags["highway"]
+	amenity := tags["amenity"]
+	manMade := tags["man_made"]
+
+	// TODO: OSRM includes ways where leisure=track, but I found that this
+	// sometimes caused no valid route to be found. I have not been able
+	// to unpack why this type of way is problematic, but my theory is it
+	// has something to do with tracks being circular (for an example, see
+	// way 352240450), and that OSRM must be able to handle this in a way
+	// that routingkit is not. Nevertheless, I don't expect it should be
+	// a huge problem to omit this type of way.
+	if highway == "primary" ||
 		highway == "primary_link" ||
+		highway == "secondary" ||
+		highway == "secondary_link" ||
+		highway == "tertiary" ||
+		highway == "tertiary_link" ||
+		highway == "residential" ||
+		highway == "unclassified" ||
+		highway == "living_street" ||
+		highway == "road" ||
+		highway == "service" ||
+		highway == "track" ||
 		highway == "path" ||
-		highway == "footway" ||
-		highway == "cycleway" ||
-		// TODO: from OSM docs it doesn't seem like bridleways universally permit biking
-		highway == "bridleway" ||
-		highway == "pedestrian" ||
-		highway == "crossing" ||
-		highway == "escape" ||
 		highway == "steps" ||
-		highway == "ferry" {
-		return true
-	}
-
-	if highway == "motorway" ||
-		highway == "motorway_link" ||
-		highway == "motorway_junction" ||
-		highway == "trunk" ||
-		highway == "trunk_link" ||
-		highway == "construction" ||
-		highway == "bus_guideway" ||
-		highway == "raceway" ||
-		highway == "conveying" {
-		return false
-	}
-
-	// TODO: curious about lack of handling for one-way streets
-
-	return false
-}
-
-func pedestrianTagMapFilter(_ int, tagMap map[string]string) bool {
-	if _, ok := tagMap["junction"]; ok {
-		return true
-	}
-	if val, ok := tagMap["route"]; ok && val == "ferry" {
-		return true
-	}
-	// TOOD: same question here as with bikes
-	if val, ok := tagMap["ferry"]; ok && val == "ferry" {
-		return true
-	}
-
-	publicTransport, ok := tagMap["public_transport"]
-	if ok && (publicTransport == "stop_position" ||
-		publicTransport == "platform" ||
-		publicTransport == "stop_area" ||
-		publicTransport == "station") {
-		return true
-	}
-
-	railway, ok := tagMap["railway"]
-	if ok && (railway == "halt" ||
+		highway == "pedestrian" ||
+		highway == "footway" ||
+		highway == "pier" ||
 		railway == "platform" ||
-		railway == "subway_entrance" ||
-		railway == "station" ||
-		railway == "tram_stop") {
+		amenity == "parking" ||
+		amenity == "parking_entrance" ||
+		manMade == "pier" {
 		return true
-	}
-
-	highway, ok := tagMap["highway"]
-	if !ok {
-		return false
-	}
-
-	if val, ok := tagMap["access"]; ok {
-		if !(val == "yes" ||
-			val == "permissive" ||
-			val == "delivery" ||
-			val == "designated" ||
-			val == "destination" ||
-			val == "agricultural" ||
-			val == "forestry" ||
-			val == "public") {
-			return false
-		}
-	}
-
-	if val, ok := tagMap["crossing"]; ok && val == "no" {
-		return false
-	}
-
-	if highway == "secondary" ||
-		highway == "tertiary" ||
-		highway == "unclassified" ||
-		highway == "residential" ||
-		highway == "service" ||
-		highway == "secondary_link" ||
-		highway == "tertiary_link" ||
-		highway == "living_street" ||
-		highway == "track" ||
-		highway == "bicycle_road" ||
-		highway == "path" ||
-		highway == "footway" ||
-		highway == "cycleway" ||
-		highway == "bridleway" ||
-		highway == "pedestrian" ||
-		highway == "escape" ||
-		highway == "steps" ||
-		highway == "crossing" ||
-		highway == "escalator" ||
-		highway == "elevator" ||
-		highway == "platform" ||
-		highway == "ferry" {
-		return true
-	}
-
-	if highway == "motorway" ||
-		highway == "motorway_link" ||
-		highway == "motorway_junction" ||
-		highway == "trunk" ||
-		highway == "trunk_link" ||
-		highway == "primary" ||
-		highway == "primary_link" ||
-		highway == "construction" ||
-		highway == "bus_guideway" ||
-		highway == "raceway" ||
-		// TODO: again, strikes me as wrong that proposed isn't given higher precedence
-		// but maybe there's a reason for this
-		highway == "proposed" ||
-		highway == "conveying" {
-		return false
 	}
 
 	return false
