@@ -546,6 +546,15 @@ func TestDistance(t *testing.T) {
 			waypointsFile:    "waypoints_15.json",
 			profile:          routingkit.Pedestrian(),
 		},
+		{
+			source:           []float32{-76.58749, 39.29971},
+			destination:      []float32{-76.59735, 39.30587},
+			snap:             1000,
+			osmFile:          marylandMap,
+			expectedDistance: 1555,
+			waypointsFile:    "waypoints_16.json",
+			profile:          routingkit.Pedestrian(),
+		},
 	}
 
 	for i, test := range tests {

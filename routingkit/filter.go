@@ -203,9 +203,9 @@ func bikeTagMapFilter(_ int, tags map[string]string) bool {
 		railway == "tram" {
 		return true
 	}
-	if amenity == "parking" || amenity == "parking_entrance" {
-		return true
-	}
+	// TODO: as with pedestrian, this should include amenity=parking
+	// and amenity=parking_entrance, but somehow including these ways
+	// results in the query being unroutable
 	if _, ok := tags["cycleway"]; ok {
 		return true
 	}
@@ -311,7 +311,6 @@ func pedestrianTagMapFilter(id int, tags map[string]string) bool {
 		return true
 	}
 	highway := tags["highway"]
-	amenity := tags["amenity"]
 	manMade := tags["man_made"]
 
 	// TODO: OSRM includes ways where leisure=track, but I found that this
@@ -321,6 +320,7 @@ func pedestrianTagMapFilter(id int, tags map[string]string) bool {
 	// way 352240450), and that OSRM must be able to handle this in a way
 	// that routingkit is not. Nevertheless, I don't expect it should be
 	// a huge problem to omit this type of way.
+	// The same issue exists with amenity=parking/amenity=parking_entrance
 	if highway == "primary" ||
 		highway == "primary_link" ||
 		highway == "secondary" ||
@@ -339,8 +339,6 @@ func pedestrianTagMapFilter(id int, tags map[string]string) bool {
 		highway == "footway" ||
 		highway == "pier" ||
 		railway == "platform" ||
-		amenity == "parking" ||
-		amenity == "parking_entrance" ||
 		manMade == "pier" {
 		return true
 	}
