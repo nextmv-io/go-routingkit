@@ -40,6 +40,19 @@ var englandMapWithLengthRestriction = "testdata/england_length_restriction.osm.p
 // Larcom Street has a weight limit of 7.5 tonnes
 var englandMapWithWeightRestriction = "testdata/england_weight_restriction.osm.pbf"
 
+func cleanCH() error {
+	files, err := filepath.Glob("testdata/*.ch")
+	if err != nil {
+		return fmt.Errorf("removing testdata ch files: %v", err)
+	}
+	for _, f := range files {
+		if err := os.Remove(f); err != nil {
+			return fmt.Errorf("removing file %s: %v", f, err)
+		}
+	}
+	return nil
+}
+
 // tempFile returns the location of a temporary file. It uses ioutil.TempFile
 // under the hood, but if the file exists (but does not contain a valid
 // contraction hierarchy), we'll get an error from routingkit, so we need to
@@ -338,9 +351,23 @@ func TestMatrix(t *testing.T) {
 }
 
 var update *bool
+var cleanCHFiles *bool
 
 func init() {
 	update = flag.Bool("update", false, "update text fixtures")
+	cleanCHFiles = flag.Bool("clean_ch", true, "clean CH files in testdata")
+}
+
+func TestMain(m *testing.M) {
+	flag.Parse()
+	if *cleanCHFiles {
+		if err := cleanCH(); err != nil {
+			fmt.Fprintf(os.Stderr, "error cleaning CH files: %v", err)
+			os.Exit(1)
+		}
+	}
+	exit := m.Run()
+	os.Exit(exit)
 }
 
 // TestDistance not only tests that the distance between two points is the expected value, but also that
@@ -463,9 +490,8 @@ func TestDistance(t *testing.T) {
 		},
 		// a truck with this height will need to go around the train overpass
 		{
-			source:      []float32{-76.638843, 39.254254},
-			destination: []float32{-76.637647, 39.256933},
-			//destination:      []float32{-76.636088, 39.260697},
+			source:           []float32{-76.638843, 39.254254},
+			destination:      []float32{-76.637647, 39.256933},
 			snap:             1000,
 			osmFile:          marylandMapWithHeightRestriction,
 			expectedDistance: 1972,

@@ -22,4 +22,4 @@ jobs:
 
       # Run the tests
       - name: go test
-        run: go test -v -cover -race ./...
+        run: go test -v -cover -race ./... -args -clean_ch=false
