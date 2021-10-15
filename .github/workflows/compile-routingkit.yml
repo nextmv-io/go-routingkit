@@ -23,7 +23,7 @@ jobs:
         run: |
           git config --local user.email "bot@nextmv.io"
           git config --local user.name "nextmv bot"
-          git add .
+          git add --all
           git commit -m "Adding macos binaries"
 
       - name: Push changes
