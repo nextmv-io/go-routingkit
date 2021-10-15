@@ -25,6 +25,8 @@ jobs:
           g++ --version || echo "failed getting g++ version"
           echo ">>> clang++"
           clang++ --version || echo "failed getting clang++ version"
+          echo ">>> glibc"
+          ldd --version || echo "failed getting glibc version"
           echo ">>> ar"
           ar --version || echo "failed getting ar version"
           echo ">>> swig"
