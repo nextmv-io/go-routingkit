@@ -7,6 +7,7 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"math"
 	"os"
 	"sync"
 
@@ -22,6 +23,11 @@ type parameters struct {
 	out     *os.File
 	mapFile string
 	measure string
+	width   float64
+	height  float64
+	length  float64
+	weigth  float64
+	speed   int
 	profile routingkit.Profile
 }
 
@@ -37,10 +43,12 @@ var profileEnum = struct {
 	CAR        string
 	BIKE       string
 	PEDESTRIAN string
+	TRUCK      string
 }{
 	CAR:        "car",
 	BIKE:       "bike",
 	PEDESTRIAN: "pedestrian",
+	TRUCK:      "truck",
 }
 
 func main() {
@@ -133,13 +141,43 @@ func parseFlags() (params parameters, err error) {
 		&profile,
 		"profile",
 		profileEnum.CAR,
-		"car|bike|pedestrian",
+		"car|truck|bike|pedestrian",
 	)
 	flag.StringVar(
 		&params.measure,
 		"measure",
 		measureEnum.DISTANCE,
 		"distance|traveltime",
+	)
+	flag.Float64Var(
+		&params.width,
+		"width",
+		math.MaxFloat64,
+		"truck width",
+	)
+	flag.Float64Var(
+		&params.height,
+		"height",
+		math.MaxFloat64,
+		"truck heigth",
+	)
+	flag.Float64Var(
+		&params.height,
+		"length",
+		math.MaxFloat64,
+		"truck length",
+	)
+	flag.Float64Var(
+		&params.height,
+		"weight",
+		math.MaxFloat64,
+		"truck weight",
+	)
+	flag.IntVar(
+		&params.speed,
+		"weight",
+		27,
+		"truck speed (default=27m/s)",
 	)
 	flag.Parse()
 	if in == "" {
@@ -158,6 +196,8 @@ func parseFlags() (params parameters, err error) {
 		params.profile = routingkit.Bike()
 	case profileEnum.PEDESTRIAN:
 		params.profile = routingkit.Pedestrian()
+	case profileEnum.TRUCK:
+		params.profile = routingkit.Truck(params.height, params.width, params.length, params.weigth, params.speed)
 	default:
 		return parameters{}, errors.New("invalid option for profile" + profile)
 	}
