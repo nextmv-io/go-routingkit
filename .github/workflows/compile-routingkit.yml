@@ -17,6 +17,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: echo "Compiling for ${{matrix.os}}"
+      - name: Info
+        run: |
+          uname -a || echo "failed getting system info"
+          g++ --version || echo "failed getting g++ version"
+          clang++ --version || echo "failed getting clang++ version"
+          ar --version || echo "failed getting ar version"
+          swig -version || echo "failed getting swig version"
       - name: Compile
         run: |
           echo ">>> Running setup.sh"
