@@ -30,7 +30,7 @@ jobs:
           git config --local user.name "nextmv bot"
           git pull
           git add --all
-          git commit -m "Adding ${{matrix.os}} binaries"
+          git commit -m "Adding ${{matrix.os}} binaries" || echo "no commit necessary"
 
       - name: Push changes
         uses: ad-m/github-push-action@master
