@@ -8,10 +8,18 @@ defaults:
 
 jobs:
   build:
-    runs-on: [macos-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+        include:
+        - os: macos-latest
+          TARGET: darwin-x86_64
+        - os: ubuntu-latest
+          TARGET: linux-x86_64
     steps:
       - uses: actions/checkout@v2
-
+      - run: echo "Compiling for ${{matrix.TARGET}}"
       - name: Compile for macos
         run: |
           echo ">>> Running setup.sh"
