@@ -7,8 +7,8 @@ defaults:
     working-directory: ./third_party
 
 jobs:
-  macos:
-    runs-on: [macos-latest]
+  build:
+    runs-on: [macos-latest, ubuntu-latest]
     steps:
       - uses: actions/checkout@v2
 
