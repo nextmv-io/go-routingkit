@@ -421,7 +421,7 @@ namespace ErrorHandler
 
 Client::Client(int conc, char *pbf_file, char *ch_file, Profile profile)
 {
-    ErrorHandler::install_exception_handlers();
+    // ErrorHandler::install_exception_handlers();
     vector<unsigned int> tail;
 
     bool ch_exists = file_exists(ch_file);
