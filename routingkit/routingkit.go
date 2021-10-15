@@ -42,9 +42,11 @@ func parsePBF(osmFile string, tagMapFilter TagMapFilter, speedMapper SpeedMapper
 			tagMap := o.Tags.Map()
 			if tagMapFilter != nil && tagMapFilter(id, tagMap) {
 				allowed[id] = true
-			}
-			if speedMapper != nil {
-				waySpeeds[id] = speedMapper(id, tagMap)
+				// we only need to write the speed into ways that are actually
+				// allowed
+				if speedMapper != nil {
+					waySpeeds[id] = speedMapper(id, tagMap)
+				}
 			}
 		}
 	}
