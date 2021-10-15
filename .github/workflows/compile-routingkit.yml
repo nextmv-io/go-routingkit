@@ -1,0 +1,33 @@
+name: compile routingkit
+on:
+  workflow_dispatch:  # Allow manual trigger
+
+defaults:
+  run:
+    working-directory: ./third_party
+
+jobs:
+  macos:
+    runs-on: [macos-latest]
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Compile for macos
+        run: |
+          echo ">>> Running setup.sh"
+          sh setup.sh
+          echo ">>> Running build.sh"
+          sh build.sh
+
+      - name: Commit files
+        run: |
+          git config --local user.email "bot@nextmv.io"
+          git config --local user.name "nextmv bot"
+          git add .
+          git commit -m "Adding macos binaries"
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          branch: ${{ github.ref }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
