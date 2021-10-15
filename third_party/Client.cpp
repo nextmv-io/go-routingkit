@@ -422,6 +422,7 @@ namespace ErrorHandler
 Client::Client(int conc, char *pbf_file, char *ch_file, Profile profile)
 {
     // ErrorHandler::install_exception_handlers();
+    cout << "not adding any exception handlers" << endl;
     vector<unsigned int> tail;
 
     bool ch_exists = file_exists(ch_file);
