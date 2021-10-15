@@ -23,9 +23,9 @@ jobs:
       - name: Compile for macos
         run: |
           echo ">>> Running setup.sh"
-          sh setup.sh
+          bash setup.sh
           echo ">>> Running build.sh"
-          sh build.sh
+          bash build.sh
 
       - name: Commit files
         run: |
