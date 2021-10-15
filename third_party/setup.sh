@@ -25,6 +25,8 @@ if [ "$GOOS" = "darwin" ]; then
 		sed -i '' "s/-march=native/-mcpu=apple-a14/" Makefile
 		sed -i '' "s/-Iinclude/-Iinclude -I\/opt\/homebrew\/opt\/libomp\/include/" Makefile
 		sed -i '' "s/^LDFLAGS=/LDFLAGS=-L\/opt\/homebrew\/opt\/libomp\/lib/" Makefile
+	else
+		sed -i '' "s/-DNDEBUG/-DNDEBUG -DROUTING_KIT_NO_ALIGNED_ALLOC/" Makefile
 	fi
 fi
 rm -rv build || echo "no build directory"
