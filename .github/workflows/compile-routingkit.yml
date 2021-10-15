@@ -22,7 +22,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: echo "Compiling for ${{matrix.TARGET}}"
-      - name: Compile for macos
+      - name: Compile
         run: |
           echo ">>> Running setup.sh"
           bash setup.sh
@@ -35,7 +35,7 @@ jobs:
           git config --local user.name "nextmv bot"
           git pull
           git add --all
-          git commit -m "Adding macos binaries"
+          git commit -m "Adding ${{matrix.TARGET}}" binaries"
 
       - name: Push changes
         uses: ad-m/github-push-action@master
