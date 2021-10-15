@@ -37,9 +37,6 @@ jobs:
           bash setup.sh
           echo ">>> Running build.sh"
           bash build.sh
-      - name: Build
-        run: go build -v ./...
-        working-directory: .
       - name: Test
         run: go test -v -cover -race ./... -args -clean_ch=false
         working-directory: .
@@ -48,7 +45,7 @@ jobs:
           git config --local user.email "bot@nextmv.io"
           git config --local user.name "nextmv bot"
           git pull
-          git add --all
+          git add ../routingkit/internal/routingkit/
           git commit -m "Adding ${{matrix.os}} binaries" || echo "no commit necessary"
       - name: Push changes
         uses: ad-m/github-push-action@master
