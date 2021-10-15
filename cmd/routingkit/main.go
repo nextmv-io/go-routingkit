@@ -26,7 +26,7 @@ type parameters struct {
 	width   float64
 	height  float64
 	length  float64
-	weigth  float64
+	weight  float64
 	speed   int
 	profile routingkit.Profile
 }
@@ -150,6 +150,12 @@ func parseFlags() (params parameters, err error) {
 		"distance|traveltime",
 	)
 	flag.Float64Var(
+		&params.length,
+		"length",
+		math.MaxFloat64,
+		"truck length",
+	)
+	flag.Float64Var(
 		&params.width,
 		"width",
 		math.MaxFloat64,
@@ -159,25 +165,19 @@ func parseFlags() (params parameters, err error) {
 		&params.height,
 		"height",
 		math.MaxFloat64,
-		"truck heigth",
+		"truck height",
 	)
 	flag.Float64Var(
-		&params.height,
-		"length",
-		math.MaxFloat64,
-		"truck length",
-	)
-	flag.Float64Var(
-		&params.height,
+		&params.weight,
 		"weight",
 		math.MaxFloat64,
 		"truck weight",
 	)
 	flag.IntVar(
 		&params.speed,
-		"weight",
+		"speed",
 		27,
-		"truck speed (default=27m/s)",
+		"truck speed in m/s (default=27)",
 	)
 	flag.Parse()
 	if in == "" {
@@ -197,7 +197,7 @@ func parseFlags() (params parameters, err error) {
 	case profileEnum.PEDESTRIAN:
 		params.profile = routingkit.Pedestrian()
 	case profileEnum.TRUCK:
-		params.profile = routingkit.Truck(params.height, params.width, params.length, params.weigth, params.speed)
+		params.profile = routingkit.Truck(params.height, params.width, params.length, params.weight, params.speed)
 	default:
 		return parameters{}, errors.New("invalid option for profile" + profile)
 	}
