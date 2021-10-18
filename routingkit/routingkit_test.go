@@ -2,19 +2,56 @@ package routingkit_test
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"math/rand"
 	"os"
+	"os/exec"
+	"path/filepath"
 	"reflect"
 	"testing"
 
+	"github.com/google/go-cmp/cmp"
 	"github.com/nextmv-io/go-routingkit/routingkit"
 )
 
-// This is a small map file containing data for the boudning box from
+// This is a small map file containing data for the bounding box from
 // -76.60735000000001,39.28971 to -76.57749,39.31587
 var marylandMap string = "testdata/maryland.osm.pbf"
+
+// This is another small map of Maryland that contains data for the
+// bounding box from -76.663640,39.240043 to -76.605023,39.269623.
+// A low overpass with a max height of 13'11" is found at -76.638449,39.254932
+// (way ID 456490563), where Annapolis Rd. passes under a train line
+var marylandMapWithHeightRestriction = "testdata/maryland_height_restriction.osm.pbf"
+
+// This is a small area of England, covering data from 0.301445,51.363350 to
+// 0.371563,51.392494. There is a narrow pass on Harley Bottom Road that a
+// vehicle with a width larger than 6'6" will need to go around.
+var englandMapWithWidthRestriction = "testdata/england_width_restriction.osm.pbf"
+
+// This is a part of London, covering data from -0.121322,51.508732 to -0.088926,51.525289.
+// There is a 40' length restriction on Fleet and Farringdon Streets.
+var englandMapWithLengthRestriction = "testdata/england_length_restriction.osm.pbf"
+
+// This is a section of London, covering -0.100959,51.487403 to -0.083680,51.496247.
+// Larcom Street has a weight limit of 7.5 tonnes
+var englandMapWithWeightRestriction = "testdata/england_weight_restriction.osm.pbf"
+
+func cleanCH() error {
+	files, err := filepath.Glob("testdata/*.ch")
+	if err != nil {
+		return fmt.Errorf("removing testdata ch files: %v", err)
+	}
+	for _, f := range files {
+		if err := os.Remove(f); err != nil {
+			return fmt.Errorf("removing file %s: %v", f, err)
+		}
+	}
+	return nil
+}
 
 // tempFile returns the location of a temporary file. It uses ioutil.TempFile
 // under the hood, but if the file exists (but does not contain a valid
@@ -32,6 +69,68 @@ func tempFile(dir, pattern string) (string, error) {
 	return filename, nil
 }
 
+// plotWaypoints uses nextplot to render two paths, the expected and received
+// set of waypoints. It returns the paths of the two plots
+func plotWaypoints(
+	i int,
+	expectedWaypoints [][]float32,
+	gotWaypoints [][]float32,
+) (expectedPlot string, gotPlot string, err error) {
+	tempDir := os.TempDir()
+	expectedPath := filepath.Join(tempDir, fmt.Sprintf("routingkit_debug_expected_%d.json", i))
+	gotPath := filepath.Join(tempDir, fmt.Sprintf("routingkit_debug_got_%d.json", i))
+	expectedFile, err := os.OpenFile(expectedPath, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0655)
+	if err != nil {
+		return "", "", fmt.Errorf("opening expected waypoints file: %v", err)
+	}
+	defer expectedFile.Close()
+	gotFile, err := os.OpenFile(gotPath, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0655)
+	if err != nil {
+		return "", "", fmt.Errorf("opening got waypoints file: %v", err)
+	}
+	defer gotFile.Close()
+
+	type waypoints struct {
+		Waypoints [][]float32 `json:"waypoints"`
+	}
+	var pathsToPlot []string
+
+	if len(expectedWaypoints) > 0 {
+		if err := json.NewEncoder(expectedFile).Encode(waypoints{expectedWaypoints}); err != nil {
+			return "", "", fmt.Errorf("writing expected points: %v", err)
+		}
+		pathsToPlot = append(pathsToPlot, expectedPath)
+		expectedPath = expectedPath + ".html"
+	} else {
+		expectedPath = ""
+	}
+	if len(gotWaypoints) > 0 {
+		if err := json.NewEncoder(gotFile).Encode(waypoints{gotWaypoints}); err != nil {
+			return "", "", fmt.Errorf("writing expected points: %v", err)
+		}
+		pathsToPlot = append(pathsToPlot, gotPath)
+		gotPath = gotPath + ".html"
+	} else {
+		gotPath = ""
+	}
+
+	for _, path := range pathsToPlot {
+		out, err := exec.Command(
+			"nextplot",
+			"route",
+			"--input_route",
+			path,
+			"--jpath_route",
+			"waypoints",
+		).CombinedOutput()
+		if err != nil {
+			return "", "", fmt.Errorf("nextplot error: %v, stdout: %s", err, string(out))
+		}
+	}
+
+	return expectedPath, gotPath, nil
+}
+
 func TestCreateCH(t *testing.T) {
 	chFile, err := tempFile("", "routingkit-test.ch")
 	if err != nil {
@@ -39,7 +138,7 @@ func TestCreateCH(t *testing.T) {
 	}
 	defer os.Remove(chFile)
 
-	_, err = routingkit.NewDistanceClient(marylandMap, routingkit.CarTravelProfile)
+	_, err = routingkit.NewDistanceClient(marylandMap, routingkit.Car())
 	if err != nil {
 		t.Fatalf("creating Client: %v", err)
 	}
@@ -69,7 +168,9 @@ func TestNearest(t *testing.T) {
 		},
 	}
 
-	cli, err := routingkit.NewDistanceClient(marylandMap, routingkit.CarTravelProfile)
+	car := routingkit.Car()
+
+	cli, err := routingkit.NewDistanceClient(marylandMap, car)
 	if err != nil {
 		t.Fatalf("creating Client: %v", err)
 	}
@@ -90,7 +191,7 @@ func TestDistances(t *testing.T) {
 		source       []float32
 		destinations [][]float32
 		snap         float32
-		profile      routingkit.TravelProfile
+		profile      routingkit.Profile
 		ch           string
 
 		expected []uint32
@@ -102,7 +203,7 @@ func TestDistances(t *testing.T) {
 				{-76.591286, 39.298443},
 			},
 			snap:    1000,
-			profile: routingkit.CarTravelProfile,
+			profile: routingkit.Car(),
 
 			expected: []uint32{1496, 617},
 		},
@@ -113,7 +214,7 @@ func TestDistances(t *testing.T) {
 				{-76.591286, 39.298443},
 			},
 			snap:    1000,
-			profile: routingkit.BikeTravelProfile,
+			profile: routingkit.Bike(),
 
 			expected: []uint32{1440, 617},
 		},
@@ -124,9 +225,9 @@ func TestDistances(t *testing.T) {
 				{-76.591286, 39.298443},
 			},
 			snap:    1000,
-			profile: routingkit.PedestrianTravelProfile,
+			profile: routingkit.Pedestrian(),
 
-			expected: []uint32{1588, 912},
+			expected: []uint32{1429, 428},
 		},
 		{
 			// should receive MaxDistance for invalid destinations
@@ -138,7 +239,7 @@ func TestDistances(t *testing.T) {
 				{-76.599388, 39.302014},
 			},
 			snap:    100,
-			profile: routingkit.CarTravelProfile,
+			profile: routingkit.Car(),
 
 			expected: []uint32{routingkit.MaxDistance, 1496, routingkit.MaxDistance, 1259},
 		},
@@ -150,7 +251,7 @@ func TestDistances(t *testing.T) {
 				{-76.584897, 39.280774},
 			},
 			snap:    10,
-			profile: routingkit.CarTravelProfile,
+			profile: routingkit.Car(),
 
 			expected: []uint32{routingkit.MaxDistance, routingkit.MaxDistance},
 		},
@@ -173,7 +274,7 @@ func TestMatrix(t *testing.T) {
 	tests := []struct {
 		sources      [][]float32
 		destinations [][]float32
-		profile      routingkit.TravelProfile
+		profile      routingkit.Profile
 		ch           string
 
 		expected [][]uint32
@@ -195,7 +296,7 @@ func TestMatrix(t *testing.T) {
 				{2372, 2224},
 				{3399, 1548},
 			},
-			profile: routingkit.CarTravelProfile,
+			profile: routingkit.Car(),
 		},
 		{
 			sources: [][]float32{
@@ -209,12 +310,12 @@ func TestMatrix(t *testing.T) {
 				{-76.599388, 39.302014},
 			},
 			expected: [][]uint32{
-				{1440, 1242},
-				{1792, 558},
-				{2370, 2192},
-				{3354, 1547},
+				{1440, 1259},
+				{1796, 575},
+				{2372, 2216},
+				{3364, 1548},
 			},
-			profile: routingkit.BikeTravelProfile,
+			profile: routingkit.Bike(),
 		},
 		{
 			sources: [][]float32{
@@ -228,12 +329,12 @@ func TestMatrix(t *testing.T) {
 				{-76.599388, 39.302014},
 			},
 			expected: [][]uint32{
-				{1588, 1404},
+				{1429, 1242},
 				{1589, 558},
-				{2368, 2209},
-				{3151, 1544},
+				{2367, 2189},
+				{3151, 1533},
 			},
-			profile: routingkit.PedestrianTravelProfile,
+			profile: routingkit.Pedestrian(),
 		},
 	}
 
@@ -249,163 +350,270 @@ func TestMatrix(t *testing.T) {
 	}
 }
 
+var update *bool
+var cleanCHFiles *bool
+
+func init() {
+	update = flag.Bool("update", false, "update text fixtures")
+	cleanCHFiles = flag.Bool("clean_ch", true, "clean CH files in testdata")
+}
+
+func TestMain(m *testing.M) {
+	flag.Parse()
+	if *cleanCHFiles {
+		if err := cleanCH(); err != nil {
+			fmt.Fprintf(os.Stderr, "error cleaning CH files: %v", err)
+			os.Exit(1)
+		}
+	}
+	exit := m.Run()
+	os.Exit(exit)
+}
+
+// TestDistance not only tests that the distance between two points is the expected value, but also that
+// the provided waypoints match test fixtures located in testdata/fixtures. These fixtures can automatically
+// be updated when they don't match if you pass the -update flag when running the tests. If you're using
+// "go test", you'll have to pass this as e.g. "go test ./... -args -update."
+// If the test fails, nextplot will be used to create a plot of the expected and received cases in the temporary
+// directory. Before updating a case or adding a new case, you should look at these plots and confirm them
+// to other sources (OSRM, Google Maps) to ensure they look reasonable - if anything looks off please note somewhere.
 func TestDistance(t *testing.T) {
 	tests := []struct {
 		source      []float32
 		destination []float32
 		snap        float32
-		profile     routingkit.TravelProfile
+		profile     routingkit.Profile
 		ch          string
+		osmFile     string
 
-		expectedDistance  uint32
-		expectedWaypoints [][]float32
+		expectedDistance uint32
+		waypointsFile    string
 	}{
+		// The destination has a strange way of snapping, it snaps to -76.58494567871094, 39.284912109375
+		// which is a few blocks inland even though the point is in the water. May want to look into
+		// this more
+		// Also, I noticed the route we get takes one strange turn, on the block between E. Monument and
+		// E. Madison. This street is tagged as highway=service and service=alley but on Google Street
+		// View it really doesn't seem like something you should be driving through (narrow alleyway).
+		// I wonder if we should think about forbidding streets tagged like this unless they're being
+		// used to reach a destination
 		{
 			source:           []float32{-76.587490, 39.299710},
 			destination:      []float32{-76.584897, 39.280774},
 			snap:             1000,
 			expectedDistance: 1897,
-			expectedWaypoints: [][]float32{
-				{-76.58753204345703, 39.29970932006836},
-				{-76.58747863769531, 39.29899978637695},
-				{-76.58726501464844, 39.29899978637695},
-				{-76.58705139160156, 39.299007415771484},
-				{-76.58668518066406, 39.29902267456055},
-				{-76.58667755126953, 39.29899215698242},
-				{-76.58666229248047, 39.298675537109375},
-				{-76.58663940429688, 39.29836654663086},
-				{-76.58662414550781, 39.29810333251953},
-				{-76.58661651611328, 39.29795455932617},
-				{-76.58660125732422, 39.297767639160156},
-				{-76.58659362792969, 39.29757308959961},
-				{-76.5865707397461, 39.29726028442383},
-				{-76.5865478515625, 39.296871185302734},
-				{-76.5865249633789, 39.296566009521484},
-				{-76.58650970458984, 39.29627227783203},
-				{-76.58650970458984, 39.296241760253906},
-				{-76.58647918701172, 39.2957763671875},
-				{-76.58645629882812, 39.29545593261719},
-				{-76.58644104003906, 39.29514694213867},
-				{-76.58643341064453, 39.29507827758789},
-				{-76.58641815185547, 39.29477310180664},
-				{-76.58641052246094, 39.29462814331055},
-				{-76.5864028930664, 39.294586181640625},
-				{-76.58638000488281, 39.294246673583984},
-				{-76.58562469482422, 39.29427719116211},
-				{-76.58485412597656, 39.29430389404297},
-				{-76.5848388671875, 39.293941497802734},
-				{-76.5848159790039, 39.29353332519531},
-				{-76.58477783203125, 39.293006896972656},
-				{-76.58473205566406, 39.292274475097656},
-				{-76.58470916748047, 39.291893005371094},
-				{-76.58467864990234, 39.291358947753906},
-				{-76.58463287353516, 39.29073715209961},
-				{-76.58534240722656, 39.290714263916016},
-				{-76.58531951904297, 39.29029846191406},
-				{-76.58529663085938, 39.290008544921875},
-				{-76.58494567871094, 39.284912109375},
-			},
-			profile: routingkit.CarTravelProfile,
+			osmFile:          marylandMap,
+			waypointsFile:    "waypoints_0.json",
+			profile:          routingkit.Car(),
 		},
 		{
 			source:           []float32{-76.587490, 39.299710},
 			destination:      []float32{-76.584897, 39.280774},
 			snap:             1000,
-			expectedDistance: 1893,
-			expectedWaypoints: [][]float32{
-				{-76.58753, 39.29971},
-				{-76.58748, 39.299},
-				{-76.587265, 39.299},
-				{-76.58705, 39.299007},
-				{-76.586685, 39.299023},
-				{-76.58668, 39.298992},
-				{-76.58666, 39.298676},
-				{-76.58664, 39.298367},
-				{-76.586624, 39.298103},
-				{-76.58662, 39.297955},
-				{-76.5866, 39.297768},
-				{-76.58659, 39.297573},
-				{-76.58657, 39.29726},
-				{-76.58655, 39.29687},
-				{-76.586525, 39.296566},
-				{-76.58651, 39.296272},
-				{-76.58651, 39.29624},
-				{-76.58648, 39.295776},
-				{-76.58646, 39.295456}, {-76.58644, 39.295147}, {-76.58643, 39.29508}, {-76.58642, 39.294773}, {-76.58641, 39.29463}, {-76.5864, 39.294586}, {-76.58638, 39.294247}, {-76.585625, 39.294277}, {-76.584854, 39.294304}, {-76.58484, 39.29394}, {-76.584816, 39.293533}, {-76.58478, 39.293007}, {-76.58473, 39.292274}, {-76.58472, 39.291973}, {-76.58471, 39.291893}, {-76.58471, 39.291817}, {-76.58468, 39.29136}, {-76.58464, 39.2908}, {-76.584724, 39.290737}, {-76.58534, 39.290714},
-				{-76.58532, 39.2903},
-				{-76.5853, 39.29001},
-				{-76.584946, 39.284912},
-			},
-			profile: routingkit.BikeTravelProfile,
+			expectedDistance: 1897,
+			osmFile:          marylandMap,
+			waypointsFile:    "waypoints_1.json",
+			profile:          routingkit.Bike(),
 		},
 		{
 			source:           []float32{-76.587490, 39.299710},
 			destination:      []float32{-76.584897, 39.280774},
 			snap:             1000,
 			expectedDistance: 1777,
-			expectedWaypoints: [][]float32{
-				{-76.58753, 39.29971},
-				{-76.58748, 39.299},
-				{-76.587265, 39.299},
-				{-76.58725, 39.298653},
-				{-76.587234, 39.298347},
-				{-76.58718, 39.29755},
-				{-76.58716, 39.297253},
-				{-76.58716, 39.297234},
-				{-76.587135, 39.296844},
-				{-76.58712, 39.296543},
-				{-76.5871, 39.296238},
-				{-76.58707, 39.295742},
-				{-76.587036, 39.295124},
-				{-76.58703, 39.29506},
-				{-76.587, 39.294594},
-				{-76.586975, 39.294224},
-				{-76.586945, 39.293785},
-				{-76.58693, 39.293446},
-				{-76.5869, 39.29292},
-				{-76.586586, 39.292934},
-				{-76.58655, 39.292404},
-				{-76.58652, 39.29182},
-				{-76.58625, 39.291832},
-				{-76.58621, 39.291294},
-				{-76.586205, 39.291046},
-				{-76.5862, 39.290985},
-				{-76.58618, 39.290684},
-				{-76.58615, 39.29031},
-				{-76.58614, 39.290264},
-				{-76.58612, 39.289978},
-				{-76.5853, 39.29001},
-				{-76.584946, 39.284912},
-			},
-			profile: routingkit.PedestrianTravelProfile,
+			osmFile:          marylandMap,
+			waypointsFile:    "waypoints_2.json",
+			profile:          routingkit.Pedestrian(),
+		},
+		{
+			source:           []float32{-76.587490, 39.299710},
+			destination:      []float32{-76.582855, 39.309095},
+			snap:             1000,
+			profile:          routingkit.Car(),
+			osmFile:          marylandMap,
+			expectedDistance: 1496,
+			waypointsFile:    "waypoints_3.json",
+		},
+		{
+			source:           []float32{-76.587490, 39.299710},
+			destination:      []float32{-76.582855, 39.309095},
+			snap:             1000,
+			profile:          routingkit.Bike(),
+			osmFile:          marylandMap,
+			expectedDistance: 1440,
+			waypointsFile:    "waypoints_4.json",
+		},
+		{
+			source:           []float32{-76.587490, 39.299710},
+			destination:      []float32{-76.582855, 39.309095},
+			snap:             1000,
+			profile:          routingkit.Pedestrian(),
+			osmFile:          marylandMap,
+			expectedDistance: 1429,
+			waypointsFile:    "waypoints_5.json",
+		},
+		{
+			source:           []float32{-76.587490, 39.299710},
+			destination:      []float32{-76.591286, 39.298443},
+			snap:             1000,
+			profile:          routingkit.Car(),
+			osmFile:          marylandMap,
+			expectedDistance: 617,
+			waypointsFile:    "waypoints_6.json",
+		},
+		{
+			source:           []float32{-76.587490, 39.299710},
+			destination:      []float32{-76.591286, 39.298443},
+			snap:             1000,
+			profile:          routingkit.Bike(),
+			osmFile:          marylandMap,
+			expectedDistance: 617,
+			waypointsFile:    "waypoints_7.json",
+		},
+		{
+			source:           []float32{-76.587490, 39.299710},
+			destination:      []float32{-76.591286, 39.298443},
+			snap:             1000,
+			profile:          routingkit.Pedestrian(),
+			osmFile:          marylandMap,
+			expectedDistance: 428,
+			waypointsFile:    "waypoints_8.json",
 		},
 		{
 			source: []float32{-76.587490, 39.299710},
 			// point is in a river so should not snap
-			destination:       []float32{-76.584897, 39.280774},
-			snap:              10,
-			expectedDistance:  routingkit.MaxDistance,
-			expectedWaypoints: [][]float32{},
-			profile:           routingkit.CarTravelProfile,
+			destination:      []float32{-76.584897, 39.280774},
+			snap:             10,
+			osmFile:          marylandMap,
+			expectedDistance: routingkit.MaxDistance,
+			waypointsFile:    "waypoints_9.json",
+			profile:          routingkit.Car(),
+		},
+		// a truck with this height will need to go around the train overpass
+		{
+			source:           []float32{-76.638843, 39.254254},
+			destination:      []float32{-76.637647, 39.256933},
+			snap:             1000,
+			osmFile:          marylandMapWithHeightRestriction,
+			expectedDistance: 1972,
+			waypointsFile:    "waypoints_10.json",
+			profile:          routingkit.Truck(4.25, 0, 0, 0, 100),
+		},
+		// a truck with this width will need to go around the narrow pass
+		{
+			source:           []float32{0.328562, 51.387527},
+			destination:      []float32{0.328830, 51.389174},
+			snap:             1000,
+			osmFile:          englandMapWithWidthRestriction,
+			expectedDistance: 9303,
+			waypointsFile:    "waypoints_11.json",
+			profile:          routingkit.Truck(4.25, 2.0, 0, 0, 100),
+		},
+		// Truck should avoid going down Fleet St. due to the length restriction
+		{
+			source:           []float32{-0.106210, 51.514208},
+			destination:      []float32{-0.103678, 51.514181},
+			snap:             1000,
+			osmFile:          englandMapWithLengthRestriction,
+			expectedDistance: 527,
+			waypointsFile:    "waypoints_12.json",
+			profile:          routingkit.Truck(4.25, 2.0, 13.0, 0, 100),
+		},
+		// Truck should avoid going down Larcom St. due to the weight restriction
+		{
+			source:           []float32{-0.096975, 51.490302},
+			destination:      []float32{-0.093553, 51.491785},
+			snap:             1000,
+			osmFile:          englandMapWithWeightRestriction,
+			expectedDistance: 942,
+			waypointsFile:    "waypoints_13.json",
+			profile:          routingkit.Truck(4.25, 2.0, 13.0, 8.0, 100),
+		},
+		{
+			source:           []float32{-76.594045, 39.300524},
+			destination:      []float32{-76.582855, 39.309095},
+			snap:             1000,
+			osmFile:          marylandMap,
+			expectedDistance: 1589,
+			waypointsFile:    "waypoints_14.json",
+			profile:          routingkit.Pedestrian(),
+		},
+		{
+			source:           []float32{-76.598423, 39.289484},
+			destination:      []float32{-76.599388, 39.302014},
+			snap:             1000,
+			osmFile:          marylandMap,
+			expectedDistance: 1533,
+			waypointsFile:    "waypoints_15.json",
+			profile:          routingkit.Pedestrian(),
+		},
+		{
+			source:           []float32{-76.58749, 39.29971},
+			destination:      []float32{-76.59735, 39.30587},
+			snap:             1000,
+			osmFile:          marylandMap,
+			expectedDistance: 1555,
+			waypointsFile:    "waypoints_16.json",
+			profile:          routingkit.Pedestrian(),
 		},
 	}
 
 	for i, test := range tests {
-		cli, err := routingkit.NewDistanceClient(marylandMap, test.profile)
+		cli, err := routingkit.NewDistanceClient(test.osmFile, test.profile)
 		if err != nil {
 			t.Fatalf("creating Client: %v", err)
 		}
 		cli.SetSnapRadius(test.snap)
 		distance, waypoints := cli.Route(test.source, test.destination)
 		if test.expectedDistance != distance {
-			t.Errorf("[%d] expected distance %v, got %v", i, test.expectedDistance, distance)
+			t.Errorf("[%d] route: expected distance %v, got %v", i, test.expectedDistance, distance)
 		}
-		if !reflect.DeepEqual(test.expectedWaypoints, waypoints) {
-			t.Errorf("[%d] expected waypoints %v, got %v", i, test.expectedWaypoints, waypoints)
+
+		waypointsFile, err := os.OpenFile(
+			filepath.Join("testdata/fixtures", test.waypointsFile),
+			os.O_RDONLY,
+			0655,
+		)
+		if err != nil {
+			t.Errorf("[%d] opening test fixture: %v", i, err)
+			continue
+		}
+		var expectedWaypoints [][]float32
+		if err := json.NewDecoder(waypointsFile).Decode(&expectedWaypoints); err != nil && err != io.EOF {
+			t.Errorf("[%d] loading test fixture: %v", i, err)
+			continue
+		}
+		if diff := cmp.Diff(expectedWaypoints, waypoints); diff != "" {
+			if *update {
+				waypointsFileW, err := os.OpenFile(
+					filepath.Join("testdata/fixtures", test.waypointsFile),
+					os.O_CREATE|os.O_WRONLY|os.O_TRUNC,
+					0655,
+				)
+				if err != nil {
+					t.Errorf("[%d] opening test fixture for update: %v", i, err)
+					continue
+				}
+				if err := json.NewEncoder(waypointsFileW).Encode(waypoints); err != nil {
+					t.Errorf("[%d updating fixtures: %v", i, err)
+				}
+			}
+			expectedPlot, gotPlot, err := plotWaypoints(i, expectedWaypoints, waypoints)
+			msg := fmt.Sprintf("[%d] waypoints mismatch (-want +got)\n%s\n", i, diff)
+			if err == nil {
+				if expectedPlot != "" {
+					msg += fmt.Sprintf("see expected path at %s\n", expectedPlot)
+				}
+				if gotPlot != "" {
+					msg += fmt.Sprintf("see actual path at %s\n", gotPlot)
+				}
+			} else {
+				msg += fmt.Sprintf("error plotting paths: %v", err)
+			}
+			t.Errorf(msg)
 		}
 		distance = cli.Distance(test.source, test.destination)
 		if test.expectedDistance != distance {
-			t.Errorf("[%d] expected distance %v, got %v", i, test.expectedDistance, distance)
+			t.Errorf("[%d] distance: expected distance %v, got %v", i, test.expectedDistance, distance)
 		}
 	}
 }
@@ -432,7 +640,7 @@ func TestTravelTimes(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		cli, err := routingkit.NewTravelTimeClient(marylandMap)
+		cli, err := routingkit.NewTravelTimeClient(marylandMap, routingkit.Car())
 		if err != nil {
 			t.Fatalf("creating Client: %v", err)
 		}
@@ -466,14 +674,14 @@ func TestTravelTimeMatrix(t *testing.T) {
 			expected: [][]uint32{
 				{134910, 113043},
 				{157170, 53118},
-				{210945, 190230},
+				{210945, 189960},
 				{295634, 129178},
 			},
 		},
 	}
 
 	for i, test := range tests {
-		cli, err := routingkit.NewTravelTimeClient(marylandMap)
+		cli, err := routingkit.NewTravelTimeClient(marylandMap, routingkit.Car())
 		if err != nil {
 			t.Fatalf("creating Client: %v", err)
 		}
@@ -490,59 +698,31 @@ func TestTravelTime(t *testing.T) {
 		destination []float32
 		snap        float32
 		ch          string
+		profile     routingkit.Profile
 
 		expectedTravelTime uint32
-		expectedWaypoints  [][]float32
+		waypointsFile      string
 	}{
 		{
 			source:             []float32{-76.587490, 39.299710},
 			destination:        []float32{-76.584897, 39.280774},
 			snap:               1000,
 			expectedTravelTime: 213405,
-			expectedWaypoints: [][]float32{
-				{-76.58753, 39.29971},
-				{-76.587906, 39.299694},
-				{-76.58786, 39.298977},
-				{-76.587845, 39.29863},
-				{-76.58725, 39.298653},
-				{-76.58666, 39.298676},
-				{-76.58664, 39.298367},
-				{-76.586624, 39.298103},
-				{-76.58662, 39.297955},
-				{-76.5866, 39.297768},
-				{-76.58659, 39.297573},
-				{-76.58657, 39.29726},
-				{-76.58655, 39.29687},
-				{-76.586525, 39.296566},
-				{-76.58651, 39.296272},
-				{-76.58651, 39.29624},
-				{-76.58648, 39.295776},
-				{-76.58646, 39.295456},
-				{-76.58644, 39.295147},
-				{-76.58643, 39.29508},
-				{-76.58642, 39.294773},
-				{-76.58641, 39.29463},
-				{-76.5864, 39.294586},
-				{-76.58638, 39.294247},
-				{-76.585625, 39.294277},
-				{-76.584854, 39.294304},
-				{-76.58484, 39.29394},
-				{-76.584816, 39.293533},
-				{-76.58478, 39.293007},
-				{-76.58473, 39.292274},
-				{-76.58471, 39.291893},
-				{-76.58468, 39.29136},
-				{-76.58463, 39.290737},
-				{-76.58534, 39.290714},
-				{-76.58532, 39.2903},
-				{-76.5853, 39.29001},
-				{-76.584946, 39.284912},
-			},
+			waypointsFile:      "travel_time_waypoints_0.json",
+			profile:            routingkit.Car(),
+		},
+		{
+			source:             []float32{-76.587490, 39.299710},
+			destination:        []float32{-76.591286, 39.298443},
+			snap:               1000,
+			expectedTravelTime: 53712,
+			waypointsFile:      "travel_time_waypoints_1.json",
+			profile:            routingkit.Bike(),
 		},
 	}
 
 	for i, test := range tests {
-		cli, err := routingkit.NewTravelTimeClient(marylandMap)
+		cli, err := routingkit.NewTravelTimeClient(marylandMap, test.profile)
 		if err != nil {
 			t.Fatalf("creating Client: %v", err)
 		}
@@ -551,8 +731,49 @@ func TestTravelTime(t *testing.T) {
 		if test.expectedTravelTime != travelTime {
 			t.Errorf("[%d] expected travel time %v, got %v", i, test.expectedTravelTime, travelTime)
 		}
-		if !reflect.DeepEqual(test.expectedWaypoints, waypoints) {
-			t.Errorf("[%d] expected waypoints %v, got %v", i, test.expectedWaypoints, waypoints)
+
+		waypointsFile, err := os.OpenFile(
+			filepath.Join("testdata/fixtures", test.waypointsFile),
+			os.O_RDONLY,
+			0655,
+		)
+		var expectedWaypoints [][]float32
+		if err := json.NewDecoder(waypointsFile).Decode(&expectedWaypoints); err != nil && err != io.EOF {
+			t.Errorf("[%d] loading test fixture: %v", i, err)
+			continue
+		}
+		if err != nil {
+			t.Errorf("[%d] opening test fixture: %v", i, err)
+			continue
+		}
+		if diff := cmp.Diff(expectedWaypoints, waypoints); diff != "" {
+			if *update {
+				waypointsFileW, err := os.OpenFile(
+					filepath.Join("testdata/fixtures", test.waypointsFile),
+					os.O_CREATE|os.O_WRONLY|os.O_TRUNC,
+					0655,
+				)
+				if err != nil {
+					t.Errorf("[%d] opening test fixture for update: %v", i, err)
+					continue
+				}
+				if err := json.NewEncoder(waypointsFileW).Encode(waypoints); err != nil {
+					t.Errorf("[%d updating fixtures: %v", i, err)
+				}
+			}
+			expectedPlot, gotPlot, err := plotWaypoints(i, expectedWaypoints, waypoints)
+			msg := fmt.Sprintf("[%d] waypoints mismatch (-want +got)\n%s\n", i, diff)
+			if err == nil {
+				msg += fmt.Sprintf("error plotting paths: %v", err)
+				continue
+			}
+			if expectedPlot != "" {
+				msg += fmt.Sprintf("see expected path at %s.\n", expectedPlot)
+			}
+			if gotPlot != "" {
+				msg += fmt.Sprintf("see actual path at %s.\n", gotPlot)
+			}
+			t.Errorf(msg)
 		}
 		travelTime = cli.TravelTime(test.source, test.destination)
 		if test.expectedTravelTime != travelTime {
@@ -584,7 +805,7 @@ func randomPointsInBoundingBox(n int, bottomLeft [2]float64, topRight [2]float64
 }
 
 func BenchmarkDistance(b *testing.B) {
-	cli, err := routingkit.NewDistanceClient(marylandMap, routingkit.CarTravelProfile)
+	cli, err := routingkit.NewDistanceClient(marylandMap, routingkit.Car())
 	if err != nil {
 		b.Fatalf("creating Client: %v", err)
 	}
@@ -611,7 +832,7 @@ func BenchmarkDistance(b *testing.B) {
 }
 
 func BenchmarkMatrix(b *testing.B) {
-	cli, err := routingkit.NewDistanceClient(marylandMap, routingkit.CarTravelProfile)
+	cli, err := routingkit.NewDistanceClient(marylandMap, routingkit.Car())
 	if err != nil {
 		b.Fatalf("creating Client: %v", err)
 	}

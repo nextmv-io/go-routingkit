@@ -7,25 +7,46 @@ defaults:
     working-directory: ./third_party
 
 jobs:
-  macos:
-    runs-on: [macos-latest]
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      # Forbid parallel builds (may cause problems with git commits)
+      max-parallel: 1
+      matrix:
+        os: [macos-latest, ubuntu-latest]
     steps:
       - uses: actions/checkout@v2
-
-      - name: Compile for macos
+      - run: echo "Compiling for ${{matrix.os}}"
+      - name: Info
+        run: |
+          echo ">>> uname -a"
+          uname -a || echo "failed getting system info"
+          echo ">>> g++"
+          g++ --version || echo "failed getting g++ version"
+          echo ">>> clang++"
+          clang++ --version || echo "failed getting clang++ version"
+          echo ">>> glibc"
+          ldd --version || echo "failed getting glibc version"
+          echo ">>> ar"
+          ar --version || echo "failed getting ar version"
+          echo ">>> swig"
+          swig -version || echo "failed getting swig version"
+      - name: Compile
         run: |
           echo ">>> Running setup.sh"
-          sh setup.sh
+          bash setup.sh
           echo ">>> Running build.sh"
-          sh build.sh
-
+          bash build.sh
+      - name: Test
+        run: go test -v -cover -race ./... -args -clean_ch=false
+        working-directory: .
       - name: Commit files
         run: |
           git config --local user.email "bot@nextmv.io"
           git config --local user.name "nextmv bot"
-          git add .
-          git commit -m "Adding macos binaries"
-
+          git pull
+          git add ../routingkit/internal/routingkit/
+          git commit -m "Adding ${{matrix.os}} binaries" || echo "no commit necessary"
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:

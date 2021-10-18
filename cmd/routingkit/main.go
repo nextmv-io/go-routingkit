@@ -7,6 +7,7 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"math"
 	"os"
 	"sync"
 
@@ -22,7 +23,12 @@ type parameters struct {
 	out     *os.File
 	mapFile string
 	measure string
-	profile routingkit.TravelProfile
+	width   float64
+	height  float64
+	length  float64
+	weight  float64
+	speed   int
+	profile routingkit.Profile
 }
 
 var measureEnum = struct {
@@ -37,10 +43,12 @@ var profileEnum = struct {
 	CAR        string
 	BIKE       string
 	PEDESTRIAN string
+	TRUCK      string
 }{
 	CAR:        "car",
 	BIKE:       "bike",
 	PEDESTRIAN: "pedestrian",
+	TRUCK:      "truck",
 }
 
 func main() {
@@ -63,13 +71,9 @@ func main() {
 		}
 		client = c
 	case measureEnum.TRAVELTIME:
-		if params.profile != routingkit.CarTravelProfile {
-			fmt.Fprintf(os.Stderr, "invalid parameter combination. "+
-				"This profile can only be used with measure=distance.\n")
-			os.Exit(1)
-		}
 		c, err := routingkit.NewTravelTimeClient(
 			params.mapFile,
+			params.profile,
 		)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "error creating client: %v\n", err)
@@ -137,13 +141,43 @@ func parseFlags() (params parameters, err error) {
 		&profile,
 		"profile",
 		profileEnum.CAR,
-		"car|bike|pedestrian - bike and pedestrian only work with measure=distance",
+		"car|truck|bike|pedestrian",
 	)
 	flag.StringVar(
 		&params.measure,
 		"measure",
 		measureEnum.DISTANCE,
 		"distance|traveltime",
+	)
+	flag.Float64Var(
+		&params.length,
+		"length",
+		math.MaxFloat64,
+		"truck length",
+	)
+	flag.Float64Var(
+		&params.width,
+		"width",
+		math.MaxFloat64,
+		"truck width",
+	)
+	flag.Float64Var(
+		&params.height,
+		"height",
+		math.MaxFloat64,
+		"truck height",
+	)
+	flag.Float64Var(
+		&params.weight,
+		"weight",
+		math.MaxFloat64,
+		"truck weight",
+	)
+	flag.IntVar(
+		&params.speed,
+		"speed",
+		27,
+		"truck speed in m/s (default=27)",
 	)
 	flag.Parse()
 	if in == "" {
@@ -157,11 +191,13 @@ func parseFlags() (params parameters, err error) {
 
 	switch profile {
 	case profileEnum.CAR:
-		params.profile = routingkit.CarTravelProfile
+		params.profile = routingkit.Car()
 	case profileEnum.BIKE:
-		params.profile = routingkit.BikeTravelProfile
+		params.profile = routingkit.Bike()
 	case profileEnum.PEDESTRIAN:
-		params.profile = routingkit.PedestrianTravelProfile
+		params.profile = routingkit.Pedestrian()
+	case profileEnum.TRUCK:
+		params.profile = routingkit.Truck(params.height, params.width, params.length, params.weight, params.speed)
 	default:
 		return parameters{}, errors.New("invalid option for profile" + profile)
 	}
