@@ -8,6 +8,11 @@ type Point struct {
 }
 
 func polylineSimilarity(first, second []Point) float64 {
+
+	c := func(i, j int) {
+	}
+	_ = c
+
 	return 0
 }
 
