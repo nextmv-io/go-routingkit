@@ -2,6 +2,7 @@ package routingkit
 
 import (
 	"fmt"
+	"math"
 	"regexp"
 	"strconv"
 	"strings"
@@ -10,9 +11,9 @@ import (
 type SpeedMapper func(wayId int, tagMap map[string]string) int
 
 var osmTagWithCountryCode = regexp.MustCompile(`^(\w{2}):(.*)$`)
-var maxSpeedAndUnits = regexp.MustCompile(`^([0-9][\.0-9]+?)(?:[ ]?(km/h|kmh|kph|mph|knots))?$`)
+var maxSpeedAndUnits = regexp.MustCompile(`^([0-9][\.0-9]*?)(?:[ ]?(km/h|kmh|kph|mph|knots))?$`)
 
-func parseMaxspeed(maxspeed string) int {
+func parseMaxspeed(maxspeed string) float64 {
 	switch maxspeed {
 	case "at:rural":
 		return 100
@@ -113,13 +114,13 @@ func parseMaxspeed(maxspeed string) int {
 	return 0
 }
 
-func ParseOSMSpeedToKM(str string) (int, bool) {
+func ParseOSMSpeedToKM(str string) (float64, bool) {
 	speedUnitsMatch := maxSpeedAndUnits.FindStringSubmatch(str)
 	if len(speedUnitsMatch) != 3 {
 		return 0, false
 	}
 	speedStr, units := speedUnitsMatch[1], speedUnitsMatch[2]
-	speed, err := strconv.Atoi(speedStr)
+	speed, err := strconv.ParseFloat(speedStr, 64)
 	if err != nil {
 		// This should not be possible due to the contruction of the regexp
 		panic(fmt.Errorf("extracted an invalid integer from maxspeed tag %s: %v", str, err))
@@ -225,7 +226,7 @@ func carSpeedMapper(_ int, tags map[string]string) int {
 			speedStr = speed
 		}
 		if speedStr != "" {
-			speed = parseMaxspeed(strings.TrimLeft(speedStr, " "))
+			speed = int(math.Ceil((parseMaxspeed(strings.TrimLeft(speedStr, " ")))))
 		}
 	}
 
