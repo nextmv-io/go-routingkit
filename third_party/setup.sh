@@ -6,7 +6,12 @@ GOOS="$( go env GOOS )"
 GOARCH="$( go env GOARCH )"
 case $GOOS in
 	linux)
-		sudo apt-get install -y zlib1g-dev
+		which apt >/dev/null 2>&1
+		if [ $? -eq 0 ]
+			sudo yum install -y zlib-devel
+		then
+			sudo apt-get install -y zlib1g-dev
+		fi
 	;;
 	darwin)
 		brew install zlib

@@ -1,4 +1,6 @@
 #!/bin/bash
+set -e
+
 HERE="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 pushd "${HERE}" || exit 1
 GOOS="$( go env GOOS )"
@@ -23,7 +25,14 @@ cd temp
 
 case $GOOS in
 	linux)
-		ar -x /usr/lib/x86_64-linux-gnu/libz.a
+		case $GOARCH in
+		amd64)
+			ar -x /usr/lib/x86_64-linux-gnu/libz.a
+		;;
+		arm64)
+			ar -x /usr/lib64/libz.a
+		;;
+		esac
 	;;
 	darwin)
 		ar -x "$(brew --prefix zlib)/lib/libz.a"
@@ -42,6 +51,12 @@ case $GOOS in
 			mv routingkit_linux_amd64_wrap.cxx ../routingkit/internal/routingkit/
 			mv libroutingkit.a ../routingkit/internal/routingkit/libroutingkit_linux_amd64.a
 			mv routingkit.go ../routingkit/internal/routingkit/routingkit_linux_amd64.go
+		;;
+		arm64)
+			swig -go -cgo -c++ -IRoutingKit/include/routingkit -intgosize 64 -O routingkit_linux_arm64.i
+			mv routingkit_linux_arm64_wrap.cxx ../routingkit/internal/routingkit/
+			mv libroutingkit.a ../routingkit/internal/routingkit/libroutingkit_linux_arm64.a
+			mv routingkit.go ../routingkit/internal/routingkit/routingkit_linux_arm64.go
 		;;
 		esac
 	;;
