@@ -8,9 +8,10 @@ case $GOOS in
 	linux)
 		which apt >/dev/null 2>&1
 		if [ $? -eq 0 ]
-			sudo yum install -y zlib-devel
 		then
 			sudo apt-get install -y zlib1g-dev
+		else
+			sudo yum install -y zlib-devel
 		fi
 	;;
 	darwin)
