@@ -7,6 +7,64 @@ import (
 	"github.com/google/go-cmp/cmp"
 )
 
+func TestParseAsKM(t *testing.T) {
+	tests := []struct {
+		val         string
+		expectedVal float64
+	}{
+		{
+			val:         "be:motorway",
+			expectedVal: 120.0,
+		},
+		{
+			val:         "rural",
+			expectedVal: 90.0,
+		},
+		{
+			val:         "0.5",
+			expectedVal: 0.5,
+		},
+		{
+			val:         "7.5 mph",
+			expectedVal: 12.0675,
+		},
+		{
+			val:         "7 mph",
+			expectedVal: 11.263,
+		},
+		{
+			val:         "10.0",
+			expectedVal: 10.0,
+		},
+		{
+			val:         "10",
+			expectedVal: 10.0,
+		},
+		{
+			val:         "10.0 km/h",
+			expectedVal: 10.0,
+		},
+		{
+			val:         "10.0 kmh",
+			expectedVal: 10.0,
+		},
+		{
+			val:         "10.0 kph",
+			expectedVal: 10.0,
+		},
+		{
+			val:         "2.0 knots",
+			expectedVal: 3.704,
+		},
+	}
+	for i, test := range tests {
+		val := parseMaxspeed(test.val)
+		if diff := cmp.Diff(test.expectedVal, val, floatComparer); diff != "" {
+			t.Errorf("[%d]: (-want, +got):\n%s", i, diff)
+		}
+	}
+}
+
 func TestParseAsMeters(t *testing.T) {
 	tests := []struct {
 		val         string
