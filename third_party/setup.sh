@@ -6,8 +6,7 @@ GOOS="$( go env GOOS )"
 GOARCH="$( go env GOARCH )"
 case $GOOS in
 	linux)
-		which apt >/dev/null 2>&1
-		if [ $? -eq 0 ]
+		if command -v apt &> /dev/null
 		then
 			sudo apt-get install -y zlib1g-dev
 		else
