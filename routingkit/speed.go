@@ -138,7 +138,8 @@ func ParseOSMSpeedToKM(str string) (float64, bool) {
 	return speed, true
 }
 
-func bikeSpeedMapper(_ int, tags map[string]string) int {
+// BikeSpeedMapper sets the speed for bikes according to the map tag
+func BikeSpeedMapper(_ int, tags map[string]string) int {
 	defaultSpeed := 15
 	walkingSpeed := 4
 	if tags["bridge"] == "movable" {
@@ -180,7 +181,8 @@ func bikeSpeedMapper(_ int, tags map[string]string) int {
 	return defaultSpeed
 }
 
-func carSpeedMapper(_ int, tags map[string]string) int {
+// CarSpeedMapper sets the speed for cars according to allowed speed, map tag and surface
+func CarSpeedMapper(_ int, tags map[string]string) int {
 	route := tags["route"]
 	if route == "ferry" {
 		return 5
@@ -282,7 +284,9 @@ func carSpeedMapper(_ int, tags map[string]string) int {
 	return speed
 }
 
-func pedestrianSpeedMapper(_ int, tags map[string]string) int {
+// PedestrianSpeedMapper sets to 5km/h and reduces the speed according to the
+// surface of the underlying way
+func PedestrianSpeedMapper(_ int, tags map[string]string) int {
 	speed := 5.0
 	multiplier := map[string]float64{
 		"fine_gravel": 0.75,
@@ -297,9 +301,10 @@ func pedestrianSpeedMapper(_ int, tags map[string]string) int {
 	return int(speed)
 }
 
-func maxSpeedMapper(maxSpeed int) SpeedMapper {
+// MaxSpeedMapper caps the allowed speed at the given value
+func MaxSpeedMapper(maxSpeed int) SpeedMapper {
 	return func(_ int, tagMap map[string]string) int {
-		speed := carSpeedMapper(0, tagMap)
+		speed := CarSpeedMapper(0, tagMap)
 		if speed > maxSpeed {
 			speed = maxSpeed
 		}

@@ -20,7 +20,8 @@ func allLanesAreHOV(tags map[string]string) bool {
 	return true
 }
 
-func carTagMapFilter(id int, tags map[string]string) bool {
+// CarTagMapFilter filters the map for map tags usable by a car
+func CarTagMapFilter(id int, tags map[string]string) bool {
 	highway := tags["highway"]
 	route := tags["route"]
 	if highway == "" && route == "" {
@@ -138,8 +139,9 @@ func carTagMapFilter(id int, tags map[string]string) bool {
 	return false
 }
 
-// TODO: make it configurable whether to use public transit - now we assume yes
-func bikeTagMapFilter(_ int, tags map[string]string) bool {
+// BikeTagMapFilter filters the map for map tags usable by bikes
+func BikeTagMapFilter(_ int, tags map[string]string) bool {
+	// TODO: make it configurable whether to use public transit - now we assume yes
 	if tags["impassable"] == "yes" {
 		return false
 	}
@@ -238,7 +240,8 @@ func bikeTagMapFilter(_ int, tags map[string]string) bool {
 	return false
 }
 
-func pedestrianTagMapFilter(id int, tags map[string]string) bool {
+// PedestrianTagMapFilter filters the map for map tags usable by pedestrians
+func PedestrianTagMapFilter(id int, tags map[string]string) bool {
 	{
 		var routable bool
 		for _, tag := range []string{
@@ -416,9 +419,10 @@ func parseAsTonnes(val string) (float64, error) {
 	return 0, fmt.Errorf("could not parse %s as tonnes value", val)
 }
 
-// to handle the units and filter by actual values, we need to mirror this:
-// https://github.com/Project-OSRM/osrm-profiles-contrib/blob/master/5/21/truck-soft/lib/measure.lua
-func truckTagMapFilter(truckHeight, truckWidth, truckLength, truckWeight float64) TagMapFilter {
+// TruckTagMapFilter filters the map for map tags usable by trucks
+func TruckTagMapFilter(truckHeight, truckWidth, truckLength, truckWeight float64) TagMapFilter {
+	// to handle the units and filter by actual values, we need to mirror this:
+	// https://github.com/Project-OSRM/osrm-profiles-contrib/blob/master/5/21/truck-soft/lib/measure.lua
 	return func(wayId int, tagMap map[string]string) bool {
 		parseMeterTag := func(tag string) float64 {
 			str, ok := tagMap[tag]
@@ -484,6 +488,6 @@ func truckTagMapFilter(truckHeight, truckWidth, truckLength, truckWeight float64
 		// https://wiki.openstreetmap.org/wiki/Key:maxbogieweight
 
 		// car is the default for trucks
-		return carTagMapFilter(wayId, tagMap)
+		return CarTagMapFilter(wayId, tagMap)
 	}
 }
