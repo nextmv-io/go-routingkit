@@ -59,11 +59,11 @@ func parsePBF(osmFile string, tagMapFilter TagMapFilter, speedMapper SpeedMapper
 }
 
 func Car() Profile {
-	return NewProfile("car", VehicleMode, false, false, carTagMapFilter, carSpeedMapper)
+	return NewProfile("car", VehicleMode, false, false, CarTagMapFilter, CarSpeedMapper)
 }
 
 func Bike() Profile {
-	return NewProfile("bike", BikeMode, false, false, bikeTagMapFilter, bikeSpeedMapper)
+	return NewProfile("bike", BikeMode, false, false, BikeTagMapFilter, BikeSpeedMapper)
 }
 
 func Pedestrian() Profile {
@@ -72,8 +72,8 @@ func Pedestrian() Profile {
 		PedestrianMode,
 		false,
 		false,
-		pedestrianTagMapFilter,
-		pedestrianSpeedMapper,
+		PedestrianTagMapFilter,
+		PedestrianSpeedMapper,
 	)
 }
 
@@ -83,10 +83,10 @@ func Truck(height, width, length, weight float64, speed int) Profile {
 		VehicleMode,
 		false,
 		true,
-		truckTagMapFilter(height, width, length, weight),
+		TruckTagMapFilter(height, width, length, weight),
 		// TODO: instead of reusing the car max speed and capping it at a given
 		// maxSpeed, we could/should also react to maxspeed:hgv
-		maxSpeedMapper(speed),
+		MaxSpeedMapper(speed),
 	)
 }
 
