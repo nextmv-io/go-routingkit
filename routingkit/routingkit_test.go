@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"math"
 	"math/rand"
 	"os"
 	"os/exec"
@@ -746,7 +747,13 @@ func TestTravelTime(t *testing.T) {
 			t.Errorf("[%d] opening test fixture: %v", i, err)
 			continue
 		}
-		if diff := cmp.Diff(expectedWaypoints, waypoints); diff != "" {
+		const tolerance = .0001
+		opt := cmp.Comparer(func(x, y float64) bool {
+			diff := math.Abs(x - y)
+			mean := math.Abs(x+y) / 2.0
+			return (diff / mean) < tolerance
+		})
+		if diff := cmp.Diff(expectedWaypoints, waypoints, opt); diff != "" {
 			if *update {
 				waypointsFileW, err := os.OpenFile(
 					filepath.Join("testdata/fixtures", test.waypointsFile),
