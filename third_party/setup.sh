@@ -14,7 +14,7 @@ case $GOOS in
 	;;
 esac
 git clone https://github.com/RoutingKit/RoutingKit.git || (cd RoutingKit ; git pull; cd ..)
-cd RoutingKit && git reset --hard
+cd RoutingKit && git reset --hard && git checkout fb5e83bcd4cf85763fb6877a0b5f8d5736c9a15b
 if [ "$GOOS" = "darwin" ]; then
 	sed -i '' "s/CC=g++/CC=clang++/" Makefile
 	sed -i '' "s/\(CFLAGS=.*-std=c++11\) \(.*\)/\1 -stdlib=libc++ \2/" Makefile
