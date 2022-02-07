@@ -22,7 +22,7 @@ if [ "$GOOS" = "darwin" ]; then
 	sed -i '' "s/OMP_LDFLAGS=-fopenmp/OMP_LDFLAGS=-Xpreprocessor -fopenmp -lomp/" Makefile
 
 	if [ "$GOARCH" = "arm64" ]; then
-		sed -i '' "s/-march=native/-mcpu=apple-a14/" Makefile
+		sed -i '' "s/-march=native/-mcpu=apple-m1/" Makefile
 		sed -i '' "s/-Iinclude/-Iinclude -I\/opt\/homebrew\/opt\/libomp\/include/" Makefile
 		sed -i '' "s/^LDFLAGS=/LDFLAGS=-L\/opt\/homebrew\/opt\/libomp\/lib/" Makefile
 	else

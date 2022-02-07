@@ -19,7 +19,7 @@ namespace std {
   %template(PointVector) vector<Point>;
   %template(UnsignedVector) vector<unsigned>;
   %template(LongIntVector) vector<long int>;
-  %template(IntIntMap) map<int, int>;
+  %template(IntIntMap) map<unsigned long int, unsigned int>;
 }
 
 %include "Client.h"

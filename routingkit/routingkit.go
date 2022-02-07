@@ -46,6 +46,12 @@ func parsePBF(osmFile string, tagMapFilter TagMapFilter, speedMapper SpeedMapper
 				// allowed
 				if speedMapper != nil {
 					waySpeeds[id] = speedMapper(id, tagMap)
+					// if the speed is returned as 0, that means the way is not
+					// usable
+					if waySpeeds[id] == 0 {
+						waySpeeds[id] = 1 // prevents routingkit crash
+						allowed[id] = false
+					}
 				}
 			}
 		}
@@ -140,7 +146,7 @@ func withSwigProfile(p Profile, allowedWayIDs map[int]bool, waySpeeds map[int]in
 
 	rkWaySpeeds := routingkit.NewIntIntMap()
 	for wayId, speed := range waySpeeds {
-		rkWaySpeeds.Set(int(wayId), speed)
+		rkWaySpeeds.Set(uint64(wayId), uint(speed))
 	}
 	customProfile.SetWaySpeeds(rkWaySpeeds)
 

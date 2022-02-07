@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"math"
 	"math/rand"
 	"os"
 	"os/exec"
@@ -635,7 +636,7 @@ func TestTravelTimes(t *testing.T) {
 			},
 			snap: 1000,
 
-			expected: []uint32{134910, 55530},
+			expected: []uint32{131599, 54169},
 		},
 	}
 
@@ -672,10 +673,10 @@ func TestTravelTimeMatrix(t *testing.T) {
 				{-76.599388, 39.302014},
 			},
 			expected: [][]uint32{
-				{134910, 113043},
-				{157170, 53118},
-				{210945, 189960},
-				{295634, 129178},
+				{131599, 110399},
+				{153578, 52230},
+				{205841, 187148},
+				{289818, 127151},
 			},
 		},
 	}
@@ -707,7 +708,7 @@ func TestTravelTime(t *testing.T) {
 			source:             []float32{-76.587490, 39.299710},
 			destination:        []float32{-76.584897, 39.280774},
 			snap:               1000,
-			expectedTravelTime: 213405,
+			expectedTravelTime: 206713,
 			waypointsFile:      "travel_time_waypoints_0.json",
 			profile:            routingkit.Car(),
 		},
@@ -715,7 +716,7 @@ func TestTravelTime(t *testing.T) {
 			source:             []float32{-76.587490, 39.299710},
 			destination:        []float32{-76.591286, 39.298443},
 			snap:               1000,
-			expectedTravelTime: 53712,
+			expectedTravelTime: 148080,
 			waypointsFile:      "travel_time_waypoints_1.json",
 			profile:            routingkit.Bike(),
 		},
@@ -746,7 +747,13 @@ func TestTravelTime(t *testing.T) {
 			t.Errorf("[%d] opening test fixture: %v", i, err)
 			continue
 		}
-		if diff := cmp.Diff(expectedWaypoints, waypoints); diff != "" {
+		const tolerance = .0001
+		opt := cmp.Comparer(func(x, y float64) bool {
+			diff := math.Abs(x - y)
+			mean := math.Abs(x+y) / 2.0
+			return (diff / mean) < tolerance
+		})
+		if diff := cmp.Diff(expectedWaypoints, waypoints, opt); diff != "" {
 			if *update {
 				waypointsFileW, err := os.OpenFile(
 					filepath.Join("testdata/fixtures", test.waypointsFile),

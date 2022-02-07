@@ -56,139 +56,143 @@ typedef long long swig_type_20;
 typedef long long swig_type_21;
 typedef long long swig_type_22;
 typedef long long swig_type_23;
-typedef _gostring_ swig_type_24;
-typedef _gostring_ swig_type_25;
-typedef _gostring_ swig_type_26;
-typedef _gostring_ swig_type_27;
-extern void _wrap_Swig_free_routingkit_2416d308e134b713(uintptr_t arg1);
-extern uintptr_t _wrap_Swig_malloc_routingkit_2416d308e134b713(swig_intgo arg1);
-extern uintptr_t _wrap_new_IntVector__SWIG_0_routingkit_2416d308e134b713(void);
-extern uintptr_t _wrap_new_IntVector__SWIG_1_routingkit_2416d308e134b713(swig_type_1 arg1);
-extern uintptr_t _wrap_new_IntVector__SWIG_2_routingkit_2416d308e134b713(uintptr_t arg1);
-extern swig_type_2 _wrap_IntVector_size_routingkit_2416d308e134b713(uintptr_t arg1);
-extern swig_type_3 _wrap_IntVector_capacity_routingkit_2416d308e134b713(uintptr_t arg1);
-extern void _wrap_IntVector_reserve_routingkit_2416d308e134b713(uintptr_t arg1, swig_type_4 arg2);
-extern _Bool _wrap_IntVector_isEmpty_routingkit_2416d308e134b713(uintptr_t arg1);
-extern void _wrap_IntVector_clear_routingkit_2416d308e134b713(uintptr_t arg1);
-extern void _wrap_IntVector_add_routingkit_2416d308e134b713(uintptr_t arg1, swig_intgo arg2);
-extern swig_intgo _wrap_IntVector_get_routingkit_2416d308e134b713(uintptr_t arg1, swig_intgo arg2);
-extern void _wrap_IntVector_set_routingkit_2416d308e134b713(uintptr_t arg1, swig_intgo arg2, swig_intgo arg3);
-extern void _wrap_delete_IntVector_routingkit_2416d308e134b713(uintptr_t arg1);
-extern uintptr_t _wrap_new_FloatVector__SWIG_0_routingkit_2416d308e134b713(void);
-extern uintptr_t _wrap_new_FloatVector__SWIG_1_routingkit_2416d308e134b713(swig_type_5 arg1);
-extern uintptr_t _wrap_new_FloatVector__SWIG_2_routingkit_2416d308e134b713(uintptr_t arg1);
-extern swig_type_6 _wrap_FloatVector_size_routingkit_2416d308e134b713(uintptr_t arg1);
-extern swig_type_7 _wrap_FloatVector_capacity_routingkit_2416d308e134b713(uintptr_t arg1);
-extern void _wrap_FloatVector_reserve_routingkit_2416d308e134b713(uintptr_t arg1, swig_type_8 arg2);
-extern _Bool _wrap_FloatVector_isEmpty_routingkit_2416d308e134b713(uintptr_t arg1);
-extern void _wrap_FloatVector_clear_routingkit_2416d308e134b713(uintptr_t arg1);
-extern void _wrap_FloatVector_add_routingkit_2416d308e134b713(uintptr_t arg1, float arg2);
-extern float _wrap_FloatVector_get_routingkit_2416d308e134b713(uintptr_t arg1, swig_intgo arg2);
-extern void _wrap_FloatVector_set_routingkit_2416d308e134b713(uintptr_t arg1, swig_intgo arg2, float arg3);
-extern void _wrap_delete_FloatVector_routingkit_2416d308e134b713(uintptr_t arg1);
-extern uintptr_t _wrap_new_PointVector__SWIG_0_routingkit_2416d308e134b713(void);
-extern uintptr_t _wrap_new_PointVector__SWIG_1_routingkit_2416d308e134b713(swig_type_9 arg1);
-extern uintptr_t _wrap_new_PointVector__SWIG_2_routingkit_2416d308e134b713(uintptr_t arg1);
-extern swig_type_10 _wrap_PointVector_size_routingkit_2416d308e134b713(uintptr_t arg1);
-extern swig_type_11 _wrap_PointVector_capacity_routingkit_2416d308e134b713(uintptr_t arg1);
-extern void _wrap_PointVector_reserve_routingkit_2416d308e134b713(uintptr_t arg1, swig_type_12 arg2);
-extern _Bool _wrap_PointVector_isEmpty_routingkit_2416d308e134b713(uintptr_t arg1);
-extern void _wrap_PointVector_clear_routingkit_2416d308e134b713(uintptr_t arg1);
-extern void _wrap_PointVector_add_routingkit_2416d308e134b713(uintptr_t arg1, uintptr_t arg2);
-extern uintptr_t _wrap_PointVector_get_routingkit_2416d308e134b713(uintptr_t arg1, swig_intgo arg2);
-extern void _wrap_PointVector_set_routingkit_2416d308e134b713(uintptr_t arg1, swig_intgo arg2, uintptr_t arg3);
-extern void _wrap_delete_PointVector_routingkit_2416d308e134b713(uintptr_t arg1);
-extern uintptr_t _wrap_new_UnsignedVector__SWIG_0_routingkit_2416d308e134b713(void);
-extern uintptr_t _wrap_new_UnsignedVector__SWIG_1_routingkit_2416d308e134b713(swig_type_13 arg1);
-extern uintptr_t _wrap_new_UnsignedVector__SWIG_2_routingkit_2416d308e134b713(uintptr_t arg1);
-extern swig_type_14 _wrap_UnsignedVector_size_routingkit_2416d308e134b713(uintptr_t arg1);
-extern swig_type_15 _wrap_UnsignedVector_capacity_routingkit_2416d308e134b713(uintptr_t arg1);
-extern void _wrap_UnsignedVector_reserve_routingkit_2416d308e134b713(uintptr_t arg1, swig_type_16 arg2);
-extern _Bool _wrap_UnsignedVector_isEmpty_routingkit_2416d308e134b713(uintptr_t arg1);
-extern void _wrap_UnsignedVector_clear_routingkit_2416d308e134b713(uintptr_t arg1);
-extern void _wrap_UnsignedVector_add_routingkit_2416d308e134b713(uintptr_t arg1, swig_intgo arg2);
-extern swig_intgo _wrap_UnsignedVector_get_routingkit_2416d308e134b713(uintptr_t arg1, swig_intgo arg2);
-extern void _wrap_UnsignedVector_set_routingkit_2416d308e134b713(uintptr_t arg1, swig_intgo arg2, swig_intgo arg3);
-extern void _wrap_delete_UnsignedVector_routingkit_2416d308e134b713(uintptr_t arg1);
-extern uintptr_t _wrap_new_LongIntVector__SWIG_0_routingkit_2416d308e134b713(void);
-extern uintptr_t _wrap_new_LongIntVector__SWIG_1_routingkit_2416d308e134b713(swig_type_17 arg1);
-extern uintptr_t _wrap_new_LongIntVector__SWIG_2_routingkit_2416d308e134b713(uintptr_t arg1);
-extern swig_type_18 _wrap_LongIntVector_size_routingkit_2416d308e134b713(uintptr_t arg1);
-extern swig_type_19 _wrap_LongIntVector_capacity_routingkit_2416d308e134b713(uintptr_t arg1);
-extern void _wrap_LongIntVector_reserve_routingkit_2416d308e134b713(uintptr_t arg1, swig_type_20 arg2);
-extern _Bool _wrap_LongIntVector_isEmpty_routingkit_2416d308e134b713(uintptr_t arg1);
-extern void _wrap_LongIntVector_clear_routingkit_2416d308e134b713(uintptr_t arg1);
-extern void _wrap_LongIntVector_add_routingkit_2416d308e134b713(uintptr_t arg1, swig_type_21 arg2);
-extern swig_type_22 _wrap_LongIntVector_get_routingkit_2416d308e134b713(uintptr_t arg1, swig_intgo arg2);
-extern void _wrap_LongIntVector_set_routingkit_2416d308e134b713(uintptr_t arg1, swig_intgo arg2, swig_type_23 arg3);
-extern void _wrap_delete_LongIntVector_routingkit_2416d308e134b713(uintptr_t arg1);
-extern uintptr_t _wrap_new_IntIntMap__SWIG_0_routingkit_2416d308e134b713(void);
-extern uintptr_t _wrap_new_IntIntMap__SWIG_1_routingkit_2416d308e134b713(uintptr_t arg1);
-extern swig_intgo _wrap_IntIntMap_size_routingkit_2416d308e134b713(uintptr_t arg1);
-extern _Bool _wrap_IntIntMap_empty_routingkit_2416d308e134b713(uintptr_t arg1);
-extern void _wrap_IntIntMap_clear_routingkit_2416d308e134b713(uintptr_t arg1);
-extern swig_intgo _wrap_IntIntMap_get_routingkit_2416d308e134b713(uintptr_t arg1, swig_intgo arg2);
-extern void _wrap_IntIntMap_set_routingkit_2416d308e134b713(uintptr_t arg1, swig_intgo arg2, swig_intgo arg3);
-extern void _wrap_IntIntMap_del_routingkit_2416d308e134b713(uintptr_t arg1, swig_intgo arg2);
-extern _Bool _wrap_IntIntMap_has_key_routingkit_2416d308e134b713(uintptr_t arg1, swig_intgo arg2);
-extern void _wrap_delete_IntIntMap_routingkit_2416d308e134b713(uintptr_t arg1);
-extern void _wrap_Point_lon_set_routingkit_2416d308e134b713(uintptr_t arg1, float arg2);
-extern float _wrap_Point_lon_get_routingkit_2416d308e134b713(uintptr_t arg1);
-extern void _wrap_Point_lat_set_routingkit_2416d308e134b713(uintptr_t arg1, float arg2);
-extern float _wrap_Point_lat_get_routingkit_2416d308e134b713(uintptr_t arg1);
-extern uintptr_t _wrap_new_Point_routingkit_2416d308e134b713(void);
-extern void _wrap_delete_Point_routingkit_2416d308e134b713(uintptr_t arg1);
-extern void _wrap_QueryResponse_distance_set_routingkit_2416d308e134b713(uintptr_t arg1, swig_intgo arg2);
-extern swig_intgo _wrap_QueryResponse_distance_get_routingkit_2416d308e134b713(uintptr_t arg1);
-extern void _wrap_QueryResponse_waypoints_set_routingkit_2416d308e134b713(uintptr_t arg1, uintptr_t arg2);
-extern uintptr_t _wrap_QueryResponse_waypoints_get_routingkit_2416d308e134b713(uintptr_t arg1);
-extern uintptr_t _wrap_new_QueryResponse_routingkit_2416d308e134b713(void);
-extern void _wrap_delete_QueryResponse_routingkit_2416d308e134b713(uintptr_t arg1);
-extern swig_intgo _wrap_vehicle_routingkit_2416d308e134b713(void);
-extern swig_intgo _wrap_bike_routingkit_2416d308e134b713(void);
-extern swig_intgo _wrap_pedestrian_routingkit_2416d308e134b713(void);
-extern void _wrap_Profile_allowedWayIds_set_routingkit_2416d308e134b713(uintptr_t arg1, uintptr_t arg2);
-extern uintptr_t _wrap_Profile_allowedWayIds_get_routingkit_2416d308e134b713(uintptr_t arg1);
-extern void _wrap_Profile_waySpeeds_set_routingkit_2416d308e134b713(uintptr_t arg1, uintptr_t arg2);
-extern uintptr_t _wrap_Profile_waySpeeds_get_routingkit_2416d308e134b713(uintptr_t arg1);
-extern void _wrap_Profile_transportMode_set_routingkit_2416d308e134b713(uintptr_t arg1, swig_intgo arg2);
-extern swig_intgo _wrap_Profile_transportMode_get_routingkit_2416d308e134b713(uintptr_t arg1);
-extern void _wrap_Profile_name_set_routingkit_2416d308e134b713(uintptr_t arg1, swig_type_24 arg2);
-extern swig_type_25 _wrap_Profile_name_get_routingkit_2416d308e134b713(uintptr_t arg1);
-extern void _wrap_Profile_prevent_left_turns_set_routingkit_2416d308e134b713(uintptr_t arg1, _Bool arg2);
-extern _Bool _wrap_Profile_prevent_left_turns_get_routingkit_2416d308e134b713(uintptr_t arg1);
-extern void _wrap_Profile_prevent_u_turns_set_routingkit_2416d308e134b713(uintptr_t arg1, _Bool arg2);
-extern _Bool _wrap_Profile_prevent_u_turns_get_routingkit_2416d308e134b713(uintptr_t arg1);
-extern void _wrap_Profile_travel_time_set_routingkit_2416d308e134b713(uintptr_t arg1, _Bool arg2);
-extern _Bool _wrap_Profile_travel_time_get_routingkit_2416d308e134b713(uintptr_t arg1);
-extern uintptr_t _wrap_new_Profile_routingkit_2416d308e134b713(void);
-extern void _wrap_delete_Profile_routingkit_2416d308e134b713(uintptr_t arg1);
-extern swig_intgo _wrap_max_distance_get_routingkit_2416d308e134b713(void);
-extern void _wrap_RoutingGraph_first_out_set_routingkit_2416d308e134b713(uintptr_t arg1, uintptr_t arg2);
-extern uintptr_t _wrap_RoutingGraph_first_out_get_routingkit_2416d308e134b713(uintptr_t arg1);
-extern void _wrap_RoutingGraph_head_set_routingkit_2416d308e134b713(uintptr_t arg1, uintptr_t arg2);
-extern uintptr_t _wrap_RoutingGraph_head_get_routingkit_2416d308e134b713(uintptr_t arg1);
-extern void _wrap_RoutingGraph_travel_time_set_routingkit_2416d308e134b713(uintptr_t arg1, uintptr_t arg2);
-extern uintptr_t _wrap_RoutingGraph_travel_time_get_routingkit_2416d308e134b713(uintptr_t arg1);
-extern void _wrap_RoutingGraph_geo_distance_set_routingkit_2416d308e134b713(uintptr_t arg1, uintptr_t arg2);
-extern uintptr_t _wrap_RoutingGraph_geo_distance_get_routingkit_2416d308e134b713(uintptr_t arg1);
-extern void _wrap_RoutingGraph_latitude_set_routingkit_2416d308e134b713(uintptr_t arg1, uintptr_t arg2);
-extern uintptr_t _wrap_RoutingGraph_latitude_get_routingkit_2416d308e134b713(uintptr_t arg1);
-extern void _wrap_RoutingGraph_longitude_set_routingkit_2416d308e134b713(uintptr_t arg1, uintptr_t arg2);
-extern uintptr_t _wrap_RoutingGraph_longitude_get_routingkit_2416d308e134b713(uintptr_t arg1);
-extern void _wrap_RoutingGraph_forbidden_turn_from_arc_set_routingkit_2416d308e134b713(uintptr_t arg1, uintptr_t arg2);
-extern uintptr_t _wrap_RoutingGraph_forbidden_turn_from_arc_get_routingkit_2416d308e134b713(uintptr_t arg1);
-extern void _wrap_RoutingGraph_forbidden_turn_to_arc_set_routingkit_2416d308e134b713(uintptr_t arg1, uintptr_t arg2);
-extern uintptr_t _wrap_RoutingGraph_forbidden_turn_to_arc_get_routingkit_2416d308e134b713(uintptr_t arg1);
-extern swig_intgo _wrap_RoutingGraph_node_count_routingkit_2416d308e134b713(uintptr_t arg1);
-extern swig_intgo _wrap_RoutingGraph_arc_count_routingkit_2416d308e134b713(uintptr_t arg1);
-extern uintptr_t _wrap_new_RoutingGraph_routingkit_2416d308e134b713(void);
-extern void _wrap_delete_RoutingGraph_routingkit_2416d308e134b713(uintptr_t arg1);
-extern uintptr_t _wrap_Client_query_routingkit_2416d308e134b713(uintptr_t arg1, swig_intgo arg2, float arg3, float arg4, float arg5, float arg6, float arg7, _Bool arg8);
-extern uintptr_t _wrap_Client_distances_routingkit_2416d308e134b713(uintptr_t arg1, swig_intgo arg2, float arg3, uintptr_t arg4, uintptr_t arg5);
-extern uintptr_t _wrap_Client_nearest_routingkit_2416d308e134b713(uintptr_t arg1, swig_intgo arg2, float arg3, float arg4, float arg5);
-extern uintptr_t _wrap_new_Client_routingkit_2416d308e134b713(swig_intgo arg1, swig_type_26 arg2, swig_type_27 arg3, uintptr_t arg4);
-extern void _wrap_delete_Client_routingkit_2416d308e134b713(uintptr_t arg1);
+typedef long long swig_type_24;
+typedef long long swig_type_25;
+typedef long long swig_type_26;
+typedef long long swig_type_27;
+typedef _gostring_ swig_type_28;
+typedef _gostring_ swig_type_29;
+typedef _gostring_ swig_type_30;
+typedef _gostring_ swig_type_31;
+extern void _wrap_Swig_free_routingkit_c375358e58063df0(uintptr_t arg1);
+extern uintptr_t _wrap_Swig_malloc_routingkit_c375358e58063df0(swig_intgo arg1);
+extern uintptr_t _wrap_new_IntVector__SWIG_0_routingkit_c375358e58063df0(void);
+extern uintptr_t _wrap_new_IntVector__SWIG_1_routingkit_c375358e58063df0(swig_type_1 arg1);
+extern uintptr_t _wrap_new_IntVector__SWIG_2_routingkit_c375358e58063df0(uintptr_t arg1);
+extern swig_type_2 _wrap_IntVector_size_routingkit_c375358e58063df0(uintptr_t arg1);
+extern swig_type_3 _wrap_IntVector_capacity_routingkit_c375358e58063df0(uintptr_t arg1);
+extern void _wrap_IntVector_reserve_routingkit_c375358e58063df0(uintptr_t arg1, swig_type_4 arg2);
+extern _Bool _wrap_IntVector_isEmpty_routingkit_c375358e58063df0(uintptr_t arg1);
+extern void _wrap_IntVector_clear_routingkit_c375358e58063df0(uintptr_t arg1);
+extern void _wrap_IntVector_add_routingkit_c375358e58063df0(uintptr_t arg1, swig_intgo arg2);
+extern swig_intgo _wrap_IntVector_get_routingkit_c375358e58063df0(uintptr_t arg1, swig_intgo arg2);
+extern void _wrap_IntVector_set_routingkit_c375358e58063df0(uintptr_t arg1, swig_intgo arg2, swig_intgo arg3);
+extern void _wrap_delete_IntVector_routingkit_c375358e58063df0(uintptr_t arg1);
+extern uintptr_t _wrap_new_FloatVector__SWIG_0_routingkit_c375358e58063df0(void);
+extern uintptr_t _wrap_new_FloatVector__SWIG_1_routingkit_c375358e58063df0(swig_type_5 arg1);
+extern uintptr_t _wrap_new_FloatVector__SWIG_2_routingkit_c375358e58063df0(uintptr_t arg1);
+extern swig_type_6 _wrap_FloatVector_size_routingkit_c375358e58063df0(uintptr_t arg1);
+extern swig_type_7 _wrap_FloatVector_capacity_routingkit_c375358e58063df0(uintptr_t arg1);
+extern void _wrap_FloatVector_reserve_routingkit_c375358e58063df0(uintptr_t arg1, swig_type_8 arg2);
+extern _Bool _wrap_FloatVector_isEmpty_routingkit_c375358e58063df0(uintptr_t arg1);
+extern void _wrap_FloatVector_clear_routingkit_c375358e58063df0(uintptr_t arg1);
+extern void _wrap_FloatVector_add_routingkit_c375358e58063df0(uintptr_t arg1, float arg2);
+extern float _wrap_FloatVector_get_routingkit_c375358e58063df0(uintptr_t arg1, swig_intgo arg2);
+extern void _wrap_FloatVector_set_routingkit_c375358e58063df0(uintptr_t arg1, swig_intgo arg2, float arg3);
+extern void _wrap_delete_FloatVector_routingkit_c375358e58063df0(uintptr_t arg1);
+extern uintptr_t _wrap_new_PointVector__SWIG_0_routingkit_c375358e58063df0(void);
+extern uintptr_t _wrap_new_PointVector__SWIG_1_routingkit_c375358e58063df0(swig_type_9 arg1);
+extern uintptr_t _wrap_new_PointVector__SWIG_2_routingkit_c375358e58063df0(uintptr_t arg1);
+extern swig_type_10 _wrap_PointVector_size_routingkit_c375358e58063df0(uintptr_t arg1);
+extern swig_type_11 _wrap_PointVector_capacity_routingkit_c375358e58063df0(uintptr_t arg1);
+extern void _wrap_PointVector_reserve_routingkit_c375358e58063df0(uintptr_t arg1, swig_type_12 arg2);
+extern _Bool _wrap_PointVector_isEmpty_routingkit_c375358e58063df0(uintptr_t arg1);
+extern void _wrap_PointVector_clear_routingkit_c375358e58063df0(uintptr_t arg1);
+extern void _wrap_PointVector_add_routingkit_c375358e58063df0(uintptr_t arg1, uintptr_t arg2);
+extern uintptr_t _wrap_PointVector_get_routingkit_c375358e58063df0(uintptr_t arg1, swig_intgo arg2);
+extern void _wrap_PointVector_set_routingkit_c375358e58063df0(uintptr_t arg1, swig_intgo arg2, uintptr_t arg3);
+extern void _wrap_delete_PointVector_routingkit_c375358e58063df0(uintptr_t arg1);
+extern uintptr_t _wrap_new_UnsignedVector__SWIG_0_routingkit_c375358e58063df0(void);
+extern uintptr_t _wrap_new_UnsignedVector__SWIG_1_routingkit_c375358e58063df0(swig_type_13 arg1);
+extern uintptr_t _wrap_new_UnsignedVector__SWIG_2_routingkit_c375358e58063df0(uintptr_t arg1);
+extern swig_type_14 _wrap_UnsignedVector_size_routingkit_c375358e58063df0(uintptr_t arg1);
+extern swig_type_15 _wrap_UnsignedVector_capacity_routingkit_c375358e58063df0(uintptr_t arg1);
+extern void _wrap_UnsignedVector_reserve_routingkit_c375358e58063df0(uintptr_t arg1, swig_type_16 arg2);
+extern _Bool _wrap_UnsignedVector_isEmpty_routingkit_c375358e58063df0(uintptr_t arg1);
+extern void _wrap_UnsignedVector_clear_routingkit_c375358e58063df0(uintptr_t arg1);
+extern void _wrap_UnsignedVector_add_routingkit_c375358e58063df0(uintptr_t arg1, swig_intgo arg2);
+extern swig_intgo _wrap_UnsignedVector_get_routingkit_c375358e58063df0(uintptr_t arg1, swig_intgo arg2);
+extern void _wrap_UnsignedVector_set_routingkit_c375358e58063df0(uintptr_t arg1, swig_intgo arg2, swig_intgo arg3);
+extern void _wrap_delete_UnsignedVector_routingkit_c375358e58063df0(uintptr_t arg1);
+extern uintptr_t _wrap_new_LongIntVector__SWIG_0_routingkit_c375358e58063df0(void);
+extern uintptr_t _wrap_new_LongIntVector__SWIG_1_routingkit_c375358e58063df0(swig_type_17 arg1);
+extern uintptr_t _wrap_new_LongIntVector__SWIG_2_routingkit_c375358e58063df0(uintptr_t arg1);
+extern swig_type_18 _wrap_LongIntVector_size_routingkit_c375358e58063df0(uintptr_t arg1);
+extern swig_type_19 _wrap_LongIntVector_capacity_routingkit_c375358e58063df0(uintptr_t arg1);
+extern void _wrap_LongIntVector_reserve_routingkit_c375358e58063df0(uintptr_t arg1, swig_type_20 arg2);
+extern _Bool _wrap_LongIntVector_isEmpty_routingkit_c375358e58063df0(uintptr_t arg1);
+extern void _wrap_LongIntVector_clear_routingkit_c375358e58063df0(uintptr_t arg1);
+extern void _wrap_LongIntVector_add_routingkit_c375358e58063df0(uintptr_t arg1, swig_type_21 arg2);
+extern swig_type_22 _wrap_LongIntVector_get_routingkit_c375358e58063df0(uintptr_t arg1, swig_intgo arg2);
+extern void _wrap_LongIntVector_set_routingkit_c375358e58063df0(uintptr_t arg1, swig_intgo arg2, swig_type_23 arg3);
+extern void _wrap_delete_LongIntVector_routingkit_c375358e58063df0(uintptr_t arg1);
+extern uintptr_t _wrap_new_IntIntMap__SWIG_0_routingkit_c375358e58063df0(void);
+extern uintptr_t _wrap_new_IntIntMap__SWIG_1_routingkit_c375358e58063df0(uintptr_t arg1);
+extern swig_intgo _wrap_IntIntMap_size_routingkit_c375358e58063df0(uintptr_t arg1);
+extern _Bool _wrap_IntIntMap_empty_routingkit_c375358e58063df0(uintptr_t arg1);
+extern void _wrap_IntIntMap_clear_routingkit_c375358e58063df0(uintptr_t arg1);
+extern swig_intgo _wrap_IntIntMap_get_routingkit_c375358e58063df0(uintptr_t arg1, swig_type_24 arg2);
+extern void _wrap_IntIntMap_set_routingkit_c375358e58063df0(uintptr_t arg1, swig_type_25 arg2, swig_intgo arg3);
+extern void _wrap_IntIntMap_del_routingkit_c375358e58063df0(uintptr_t arg1, swig_type_26 arg2);
+extern _Bool _wrap_IntIntMap_has_key_routingkit_c375358e58063df0(uintptr_t arg1, swig_type_27 arg2);
+extern void _wrap_delete_IntIntMap_routingkit_c375358e58063df0(uintptr_t arg1);
+extern void _wrap_Point_lon_set_routingkit_c375358e58063df0(uintptr_t arg1, float arg2);
+extern float _wrap_Point_lon_get_routingkit_c375358e58063df0(uintptr_t arg1);
+extern void _wrap_Point_lat_set_routingkit_c375358e58063df0(uintptr_t arg1, float arg2);
+extern float _wrap_Point_lat_get_routingkit_c375358e58063df0(uintptr_t arg1);
+extern uintptr_t _wrap_new_Point_routingkit_c375358e58063df0(void);
+extern void _wrap_delete_Point_routingkit_c375358e58063df0(uintptr_t arg1);
+extern void _wrap_QueryResponse_distance_set_routingkit_c375358e58063df0(uintptr_t arg1, swig_intgo arg2);
+extern swig_intgo _wrap_QueryResponse_distance_get_routingkit_c375358e58063df0(uintptr_t arg1);
+extern void _wrap_QueryResponse_waypoints_set_routingkit_c375358e58063df0(uintptr_t arg1, uintptr_t arg2);
+extern uintptr_t _wrap_QueryResponse_waypoints_get_routingkit_c375358e58063df0(uintptr_t arg1);
+extern uintptr_t _wrap_new_QueryResponse_routingkit_c375358e58063df0(void);
+extern void _wrap_delete_QueryResponse_routingkit_c375358e58063df0(uintptr_t arg1);
+extern swig_intgo _wrap_vehicle_routingkit_c375358e58063df0(void);
+extern swig_intgo _wrap_bike_routingkit_c375358e58063df0(void);
+extern swig_intgo _wrap_pedestrian_routingkit_c375358e58063df0(void);
+extern void _wrap_Profile_allowedWayIds_set_routingkit_c375358e58063df0(uintptr_t arg1, uintptr_t arg2);
+extern uintptr_t _wrap_Profile_allowedWayIds_get_routingkit_c375358e58063df0(uintptr_t arg1);
+extern void _wrap_Profile_waySpeeds_set_routingkit_c375358e58063df0(uintptr_t arg1, uintptr_t arg2);
+extern uintptr_t _wrap_Profile_waySpeeds_get_routingkit_c375358e58063df0(uintptr_t arg1);
+extern void _wrap_Profile_transportMode_set_routingkit_c375358e58063df0(uintptr_t arg1, swig_intgo arg2);
+extern swig_intgo _wrap_Profile_transportMode_get_routingkit_c375358e58063df0(uintptr_t arg1);
+extern void _wrap_Profile_name_set_routingkit_c375358e58063df0(uintptr_t arg1, swig_type_28 arg2);
+extern swig_type_29 _wrap_Profile_name_get_routingkit_c375358e58063df0(uintptr_t arg1);
+extern void _wrap_Profile_prevent_left_turns_set_routingkit_c375358e58063df0(uintptr_t arg1, _Bool arg2);
+extern _Bool _wrap_Profile_prevent_left_turns_get_routingkit_c375358e58063df0(uintptr_t arg1);
+extern void _wrap_Profile_prevent_u_turns_set_routingkit_c375358e58063df0(uintptr_t arg1, _Bool arg2);
+extern _Bool _wrap_Profile_prevent_u_turns_get_routingkit_c375358e58063df0(uintptr_t arg1);
+extern void _wrap_Profile_travel_time_set_routingkit_c375358e58063df0(uintptr_t arg1, _Bool arg2);
+extern _Bool _wrap_Profile_travel_time_get_routingkit_c375358e58063df0(uintptr_t arg1);
+extern uintptr_t _wrap_new_Profile_routingkit_c375358e58063df0(void);
+extern void _wrap_delete_Profile_routingkit_c375358e58063df0(uintptr_t arg1);
+extern swig_intgo _wrap_max_distance_get_routingkit_c375358e58063df0(void);
+extern void _wrap_RoutingGraph_first_out_set_routingkit_c375358e58063df0(uintptr_t arg1, uintptr_t arg2);
+extern uintptr_t _wrap_RoutingGraph_first_out_get_routingkit_c375358e58063df0(uintptr_t arg1);
+extern void _wrap_RoutingGraph_head_set_routingkit_c375358e58063df0(uintptr_t arg1, uintptr_t arg2);
+extern uintptr_t _wrap_RoutingGraph_head_get_routingkit_c375358e58063df0(uintptr_t arg1);
+extern void _wrap_RoutingGraph_travel_time_set_routingkit_c375358e58063df0(uintptr_t arg1, uintptr_t arg2);
+extern uintptr_t _wrap_RoutingGraph_travel_time_get_routingkit_c375358e58063df0(uintptr_t arg1);
+extern void _wrap_RoutingGraph_geo_distance_set_routingkit_c375358e58063df0(uintptr_t arg1, uintptr_t arg2);
+extern uintptr_t _wrap_RoutingGraph_geo_distance_get_routingkit_c375358e58063df0(uintptr_t arg1);
+extern void _wrap_RoutingGraph_latitude_set_routingkit_c375358e58063df0(uintptr_t arg1, uintptr_t arg2);
+extern uintptr_t _wrap_RoutingGraph_latitude_get_routingkit_c375358e58063df0(uintptr_t arg1);
+extern void _wrap_RoutingGraph_longitude_set_routingkit_c375358e58063df0(uintptr_t arg1, uintptr_t arg2);
+extern uintptr_t _wrap_RoutingGraph_longitude_get_routingkit_c375358e58063df0(uintptr_t arg1);
+extern void _wrap_RoutingGraph_forbidden_turn_from_arc_set_routingkit_c375358e58063df0(uintptr_t arg1, uintptr_t arg2);
+extern uintptr_t _wrap_RoutingGraph_forbidden_turn_from_arc_get_routingkit_c375358e58063df0(uintptr_t arg1);
+extern void _wrap_RoutingGraph_forbidden_turn_to_arc_set_routingkit_c375358e58063df0(uintptr_t arg1, uintptr_t arg2);
+extern uintptr_t _wrap_RoutingGraph_forbidden_turn_to_arc_get_routingkit_c375358e58063df0(uintptr_t arg1);
+extern swig_intgo _wrap_RoutingGraph_node_count_routingkit_c375358e58063df0(uintptr_t arg1);
+extern swig_intgo _wrap_RoutingGraph_arc_count_routingkit_c375358e58063df0(uintptr_t arg1);
+extern uintptr_t _wrap_new_RoutingGraph_routingkit_c375358e58063df0(void);
+extern void _wrap_delete_RoutingGraph_routingkit_c375358e58063df0(uintptr_t arg1);
+extern uintptr_t _wrap_Client_query_routingkit_c375358e58063df0(uintptr_t arg1, swig_intgo arg2, float arg3, float arg4, float arg5, float arg6, float arg7, _Bool arg8);
+extern uintptr_t _wrap_Client_distances_routingkit_c375358e58063df0(uintptr_t arg1, swig_intgo arg2, float arg3, uintptr_t arg4, uintptr_t arg5);
+extern uintptr_t _wrap_Client_nearest_routingkit_c375358e58063df0(uintptr_t arg1, swig_intgo arg2, float arg3, float arg4, float arg5);
+extern uintptr_t _wrap_new_Client_routingkit_c375358e58063df0(swig_intgo arg1, swig_type_30 arg2, swig_type_31 arg3, uintptr_t arg4);
+extern void _wrap_delete_Client_routingkit_c375358e58063df0(uintptr_t arg1);
 #undef intgo
 */
 import "C"
@@ -223,13 +227,13 @@ func swigCopyString(s string) string {
 
 func Swig_free(arg1 uintptr) {
 	_swig_i_0 := arg1
-	C._wrap_Swig_free_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0))
+	C._wrap_Swig_free_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0))
 }
 
 func Swig_malloc(arg1 int) (_swig_ret uintptr) {
 	var swig_r uintptr
 	_swig_i_0 := arg1
-	swig_r = (uintptr)(C._wrap_Swig_malloc_routingkit_2416d308e134b713(C.swig_intgo(_swig_i_0)))
+	swig_r = (uintptr)(C._wrap_Swig_malloc_routingkit_c375358e58063df0(C.swig_intgo(_swig_i_0)))
 	return swig_r
 }
 
@@ -244,21 +248,21 @@ func (p SwigcptrIntVector) SwigIsIntVector() {
 
 func NewIntVector__SWIG_0() (_swig_ret IntVector) {
 	var swig_r IntVector
-	swig_r = (IntVector)(SwigcptrIntVector(C._wrap_new_IntVector__SWIG_0_routingkit_2416d308e134b713()))
+	swig_r = (IntVector)(SwigcptrIntVector(C._wrap_new_IntVector__SWIG_0_routingkit_c375358e58063df0()))
 	return swig_r
 }
 
 func NewIntVector__SWIG_1(arg1 int64) (_swig_ret IntVector) {
 	var swig_r IntVector
 	_swig_i_0 := arg1
-	swig_r = (IntVector)(SwigcptrIntVector(C._wrap_new_IntVector__SWIG_1_routingkit_2416d308e134b713(C.swig_type_1(_swig_i_0))))
+	swig_r = (IntVector)(SwigcptrIntVector(C._wrap_new_IntVector__SWIG_1_routingkit_c375358e58063df0(C.swig_type_1(_swig_i_0))))
 	return swig_r
 }
 
 func NewIntVector__SWIG_2(arg1 IntVector) (_swig_ret IntVector) {
 	var swig_r IntVector
 	_swig_i_0 := arg1.Swigcptr()
-	swig_r = (IntVector)(SwigcptrIntVector(C._wrap_new_IntVector__SWIG_2_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0))))
+	swig_r = (IntVector)(SwigcptrIntVector(C._wrap_new_IntVector__SWIG_2_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0))))
 	return swig_r
 }
 
@@ -283,46 +287,46 @@ check_2:
 func (arg1 SwigcptrIntVector) Size() (_swig_ret int64) {
 	var swig_r int64
 	_swig_i_0 := arg1
-	swig_r = (int64)(C._wrap_IntVector_size_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0)))
+	swig_r = (int64)(C._wrap_IntVector_size_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0)))
 	return swig_r
 }
 
 func (arg1 SwigcptrIntVector) Capacity() (_swig_ret int64) {
 	var swig_r int64
 	_swig_i_0 := arg1
-	swig_r = (int64)(C._wrap_IntVector_capacity_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0)))
+	swig_r = (int64)(C._wrap_IntVector_capacity_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0)))
 	return swig_r
 }
 
 func (arg1 SwigcptrIntVector) Reserve(arg2 int64) {
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2
-	C._wrap_IntVector_reserve_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0), C.swig_type_4(_swig_i_1))
+	C._wrap_IntVector_reserve_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0), C.swig_type_4(_swig_i_1))
 }
 
 func (arg1 SwigcptrIntVector) IsEmpty() (_swig_ret bool) {
 	var swig_r bool
 	_swig_i_0 := arg1
-	swig_r = (bool)(C._wrap_IntVector_isEmpty_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0)))
+	swig_r = (bool)(C._wrap_IntVector_isEmpty_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0)))
 	return swig_r
 }
 
 func (arg1 SwigcptrIntVector) Clear() {
 	_swig_i_0 := arg1
-	C._wrap_IntVector_clear_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0))
+	C._wrap_IntVector_clear_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0))
 }
 
 func (arg1 SwigcptrIntVector) Add(arg2 int) {
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2
-	C._wrap_IntVector_add_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1))
+	C._wrap_IntVector_add_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1))
 }
 
 func (arg1 SwigcptrIntVector) Get(arg2 int) (_swig_ret int) {
 	var swig_r int
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2
-	swig_r = (int)(C._wrap_IntVector_get_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1)))
+	swig_r = (int)(C._wrap_IntVector_get_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1)))
 	return swig_r
 }
 
@@ -330,12 +334,12 @@ func (arg1 SwigcptrIntVector) Set(arg2 int, arg3 int) {
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2
 	_swig_i_2 := arg3
-	C._wrap_IntVector_set_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1), C.swig_intgo(_swig_i_2))
+	C._wrap_IntVector_set_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1), C.swig_intgo(_swig_i_2))
 }
 
 func DeleteIntVector(arg1 IntVector) {
 	_swig_i_0 := arg1.Swigcptr()
-	C._wrap_delete_IntVector_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0))
+	C._wrap_delete_IntVector_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0))
 }
 
 type IntVector interface {
@@ -362,21 +366,21 @@ func (p SwigcptrFloatVector) SwigIsFloatVector() {
 
 func NewFloatVector__SWIG_0() (_swig_ret FloatVector) {
 	var swig_r FloatVector
-	swig_r = (FloatVector)(SwigcptrFloatVector(C._wrap_new_FloatVector__SWIG_0_routingkit_2416d308e134b713()))
+	swig_r = (FloatVector)(SwigcptrFloatVector(C._wrap_new_FloatVector__SWIG_0_routingkit_c375358e58063df0()))
 	return swig_r
 }
 
 func NewFloatVector__SWIG_1(arg1 int64) (_swig_ret FloatVector) {
 	var swig_r FloatVector
 	_swig_i_0 := arg1
-	swig_r = (FloatVector)(SwigcptrFloatVector(C._wrap_new_FloatVector__SWIG_1_routingkit_2416d308e134b713(C.swig_type_5(_swig_i_0))))
+	swig_r = (FloatVector)(SwigcptrFloatVector(C._wrap_new_FloatVector__SWIG_1_routingkit_c375358e58063df0(C.swig_type_5(_swig_i_0))))
 	return swig_r
 }
 
 func NewFloatVector__SWIG_2(arg1 FloatVector) (_swig_ret FloatVector) {
 	var swig_r FloatVector
 	_swig_i_0 := arg1.Swigcptr()
-	swig_r = (FloatVector)(SwigcptrFloatVector(C._wrap_new_FloatVector__SWIG_2_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0))))
+	swig_r = (FloatVector)(SwigcptrFloatVector(C._wrap_new_FloatVector__SWIG_2_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0))))
 	return swig_r
 }
 
@@ -401,46 +405,46 @@ check_2:
 func (arg1 SwigcptrFloatVector) Size() (_swig_ret int64) {
 	var swig_r int64
 	_swig_i_0 := arg1
-	swig_r = (int64)(C._wrap_FloatVector_size_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0)))
+	swig_r = (int64)(C._wrap_FloatVector_size_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0)))
 	return swig_r
 }
 
 func (arg1 SwigcptrFloatVector) Capacity() (_swig_ret int64) {
 	var swig_r int64
 	_swig_i_0 := arg1
-	swig_r = (int64)(C._wrap_FloatVector_capacity_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0)))
+	swig_r = (int64)(C._wrap_FloatVector_capacity_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0)))
 	return swig_r
 }
 
 func (arg1 SwigcptrFloatVector) Reserve(arg2 int64) {
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2
-	C._wrap_FloatVector_reserve_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0), C.swig_type_8(_swig_i_1))
+	C._wrap_FloatVector_reserve_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0), C.swig_type_8(_swig_i_1))
 }
 
 func (arg1 SwigcptrFloatVector) IsEmpty() (_swig_ret bool) {
 	var swig_r bool
 	_swig_i_0 := arg1
-	swig_r = (bool)(C._wrap_FloatVector_isEmpty_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0)))
+	swig_r = (bool)(C._wrap_FloatVector_isEmpty_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0)))
 	return swig_r
 }
 
 func (arg1 SwigcptrFloatVector) Clear() {
 	_swig_i_0 := arg1
-	C._wrap_FloatVector_clear_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0))
+	C._wrap_FloatVector_clear_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0))
 }
 
 func (arg1 SwigcptrFloatVector) Add(arg2 float32) {
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2
-	C._wrap_FloatVector_add_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0), C.float(_swig_i_1))
+	C._wrap_FloatVector_add_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0), C.float(_swig_i_1))
 }
 
 func (arg1 SwigcptrFloatVector) Get(arg2 int) (_swig_ret float32) {
 	var swig_r float32
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2
-	swig_r = (float32)(C._wrap_FloatVector_get_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1)))
+	swig_r = (float32)(C._wrap_FloatVector_get_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1)))
 	return swig_r
 }
 
@@ -448,12 +452,12 @@ func (arg1 SwigcptrFloatVector) Set(arg2 int, arg3 float32) {
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2
 	_swig_i_2 := arg3
-	C._wrap_FloatVector_set_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1), C.float(_swig_i_2))
+	C._wrap_FloatVector_set_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1), C.float(_swig_i_2))
 }
 
 func DeleteFloatVector(arg1 FloatVector) {
 	_swig_i_0 := arg1.Swigcptr()
-	C._wrap_delete_FloatVector_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0))
+	C._wrap_delete_FloatVector_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0))
 }
 
 type FloatVector interface {
@@ -480,21 +484,21 @@ func (p SwigcptrPointVector) SwigIsPointVector() {
 
 func NewPointVector__SWIG_0() (_swig_ret PointVector) {
 	var swig_r PointVector
-	swig_r = (PointVector)(SwigcptrPointVector(C._wrap_new_PointVector__SWIG_0_routingkit_2416d308e134b713()))
+	swig_r = (PointVector)(SwigcptrPointVector(C._wrap_new_PointVector__SWIG_0_routingkit_c375358e58063df0()))
 	return swig_r
 }
 
 func NewPointVector__SWIG_1(arg1 int64) (_swig_ret PointVector) {
 	var swig_r PointVector
 	_swig_i_0 := arg1
-	swig_r = (PointVector)(SwigcptrPointVector(C._wrap_new_PointVector__SWIG_1_routingkit_2416d308e134b713(C.swig_type_9(_swig_i_0))))
+	swig_r = (PointVector)(SwigcptrPointVector(C._wrap_new_PointVector__SWIG_1_routingkit_c375358e58063df0(C.swig_type_9(_swig_i_0))))
 	return swig_r
 }
 
 func NewPointVector__SWIG_2(arg1 PointVector) (_swig_ret PointVector) {
 	var swig_r PointVector
 	_swig_i_0 := arg1.Swigcptr()
-	swig_r = (PointVector)(SwigcptrPointVector(C._wrap_new_PointVector__SWIG_2_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0))))
+	swig_r = (PointVector)(SwigcptrPointVector(C._wrap_new_PointVector__SWIG_2_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0))))
 	return swig_r
 }
 
@@ -519,46 +523,46 @@ check_2:
 func (arg1 SwigcptrPointVector) Size() (_swig_ret int64) {
 	var swig_r int64
 	_swig_i_0 := arg1
-	swig_r = (int64)(C._wrap_PointVector_size_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0)))
+	swig_r = (int64)(C._wrap_PointVector_size_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0)))
 	return swig_r
 }
 
 func (arg1 SwigcptrPointVector) Capacity() (_swig_ret int64) {
 	var swig_r int64
 	_swig_i_0 := arg1
-	swig_r = (int64)(C._wrap_PointVector_capacity_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0)))
+	swig_r = (int64)(C._wrap_PointVector_capacity_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0)))
 	return swig_r
 }
 
 func (arg1 SwigcptrPointVector) Reserve(arg2 int64) {
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2
-	C._wrap_PointVector_reserve_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0), C.swig_type_12(_swig_i_1))
+	C._wrap_PointVector_reserve_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0), C.swig_type_12(_swig_i_1))
 }
 
 func (arg1 SwigcptrPointVector) IsEmpty() (_swig_ret bool) {
 	var swig_r bool
 	_swig_i_0 := arg1
-	swig_r = (bool)(C._wrap_PointVector_isEmpty_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0)))
+	swig_r = (bool)(C._wrap_PointVector_isEmpty_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0)))
 	return swig_r
 }
 
 func (arg1 SwigcptrPointVector) Clear() {
 	_swig_i_0 := arg1
-	C._wrap_PointVector_clear_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0))
+	C._wrap_PointVector_clear_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0))
 }
 
 func (arg1 SwigcptrPointVector) Add(arg2 Point) {
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2.Swigcptr()
-	C._wrap_PointVector_add_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0), C.uintptr_t(_swig_i_1))
+	C._wrap_PointVector_add_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0), C.uintptr_t(_swig_i_1))
 }
 
 func (arg1 SwigcptrPointVector) Get(arg2 int) (_swig_ret Point) {
 	var swig_r Point
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2
-	swig_r = (Point)(SwigcptrPoint(C._wrap_PointVector_get_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1))))
+	swig_r = (Point)(SwigcptrPoint(C._wrap_PointVector_get_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1))))
 	return swig_r
 }
 
@@ -566,12 +570,12 @@ func (arg1 SwigcptrPointVector) Set(arg2 int, arg3 Point) {
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2
 	_swig_i_2 := arg3.Swigcptr()
-	C._wrap_PointVector_set_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1), C.uintptr_t(_swig_i_2))
+	C._wrap_PointVector_set_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1), C.uintptr_t(_swig_i_2))
 }
 
 func DeletePointVector(arg1 PointVector) {
 	_swig_i_0 := arg1.Swigcptr()
-	C._wrap_delete_PointVector_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0))
+	C._wrap_delete_PointVector_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0))
 }
 
 type PointVector interface {
@@ -598,21 +602,21 @@ func (p SwigcptrUnsignedVector) SwigIsUnsignedVector() {
 
 func NewUnsignedVector__SWIG_0() (_swig_ret UnsignedVector) {
 	var swig_r UnsignedVector
-	swig_r = (UnsignedVector)(SwigcptrUnsignedVector(C._wrap_new_UnsignedVector__SWIG_0_routingkit_2416d308e134b713()))
+	swig_r = (UnsignedVector)(SwigcptrUnsignedVector(C._wrap_new_UnsignedVector__SWIG_0_routingkit_c375358e58063df0()))
 	return swig_r
 }
 
 func NewUnsignedVector__SWIG_1(arg1 int64) (_swig_ret UnsignedVector) {
 	var swig_r UnsignedVector
 	_swig_i_0 := arg1
-	swig_r = (UnsignedVector)(SwigcptrUnsignedVector(C._wrap_new_UnsignedVector__SWIG_1_routingkit_2416d308e134b713(C.swig_type_13(_swig_i_0))))
+	swig_r = (UnsignedVector)(SwigcptrUnsignedVector(C._wrap_new_UnsignedVector__SWIG_1_routingkit_c375358e58063df0(C.swig_type_13(_swig_i_0))))
 	return swig_r
 }
 
 func NewUnsignedVector__SWIG_2(arg1 UnsignedVector) (_swig_ret UnsignedVector) {
 	var swig_r UnsignedVector
 	_swig_i_0 := arg1.Swigcptr()
-	swig_r = (UnsignedVector)(SwigcptrUnsignedVector(C._wrap_new_UnsignedVector__SWIG_2_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0))))
+	swig_r = (UnsignedVector)(SwigcptrUnsignedVector(C._wrap_new_UnsignedVector__SWIG_2_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0))))
 	return swig_r
 }
 
@@ -637,46 +641,46 @@ check_2:
 func (arg1 SwigcptrUnsignedVector) Size() (_swig_ret int64) {
 	var swig_r int64
 	_swig_i_0 := arg1
-	swig_r = (int64)(C._wrap_UnsignedVector_size_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0)))
+	swig_r = (int64)(C._wrap_UnsignedVector_size_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0)))
 	return swig_r
 }
 
 func (arg1 SwigcptrUnsignedVector) Capacity() (_swig_ret int64) {
 	var swig_r int64
 	_swig_i_0 := arg1
-	swig_r = (int64)(C._wrap_UnsignedVector_capacity_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0)))
+	swig_r = (int64)(C._wrap_UnsignedVector_capacity_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0)))
 	return swig_r
 }
 
 func (arg1 SwigcptrUnsignedVector) Reserve(arg2 int64) {
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2
-	C._wrap_UnsignedVector_reserve_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0), C.swig_type_16(_swig_i_1))
+	C._wrap_UnsignedVector_reserve_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0), C.swig_type_16(_swig_i_1))
 }
 
 func (arg1 SwigcptrUnsignedVector) IsEmpty() (_swig_ret bool) {
 	var swig_r bool
 	_swig_i_0 := arg1
-	swig_r = (bool)(C._wrap_UnsignedVector_isEmpty_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0)))
+	swig_r = (bool)(C._wrap_UnsignedVector_isEmpty_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0)))
 	return swig_r
 }
 
 func (arg1 SwigcptrUnsignedVector) Clear() {
 	_swig_i_0 := arg1
-	C._wrap_UnsignedVector_clear_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0))
+	C._wrap_UnsignedVector_clear_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0))
 }
 
 func (arg1 SwigcptrUnsignedVector) Add(arg2 uint) {
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2
-	C._wrap_UnsignedVector_add_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1))
+	C._wrap_UnsignedVector_add_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1))
 }
 
 func (arg1 SwigcptrUnsignedVector) Get(arg2 int) (_swig_ret uint) {
 	var swig_r uint
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2
-	swig_r = (uint)(C._wrap_UnsignedVector_get_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1)))
+	swig_r = (uint)(C._wrap_UnsignedVector_get_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1)))
 	return swig_r
 }
 
@@ -684,12 +688,12 @@ func (arg1 SwigcptrUnsignedVector) Set(arg2 int, arg3 uint) {
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2
 	_swig_i_2 := arg3
-	C._wrap_UnsignedVector_set_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1), C.swig_intgo(_swig_i_2))
+	C._wrap_UnsignedVector_set_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1), C.swig_intgo(_swig_i_2))
 }
 
 func DeleteUnsignedVector(arg1 UnsignedVector) {
 	_swig_i_0 := arg1.Swigcptr()
-	C._wrap_delete_UnsignedVector_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0))
+	C._wrap_delete_UnsignedVector_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0))
 }
 
 type UnsignedVector interface {
@@ -716,21 +720,21 @@ func (p SwigcptrLongIntVector) SwigIsLongIntVector() {
 
 func NewLongIntVector__SWIG_0() (_swig_ret LongIntVector) {
 	var swig_r LongIntVector
-	swig_r = (LongIntVector)(SwigcptrLongIntVector(C._wrap_new_LongIntVector__SWIG_0_routingkit_2416d308e134b713()))
+	swig_r = (LongIntVector)(SwigcptrLongIntVector(C._wrap_new_LongIntVector__SWIG_0_routingkit_c375358e58063df0()))
 	return swig_r
 }
 
 func NewLongIntVector__SWIG_1(arg1 int64) (_swig_ret LongIntVector) {
 	var swig_r LongIntVector
 	_swig_i_0 := arg1
-	swig_r = (LongIntVector)(SwigcptrLongIntVector(C._wrap_new_LongIntVector__SWIG_1_routingkit_2416d308e134b713(C.swig_type_17(_swig_i_0))))
+	swig_r = (LongIntVector)(SwigcptrLongIntVector(C._wrap_new_LongIntVector__SWIG_1_routingkit_c375358e58063df0(C.swig_type_17(_swig_i_0))))
 	return swig_r
 }
 
 func NewLongIntVector__SWIG_2(arg1 LongIntVector) (_swig_ret LongIntVector) {
 	var swig_r LongIntVector
 	_swig_i_0 := arg1.Swigcptr()
-	swig_r = (LongIntVector)(SwigcptrLongIntVector(C._wrap_new_LongIntVector__SWIG_2_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0))))
+	swig_r = (LongIntVector)(SwigcptrLongIntVector(C._wrap_new_LongIntVector__SWIG_2_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0))))
 	return swig_r
 }
 
@@ -755,46 +759,46 @@ check_2:
 func (arg1 SwigcptrLongIntVector) Size() (_swig_ret int64) {
 	var swig_r int64
 	_swig_i_0 := arg1
-	swig_r = (int64)(C._wrap_LongIntVector_size_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0)))
+	swig_r = (int64)(C._wrap_LongIntVector_size_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0)))
 	return swig_r
 }
 
 func (arg1 SwigcptrLongIntVector) Capacity() (_swig_ret int64) {
 	var swig_r int64
 	_swig_i_0 := arg1
-	swig_r = (int64)(C._wrap_LongIntVector_capacity_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0)))
+	swig_r = (int64)(C._wrap_LongIntVector_capacity_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0)))
 	return swig_r
 }
 
 func (arg1 SwigcptrLongIntVector) Reserve(arg2 int64) {
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2
-	C._wrap_LongIntVector_reserve_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0), C.swig_type_20(_swig_i_1))
+	C._wrap_LongIntVector_reserve_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0), C.swig_type_20(_swig_i_1))
 }
 
 func (arg1 SwigcptrLongIntVector) IsEmpty() (_swig_ret bool) {
 	var swig_r bool
 	_swig_i_0 := arg1
-	swig_r = (bool)(C._wrap_LongIntVector_isEmpty_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0)))
+	swig_r = (bool)(C._wrap_LongIntVector_isEmpty_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0)))
 	return swig_r
 }
 
 func (arg1 SwigcptrLongIntVector) Clear() {
 	_swig_i_0 := arg1
-	C._wrap_LongIntVector_clear_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0))
+	C._wrap_LongIntVector_clear_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0))
 }
 
 func (arg1 SwigcptrLongIntVector) Add(arg2 int64) {
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2
-	C._wrap_LongIntVector_add_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0), C.swig_type_21(_swig_i_1))
+	C._wrap_LongIntVector_add_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0), C.swig_type_21(_swig_i_1))
 }
 
 func (arg1 SwigcptrLongIntVector) Get(arg2 int) (_swig_ret int64) {
 	var swig_r int64
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2
-	swig_r = (int64)(C._wrap_LongIntVector_get_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1)))
+	swig_r = (int64)(C._wrap_LongIntVector_get_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1)))
 	return swig_r
 }
 
@@ -802,12 +806,12 @@ func (arg1 SwigcptrLongIntVector) Set(arg2 int, arg3 int64) {
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2
 	_swig_i_2 := arg3
-	C._wrap_LongIntVector_set_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1), C.swig_type_23(_swig_i_2))
+	C._wrap_LongIntVector_set_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1), C.swig_type_23(_swig_i_2))
 }
 
 func DeleteLongIntVector(arg1 LongIntVector) {
 	_swig_i_0 := arg1.Swigcptr()
-	C._wrap_delete_LongIntVector_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0))
+	C._wrap_delete_LongIntVector_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0))
 }
 
 type LongIntVector interface {
@@ -834,14 +838,14 @@ func (p SwigcptrIntIntMap) SwigIsIntIntMap() {
 
 func NewIntIntMap__SWIG_0() (_swig_ret IntIntMap) {
 	var swig_r IntIntMap
-	swig_r = (IntIntMap)(SwigcptrIntIntMap(C._wrap_new_IntIntMap__SWIG_0_routingkit_2416d308e134b713()))
+	swig_r = (IntIntMap)(SwigcptrIntIntMap(C._wrap_new_IntIntMap__SWIG_0_routingkit_c375358e58063df0()))
 	return swig_r
 }
 
 func NewIntIntMap__SWIG_1(arg1 IntIntMap) (_swig_ret IntIntMap) {
 	var swig_r IntIntMap
 	_swig_i_0 := arg1.Swigcptr()
-	swig_r = (IntIntMap)(SwigcptrIntIntMap(C._wrap_new_IntIntMap__SWIG_1_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0))))
+	swig_r = (IntIntMap)(SwigcptrIntIntMap(C._wrap_new_IntIntMap__SWIG_1_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0))))
 	return swig_r
 }
 
@@ -859,54 +863,54 @@ func NewIntIntMap(a ...interface{}) IntIntMap {
 func (arg1 SwigcptrIntIntMap) Size() (_swig_ret uint) {
 	var swig_r uint
 	_swig_i_0 := arg1
-	swig_r = (uint)(C._wrap_IntIntMap_size_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0)))
+	swig_r = (uint)(C._wrap_IntIntMap_size_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0)))
 	return swig_r
 }
 
 func (arg1 SwigcptrIntIntMap) Empty() (_swig_ret bool) {
 	var swig_r bool
 	_swig_i_0 := arg1
-	swig_r = (bool)(C._wrap_IntIntMap_empty_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0)))
+	swig_r = (bool)(C._wrap_IntIntMap_empty_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0)))
 	return swig_r
 }
 
 func (arg1 SwigcptrIntIntMap) Clear() {
 	_swig_i_0 := arg1
-	C._wrap_IntIntMap_clear_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0))
+	C._wrap_IntIntMap_clear_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0))
 }
 
-func (arg1 SwigcptrIntIntMap) Get(arg2 int) (_swig_ret int) {
-	var swig_r int
+func (arg1 SwigcptrIntIntMap) Get(arg2 uint64) (_swig_ret uint) {
+	var swig_r uint
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2
-	swig_r = (int)(C._wrap_IntIntMap_get_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1)))
+	swig_r = (uint)(C._wrap_IntIntMap_get_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0), C.swig_type_24(_swig_i_1)))
 	return swig_r
 }
 
-func (arg1 SwigcptrIntIntMap) Set(arg2 int, arg3 int) {
+func (arg1 SwigcptrIntIntMap) Set(arg2 uint64, arg3 uint) {
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2
 	_swig_i_2 := arg3
-	C._wrap_IntIntMap_set_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1), C.swig_intgo(_swig_i_2))
+	C._wrap_IntIntMap_set_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0), C.swig_type_25(_swig_i_1), C.swig_intgo(_swig_i_2))
 }
 
-func (arg1 SwigcptrIntIntMap) Del(arg2 int) {
+func (arg1 SwigcptrIntIntMap) Del(arg2 uint64) {
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2
-	C._wrap_IntIntMap_del_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1))
+	C._wrap_IntIntMap_del_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0), C.swig_type_26(_swig_i_1))
 }
 
-func (arg1 SwigcptrIntIntMap) Has_key(arg2 int) (_swig_ret bool) {
+func (arg1 SwigcptrIntIntMap) Has_key(arg2 uint64) (_swig_ret bool) {
 	var swig_r bool
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2
-	swig_r = (bool)(C._wrap_IntIntMap_has_key_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1)))
+	swig_r = (bool)(C._wrap_IntIntMap_has_key_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0), C.swig_type_27(_swig_i_1)))
 	return swig_r
 }
 
 func DeleteIntIntMap(arg1 IntIntMap) {
 	_swig_i_0 := arg1.Swigcptr()
-	C._wrap_delete_IntIntMap_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0))
+	C._wrap_delete_IntIntMap_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0))
 }
 
 type IntIntMap interface {
@@ -915,10 +919,10 @@ type IntIntMap interface {
 	Size() (_swig_ret uint)
 	Empty() (_swig_ret bool)
 	Clear()
-	Get(arg2 int) (_swig_ret int)
-	Set(arg2 int, arg3 int)
-	Del(arg2 int)
-	Has_key(arg2 int) (_swig_ret bool)
+	Get(arg2 uint64) (_swig_ret uint)
+	Set(arg2 uint64, arg3 uint)
+	Del(arg2 uint64)
+	Has_key(arg2 uint64) (_swig_ret bool)
 }
 
 type SwigcptrPoint uintptr
@@ -933,38 +937,38 @@ func (p SwigcptrPoint) SwigIsPoint() {
 func (arg1 SwigcptrPoint) SetLon(arg2 float32) {
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2
-	C._wrap_Point_lon_set_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0), C.float(_swig_i_1))
+	C._wrap_Point_lon_set_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0), C.float(_swig_i_1))
 }
 
 func (arg1 SwigcptrPoint) GetLon() (_swig_ret float32) {
 	var swig_r float32
 	_swig_i_0 := arg1
-	swig_r = (float32)(C._wrap_Point_lon_get_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0)))
+	swig_r = (float32)(C._wrap_Point_lon_get_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0)))
 	return swig_r
 }
 
 func (arg1 SwigcptrPoint) SetLat(arg2 float32) {
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2
-	C._wrap_Point_lat_set_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0), C.float(_swig_i_1))
+	C._wrap_Point_lat_set_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0), C.float(_swig_i_1))
 }
 
 func (arg1 SwigcptrPoint) GetLat() (_swig_ret float32) {
 	var swig_r float32
 	_swig_i_0 := arg1
-	swig_r = (float32)(C._wrap_Point_lat_get_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0)))
+	swig_r = (float32)(C._wrap_Point_lat_get_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0)))
 	return swig_r
 }
 
 func NewPoint() (_swig_ret Point) {
 	var swig_r Point
-	swig_r = (Point)(SwigcptrPoint(C._wrap_new_Point_routingkit_2416d308e134b713()))
+	swig_r = (Point)(SwigcptrPoint(C._wrap_new_Point_routingkit_c375358e58063df0()))
 	return swig_r
 }
 
 func DeletePoint(arg1 Point) {
 	_swig_i_0 := arg1.Swigcptr()
-	C._wrap_delete_Point_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0))
+	C._wrap_delete_Point_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0))
 }
 
 type Point interface {
@@ -988,38 +992,38 @@ func (p SwigcptrQueryResponse) SwigIsQueryResponse() {
 func (arg1 SwigcptrQueryResponse) SetDistance(arg2 uint) {
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2
-	C._wrap_QueryResponse_distance_set_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1))
+	C._wrap_QueryResponse_distance_set_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1))
 }
 
 func (arg1 SwigcptrQueryResponse) GetDistance() (_swig_ret uint) {
 	var swig_r uint
 	_swig_i_0 := arg1
-	swig_r = (uint)(C._wrap_QueryResponse_distance_get_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0)))
+	swig_r = (uint)(C._wrap_QueryResponse_distance_get_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0)))
 	return swig_r
 }
 
 func (arg1 SwigcptrQueryResponse) SetWaypoints(arg2 PointVector) {
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2.Swigcptr()
-	C._wrap_QueryResponse_waypoints_set_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0), C.uintptr_t(_swig_i_1))
+	C._wrap_QueryResponse_waypoints_set_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0), C.uintptr_t(_swig_i_1))
 }
 
 func (arg1 SwigcptrQueryResponse) GetWaypoints() (_swig_ret PointVector) {
 	var swig_r PointVector
 	_swig_i_0 := arg1
-	swig_r = (PointVector)(SwigcptrPointVector(C._wrap_QueryResponse_waypoints_get_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0))))
+	swig_r = (PointVector)(SwigcptrPointVector(C._wrap_QueryResponse_waypoints_get_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0))))
 	return swig_r
 }
 
 func NewQueryResponse() (_swig_ret QueryResponse) {
 	var swig_r QueryResponse
-	swig_r = (QueryResponse)(SwigcptrQueryResponse(C._wrap_new_QueryResponse_routingkit_2416d308e134b713()))
+	swig_r = (QueryResponse)(SwigcptrQueryResponse(C._wrap_new_QueryResponse_routingkit_c375358e58063df0()))
 	return swig_r
 }
 
 func DeleteQueryResponse(arg1 QueryResponse) {
 	_swig_i_0 := arg1.Swigcptr()
-	C._wrap_delete_QueryResponse_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0))
+	C._wrap_delete_QueryResponse_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0))
 }
 
 type QueryResponse interface {
@@ -1034,21 +1038,21 @@ type QueryResponse interface {
 type Transport_mode int
 func _swig_getvehicle() (_swig_ret Transport_mode) {
 	var swig_r Transport_mode
-	swig_r = (Transport_mode)(C._wrap_vehicle_routingkit_2416d308e134b713())
+	swig_r = (Transport_mode)(C._wrap_vehicle_routingkit_c375358e58063df0())
 	return swig_r
 }
 
 var Vehicle Transport_mode = _swig_getvehicle()
 func _swig_getbike() (_swig_ret Transport_mode) {
 	var swig_r Transport_mode
-	swig_r = (Transport_mode)(C._wrap_bike_routingkit_2416d308e134b713())
+	swig_r = (Transport_mode)(C._wrap_bike_routingkit_c375358e58063df0())
 	return swig_r
 }
 
 var Bike Transport_mode = _swig_getbike()
 func _swig_getpedestrian() (_swig_ret Transport_mode) {
 	var swig_r Transport_mode
-	swig_r = (Transport_mode)(C._wrap_pedestrian_routingkit_2416d308e134b713())
+	swig_r = (Transport_mode)(C._wrap_pedestrian_routingkit_c375358e58063df0())
 	return swig_r
 }
 
@@ -1065,46 +1069,46 @@ func (p SwigcptrProfile) SwigIsProfile() {
 func (arg1 SwigcptrProfile) SetAllowedWayIds(arg2 IntVector) {
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2.Swigcptr()
-	C._wrap_Profile_allowedWayIds_set_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0), C.uintptr_t(_swig_i_1))
+	C._wrap_Profile_allowedWayIds_set_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0), C.uintptr_t(_swig_i_1))
 }
 
 func (arg1 SwigcptrProfile) GetAllowedWayIds() (_swig_ret IntVector) {
 	var swig_r IntVector
 	_swig_i_0 := arg1
-	swig_r = (IntVector)(SwigcptrIntVector(C._wrap_Profile_allowedWayIds_get_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0))))
+	swig_r = (IntVector)(SwigcptrIntVector(C._wrap_Profile_allowedWayIds_get_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0))))
 	return swig_r
 }
 
 func (arg1 SwigcptrProfile) SetWaySpeeds(arg2 Std_map_Sl_uint64_t_Sc_unsigned_SS_int_Sc_std_less_Sl_uint64_t_Sg__Sg_) {
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2.Swigcptr()
-	C._wrap_Profile_waySpeeds_set_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0), C.uintptr_t(_swig_i_1))
+	C._wrap_Profile_waySpeeds_set_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0), C.uintptr_t(_swig_i_1))
 }
 
 func (arg1 SwigcptrProfile) GetWaySpeeds() (_swig_ret Std_map_Sl_uint64_t_Sc_unsigned_SS_int_Sc_std_less_Sl_uint64_t_Sg__Sg_) {
 	var swig_r Std_map_Sl_uint64_t_Sc_unsigned_SS_int_Sc_std_less_Sl_uint64_t_Sg__Sg_
 	_swig_i_0 := arg1
-	swig_r = (Std_map_Sl_uint64_t_Sc_unsigned_SS_int_Sc_std_less_Sl_uint64_t_Sg__Sg_)(SwigcptrStd_map_Sl_uint64_t_Sc_unsigned_SS_int_Sc_std_less_Sl_uint64_t_Sg__Sg_(C._wrap_Profile_waySpeeds_get_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0))))
+	swig_r = (Std_map_Sl_uint64_t_Sc_unsigned_SS_int_Sc_std_less_Sl_uint64_t_Sg__Sg_)(SwigcptrStd_map_Sl_uint64_t_Sc_unsigned_SS_int_Sc_std_less_Sl_uint64_t_Sg__Sg_(C._wrap_Profile_waySpeeds_get_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0))))
 	return swig_r
 }
 
 func (arg1 SwigcptrProfile) SetTransportMode(arg2 Transport_mode) {
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2
-	C._wrap_Profile_transportMode_set_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1))
+	C._wrap_Profile_transportMode_set_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1))
 }
 
 func (arg1 SwigcptrProfile) GetTransportMode() (_swig_ret Transport_mode) {
 	var swig_r Transport_mode
 	_swig_i_0 := arg1
-	swig_r = (Transport_mode)(C._wrap_Profile_transportMode_get_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0)))
+	swig_r = (Transport_mode)(C._wrap_Profile_transportMode_get_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0)))
 	return swig_r
 }
 
 func (arg1 SwigcptrProfile) SetName(arg2 string) {
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2
-	C._wrap_Profile_name_set_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0), *(*C.swig_type_24)(unsafe.Pointer(&_swig_i_1)))
+	C._wrap_Profile_name_set_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0), *(*C.swig_type_28)(unsafe.Pointer(&_swig_i_1)))
 	if Swig_escape_always_false {
 		Swig_escape_val = arg2
 	}
@@ -1113,7 +1117,7 @@ func (arg1 SwigcptrProfile) SetName(arg2 string) {
 func (arg1 SwigcptrProfile) GetName() (_swig_ret string) {
 	var swig_r string
 	_swig_i_0 := arg1
-	swig_r_p := C._wrap_Profile_name_get_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0))
+	swig_r_p := C._wrap_Profile_name_get_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0))
 	swig_r = *(*string)(unsafe.Pointer(&swig_r_p))
 	var swig_r_1 string
  swig_r_1 = swigCopyString(swig_r) 
@@ -1123,51 +1127,51 @@ func (arg1 SwigcptrProfile) GetName() (_swig_ret string) {
 func (arg1 SwigcptrProfile) SetPrevent_left_turns(arg2 bool) {
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2
-	C._wrap_Profile_prevent_left_turns_set_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0), C._Bool(_swig_i_1))
+	C._wrap_Profile_prevent_left_turns_set_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0), C._Bool(_swig_i_1))
 }
 
 func (arg1 SwigcptrProfile) GetPrevent_left_turns() (_swig_ret bool) {
 	var swig_r bool
 	_swig_i_0 := arg1
-	swig_r = (bool)(C._wrap_Profile_prevent_left_turns_get_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0)))
+	swig_r = (bool)(C._wrap_Profile_prevent_left_turns_get_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0)))
 	return swig_r
 }
 
 func (arg1 SwigcptrProfile) SetPrevent_u_turns(arg2 bool) {
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2
-	C._wrap_Profile_prevent_u_turns_set_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0), C._Bool(_swig_i_1))
+	C._wrap_Profile_prevent_u_turns_set_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0), C._Bool(_swig_i_1))
 }
 
 func (arg1 SwigcptrProfile) GetPrevent_u_turns() (_swig_ret bool) {
 	var swig_r bool
 	_swig_i_0 := arg1
-	swig_r = (bool)(C._wrap_Profile_prevent_u_turns_get_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0)))
+	swig_r = (bool)(C._wrap_Profile_prevent_u_turns_get_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0)))
 	return swig_r
 }
 
 func (arg1 SwigcptrProfile) SetTravel_time(arg2 bool) {
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2
-	C._wrap_Profile_travel_time_set_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0), C._Bool(_swig_i_1))
+	C._wrap_Profile_travel_time_set_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0), C._Bool(_swig_i_1))
 }
 
 func (arg1 SwigcptrProfile) GetTravel_time() (_swig_ret bool) {
 	var swig_r bool
 	_swig_i_0 := arg1
-	swig_r = (bool)(C._wrap_Profile_travel_time_get_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0)))
+	swig_r = (bool)(C._wrap_Profile_travel_time_get_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0)))
 	return swig_r
 }
 
 func NewProfile() (_swig_ret Profile) {
 	var swig_r Profile
-	swig_r = (Profile)(SwigcptrProfile(C._wrap_new_Profile_routingkit_2416d308e134b713()))
+	swig_r = (Profile)(SwigcptrProfile(C._wrap_new_Profile_routingkit_c375358e58063df0()))
 	return swig_r
 }
 
 func DeleteProfile(arg1 Profile) {
 	_swig_i_0 := arg1.Swigcptr()
-	C._wrap_delete_Profile_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0))
+	C._wrap_delete_Profile_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0))
 }
 
 type Profile interface {
@@ -1191,7 +1195,7 @@ type Profile interface {
 
 func GetMax_distance() (_swig_ret uint) {
 	var swig_r uint
-	swig_r = (uint)(C._wrap_max_distance_get_routingkit_2416d308e134b713())
+	swig_r = (uint)(C._wrap_max_distance_get_routingkit_c375358e58063df0())
 	return swig_r
 }
 
@@ -1207,130 +1211,130 @@ func (p SwigcptrRoutingGraph) SwigIsRoutingGraph() {
 func (arg1 SwigcptrRoutingGraph) SetFirst_out(arg2 UnsignedVector) {
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2.Swigcptr()
-	C._wrap_RoutingGraph_first_out_set_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0), C.uintptr_t(_swig_i_1))
+	C._wrap_RoutingGraph_first_out_set_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0), C.uintptr_t(_swig_i_1))
 }
 
 func (arg1 SwigcptrRoutingGraph) GetFirst_out() (_swig_ret UnsignedVector) {
 	var swig_r UnsignedVector
 	_swig_i_0 := arg1
-	swig_r = (UnsignedVector)(SwigcptrUnsignedVector(C._wrap_RoutingGraph_first_out_get_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0))))
+	swig_r = (UnsignedVector)(SwigcptrUnsignedVector(C._wrap_RoutingGraph_first_out_get_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0))))
 	return swig_r
 }
 
 func (arg1 SwigcptrRoutingGraph) SetHead(arg2 UnsignedVector) {
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2.Swigcptr()
-	C._wrap_RoutingGraph_head_set_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0), C.uintptr_t(_swig_i_1))
+	C._wrap_RoutingGraph_head_set_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0), C.uintptr_t(_swig_i_1))
 }
 
 func (arg1 SwigcptrRoutingGraph) GetHead() (_swig_ret UnsignedVector) {
 	var swig_r UnsignedVector
 	_swig_i_0 := arg1
-	swig_r = (UnsignedVector)(SwigcptrUnsignedVector(C._wrap_RoutingGraph_head_get_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0))))
+	swig_r = (UnsignedVector)(SwigcptrUnsignedVector(C._wrap_RoutingGraph_head_get_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0))))
 	return swig_r
 }
 
 func (arg1 SwigcptrRoutingGraph) SetTravel_time(arg2 UnsignedVector) {
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2.Swigcptr()
-	C._wrap_RoutingGraph_travel_time_set_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0), C.uintptr_t(_swig_i_1))
+	C._wrap_RoutingGraph_travel_time_set_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0), C.uintptr_t(_swig_i_1))
 }
 
 func (arg1 SwigcptrRoutingGraph) GetTravel_time() (_swig_ret UnsignedVector) {
 	var swig_r UnsignedVector
 	_swig_i_0 := arg1
-	swig_r = (UnsignedVector)(SwigcptrUnsignedVector(C._wrap_RoutingGraph_travel_time_get_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0))))
+	swig_r = (UnsignedVector)(SwigcptrUnsignedVector(C._wrap_RoutingGraph_travel_time_get_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0))))
 	return swig_r
 }
 
 func (arg1 SwigcptrRoutingGraph) SetGeo_distance(arg2 UnsignedVector) {
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2.Swigcptr()
-	C._wrap_RoutingGraph_geo_distance_set_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0), C.uintptr_t(_swig_i_1))
+	C._wrap_RoutingGraph_geo_distance_set_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0), C.uintptr_t(_swig_i_1))
 }
 
 func (arg1 SwigcptrRoutingGraph) GetGeo_distance() (_swig_ret UnsignedVector) {
 	var swig_r UnsignedVector
 	_swig_i_0 := arg1
-	swig_r = (UnsignedVector)(SwigcptrUnsignedVector(C._wrap_RoutingGraph_geo_distance_get_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0))))
+	swig_r = (UnsignedVector)(SwigcptrUnsignedVector(C._wrap_RoutingGraph_geo_distance_get_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0))))
 	return swig_r
 }
 
 func (arg1 SwigcptrRoutingGraph) SetLatitude(arg2 FloatVector) {
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2.Swigcptr()
-	C._wrap_RoutingGraph_latitude_set_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0), C.uintptr_t(_swig_i_1))
+	C._wrap_RoutingGraph_latitude_set_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0), C.uintptr_t(_swig_i_1))
 }
 
 func (arg1 SwigcptrRoutingGraph) GetLatitude() (_swig_ret FloatVector) {
 	var swig_r FloatVector
 	_swig_i_0 := arg1
-	swig_r = (FloatVector)(SwigcptrFloatVector(C._wrap_RoutingGraph_latitude_get_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0))))
+	swig_r = (FloatVector)(SwigcptrFloatVector(C._wrap_RoutingGraph_latitude_get_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0))))
 	return swig_r
 }
 
 func (arg1 SwigcptrRoutingGraph) SetLongitude(arg2 FloatVector) {
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2.Swigcptr()
-	C._wrap_RoutingGraph_longitude_set_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0), C.uintptr_t(_swig_i_1))
+	C._wrap_RoutingGraph_longitude_set_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0), C.uintptr_t(_swig_i_1))
 }
 
 func (arg1 SwigcptrRoutingGraph) GetLongitude() (_swig_ret FloatVector) {
 	var swig_r FloatVector
 	_swig_i_0 := arg1
-	swig_r = (FloatVector)(SwigcptrFloatVector(C._wrap_RoutingGraph_longitude_get_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0))))
+	swig_r = (FloatVector)(SwigcptrFloatVector(C._wrap_RoutingGraph_longitude_get_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0))))
 	return swig_r
 }
 
 func (arg1 SwigcptrRoutingGraph) SetForbidden_turn_from_arc(arg2 UnsignedVector) {
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2.Swigcptr()
-	C._wrap_RoutingGraph_forbidden_turn_from_arc_set_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0), C.uintptr_t(_swig_i_1))
+	C._wrap_RoutingGraph_forbidden_turn_from_arc_set_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0), C.uintptr_t(_swig_i_1))
 }
 
 func (arg1 SwigcptrRoutingGraph) GetForbidden_turn_from_arc() (_swig_ret UnsignedVector) {
 	var swig_r UnsignedVector
 	_swig_i_0 := arg1
-	swig_r = (UnsignedVector)(SwigcptrUnsignedVector(C._wrap_RoutingGraph_forbidden_turn_from_arc_get_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0))))
+	swig_r = (UnsignedVector)(SwigcptrUnsignedVector(C._wrap_RoutingGraph_forbidden_turn_from_arc_get_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0))))
 	return swig_r
 }
 
 func (arg1 SwigcptrRoutingGraph) SetForbidden_turn_to_arc(arg2 UnsignedVector) {
 	_swig_i_0 := arg1
 	_swig_i_1 := arg2.Swigcptr()
-	C._wrap_RoutingGraph_forbidden_turn_to_arc_set_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0), C.uintptr_t(_swig_i_1))
+	C._wrap_RoutingGraph_forbidden_turn_to_arc_set_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0), C.uintptr_t(_swig_i_1))
 }
 
 func (arg1 SwigcptrRoutingGraph) GetForbidden_turn_to_arc() (_swig_ret UnsignedVector) {
 	var swig_r UnsignedVector
 	_swig_i_0 := arg1
-	swig_r = (UnsignedVector)(SwigcptrUnsignedVector(C._wrap_RoutingGraph_forbidden_turn_to_arc_get_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0))))
+	swig_r = (UnsignedVector)(SwigcptrUnsignedVector(C._wrap_RoutingGraph_forbidden_turn_to_arc_get_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0))))
 	return swig_r
 }
 
 func (arg1 SwigcptrRoutingGraph) Node_count() (_swig_ret uint) {
 	var swig_r uint
 	_swig_i_0 := arg1
-	swig_r = (uint)(C._wrap_RoutingGraph_node_count_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0)))
+	swig_r = (uint)(C._wrap_RoutingGraph_node_count_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0)))
 	return swig_r
 }
 
 func (arg1 SwigcptrRoutingGraph) Arc_count() (_swig_ret uint) {
 	var swig_r uint
 	_swig_i_0 := arg1
-	swig_r = (uint)(C._wrap_RoutingGraph_arc_count_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0)))
+	swig_r = (uint)(C._wrap_RoutingGraph_arc_count_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0)))
 	return swig_r
 }
 
 func NewRoutingGraph() (_swig_ret RoutingGraph) {
 	var swig_r RoutingGraph
-	swig_r = (RoutingGraph)(SwigcptrRoutingGraph(C._wrap_new_RoutingGraph_routingkit_2416d308e134b713()))
+	swig_r = (RoutingGraph)(SwigcptrRoutingGraph(C._wrap_new_RoutingGraph_routingkit_c375358e58063df0()))
 	return swig_r
 }
 
 func DeleteRoutingGraph(arg1 RoutingGraph) {
 	_swig_i_0 := arg1.Swigcptr()
-	C._wrap_delete_RoutingGraph_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0))
+	C._wrap_delete_RoutingGraph_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0))
 }
 
 type RoutingGraph interface {
@@ -1375,7 +1379,7 @@ func (arg1 SwigcptrClient) Query(arg2 int, arg3 float32, arg4 float32, arg5 floa
 	_swig_i_5 := arg6
 	_swig_i_6 := arg7
 	_swig_i_7 := arg8
-	swig_r = (QueryResponse)(SwigcptrQueryResponse(C._wrap_Client_query_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1), C.float(_swig_i_2), C.float(_swig_i_3), C.float(_swig_i_4), C.float(_swig_i_5), C.float(_swig_i_6), C._Bool(_swig_i_7))))
+	swig_r = (QueryResponse)(SwigcptrQueryResponse(C._wrap_Client_query_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1), C.float(_swig_i_2), C.float(_swig_i_3), C.float(_swig_i_4), C.float(_swig_i_5), C.float(_swig_i_6), C._Bool(_swig_i_7))))
 	return swig_r
 }
 
@@ -1386,7 +1390,7 @@ func (arg1 SwigcptrClient) Distances(arg2 int, arg3 float32, arg4 Point, arg5 Po
 	_swig_i_2 := arg3
 	_swig_i_3 := arg4.Swigcptr()
 	_swig_i_4 := arg5.Swigcptr()
-	swig_r = (UnsignedVector)(SwigcptrUnsignedVector(C._wrap_Client_distances_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1), C.float(_swig_i_2), C.uintptr_t(_swig_i_3), C.uintptr_t(_swig_i_4))))
+	swig_r = (UnsignedVector)(SwigcptrUnsignedVector(C._wrap_Client_distances_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1), C.float(_swig_i_2), C.uintptr_t(_swig_i_3), C.uintptr_t(_swig_i_4))))
 	return swig_r
 }
 
@@ -1397,7 +1401,7 @@ func (arg1 SwigcptrClient) Nearest(arg2 int, arg3 float32, arg4 float32, arg5 fl
 	_swig_i_2 := arg3
 	_swig_i_3 := arg4
 	_swig_i_4 := arg5
-	swig_r = (Point)(SwigcptrPoint(C._wrap_Client_nearest_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1), C.float(_swig_i_2), C.float(_swig_i_3), C.float(_swig_i_4))))
+	swig_r = (Point)(SwigcptrPoint(C._wrap_Client_nearest_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0), C.swig_intgo(_swig_i_1), C.float(_swig_i_2), C.float(_swig_i_3), C.float(_swig_i_4))))
 	return swig_r
 }
 
@@ -1407,7 +1411,7 @@ func NewClient(arg1 int, arg2 string, arg3 string, arg4 Profile) (_swig_ret Clie
 	_swig_i_1 := arg2
 	_swig_i_2 := arg3
 	_swig_i_3 := arg4.Swigcptr()
-	swig_r = (Client)(SwigcptrClient(C._wrap_new_Client_routingkit_2416d308e134b713(C.swig_intgo(_swig_i_0), *(*C.swig_type_26)(unsafe.Pointer(&_swig_i_1)), *(*C.swig_type_27)(unsafe.Pointer(&_swig_i_2)), C.uintptr_t(_swig_i_3))))
+	swig_r = (Client)(SwigcptrClient(C._wrap_new_Client_routingkit_c375358e58063df0(C.swig_intgo(_swig_i_0), *(*C.swig_type_30)(unsafe.Pointer(&_swig_i_1)), *(*C.swig_type_31)(unsafe.Pointer(&_swig_i_2)), C.uintptr_t(_swig_i_3))))
 	if Swig_escape_always_false {
 		Swig_escape_val = arg2
 	}
@@ -1419,7 +1423,7 @@ func NewClient(arg1 int, arg2 string, arg3 string, arg4 Profile) (_swig_ret Clie
 
 func DeleteClient(arg1 Client) {
 	_swig_i_0 := arg1.Swigcptr()
-	C._wrap_delete_Client_routingkit_2416d308e134b713(C.uintptr_t(_swig_i_0))
+	C._wrap_delete_Client_routingkit_c375358e58063df0(C.uintptr_t(_swig_i_0))
 }
 
 type Client interface {
