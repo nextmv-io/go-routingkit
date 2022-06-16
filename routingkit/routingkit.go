@@ -11,7 +11,7 @@ import (
 	"sort"
 	"strconv"
 
-	routingkit "github.com/nextmv-io/go-routingkit/routingkit/bindings"
+	"github.com/nextmv-io/go-routingkit/routingkit/internal/routingkit"
 	"github.com/paulmach/osm"
 	"github.com/paulmach/osm/osmpbf"
 )
