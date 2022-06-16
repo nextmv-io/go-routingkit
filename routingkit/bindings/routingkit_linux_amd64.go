@@ -30,7 +30,7 @@ typedef struct { void* array; intgo len; intgo cap; } _goslice_;
 
 
 #cgo LDFLAGS: ${SRCDIR}/libroutingkit_linux_amd64.a
-#cgo CPPFLAGS: -I${SRCDIR}/../../../routingkit/internal/routingkit/include
+#cgo CPPFLAGS: -I${SRCDIR}/../../../routingkit/bindings/routingkit/include
 
 typedef long long swig_type_1;
 typedef long long swig_type_2;
@@ -196,32 +196,32 @@ extern void _wrap_delete_Client_routingkit_32b576f51e679bfa(uintptr_t arg1);
 */
 import "C"
 
-import "unsafe"
-import _ "runtime/cgo"
-import "sync"
-
+import (
+	_ "runtime/cgo"
+	"sync"
+	"unsafe"
+)
 
 type _ unsafe.Pointer
-
-
 
 var Swig_escape_always_false bool
 var Swig_escape_val interface{}
 
-
 type _swig_fnptr *byte
 type _swig_memberptr *byte
 
-
 type _ sync.Mutex
 
+type swig_gostring struct {
+	p uintptr
+	n int
+}
 
-type swig_gostring struct { p uintptr; n int }
 func swigCopyString(s string) string {
-  p := *(*swig_gostring)(unsafe.Pointer(&s))
-  r := string((*[0x7fffffff]byte)(unsafe.Pointer(p.p))[:p.n])
-  Swig_free(p.p)
-  return r
+	p := *(*swig_gostring)(unsafe.Pointer(&s))
+	r := string((*[0x7fffffff]byte)(unsafe.Pointer(p.p))[:p.n])
+	Swig_free(p.p)
+	return r
 }
 
 func Swig_free(arg1 uintptr) {
@@ -1035,6 +1035,7 @@ type QueryResponse interface {
 }
 
 type Transport_mode int
+
 func _swig_getvehicle() (_swig_ret Transport_mode) {
 	var swig_r Transport_mode
 	swig_r = (Transport_mode)(C._wrap_vehicle_routingkit_32b576f51e679bfa())
@@ -1042,6 +1043,7 @@ func _swig_getvehicle() (_swig_ret Transport_mode) {
 }
 
 var Vehicle Transport_mode = _swig_getvehicle()
+
 func _swig_getbike() (_swig_ret Transport_mode) {
 	var swig_r Transport_mode
 	swig_r = (Transport_mode)(C._wrap_bike_routingkit_32b576f51e679bfa())
@@ -1049,6 +1051,7 @@ func _swig_getbike() (_swig_ret Transport_mode) {
 }
 
 var Bike Transport_mode = _swig_getbike()
+
 func _swig_getpedestrian() (_swig_ret Transport_mode) {
 	var swig_r Transport_mode
 	swig_r = (Transport_mode)(C._wrap_pedestrian_routingkit_32b576f51e679bfa())
@@ -1056,6 +1059,7 @@ func _swig_getpedestrian() (_swig_ret Transport_mode) {
 }
 
 var Pedestrian Transport_mode = _swig_getpedestrian()
+
 type SwigcptrProfile uintptr
 
 func (p SwigcptrProfile) Swigcptr() uintptr {
@@ -1119,7 +1123,7 @@ func (arg1 SwigcptrProfile) GetName() (_swig_ret string) {
 	swig_r_p := C._wrap_Profile_name_get_routingkit_32b576f51e679bfa(C.uintptr_t(_swig_i_0))
 	swig_r = *(*string)(unsafe.Pointer(&swig_r_p))
 	var swig_r_1 string
- swig_r_1 = swigCopyString(swig_r) 
+	swig_r_1 = swigCopyString(swig_r)
 	return swig_r_1
 }
 
@@ -1433,12 +1437,11 @@ type Client interface {
 	Nearest(arg2 int, arg3 float32, arg4 float32, arg5 float32) (_swig_ret Point)
 }
 
-
 type SwigcptrStd_map_Sl_uint64_t_Sc_unsigned_SS_int_Sc_std_less_Sl_uint64_t_Sg__Sg_ uintptr
 type Std_map_Sl_uint64_t_Sc_unsigned_SS_int_Sc_std_less_Sl_uint64_t_Sg__Sg_ interface {
-	Swigcptr() uintptr;
+	Swigcptr() uintptr
 }
+
 func (p SwigcptrStd_map_Sl_uint64_t_Sc_unsigned_SS_int_Sc_std_less_Sl_uint64_t_Sg__Sg_) Swigcptr() uintptr {
 	return uintptr(p)
 }
-

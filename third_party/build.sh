@@ -39,9 +39,9 @@ case $GOOS in
 		case $GOARCH in
 		amd64)
 			swig -go -cgo -c++ -IRoutingKit/include/routingkit -intgosize 64 -O routingkit_linux_amd64.i
-			mv routingkit_linux_amd64_wrap.cxx ../routingkit/internal/routingkit/
-			mv libroutingkit.a ../routingkit/internal/routingkit/libroutingkit_linux_amd64.a
-			mv routingkit.go ../routingkit/internal/routingkit/routingkit_linux_amd64.go
+			mv routingkit_linux_amd64_wrap.cxx ../routingkit/bindings/routingkit/
+			mv libroutingkit.a ../routingkit/bindings/routingkit/libroutingkit_linux_amd64.a
+			mv routingkit.go ../routingkit/bindings/routingkit/routingkit_linux_amd64.go
 		;;
 		esac
 	;;
@@ -49,22 +49,22 @@ case $GOOS in
 		case $GOARCH in
 		amd64)
 			swig -go -cgo -c++ -IRoutingKit/include/routingkit -intgosize 64 -O routingkit_darwin_amd64.i
-			mv routingkit_darwin_amd64_wrap.cxx ../routingkit/internal/routingkit/
-			mv libroutingkit.a ../routingkit/internal/routingkit/libroutingkit_darwin_amd64.a
-			mv routingkit.go ../routingkit/internal/routingkit/routingkit_darwin_amd64.go
+			mv routingkit_darwin_amd64_wrap.cxx ../routingkit/bindings/routingkit/
+			mv libroutingkit.a ../routingkit/bindings/routingkit/libroutingkit_darwin_amd64.a
+			mv routingkit.go ../routingkit/bindings/routingkit/routingkit_darwin_amd64.go
 		;;
 		arm64)
 			swig -go -cgo -c++ -IRoutingKit/include/routingkit -intgosize 64 -O routingkit_darwin_arm64.i
-			mv routingkit_darwin_arm64_wrap.cxx ../routingkit/internal/routingkit/
-			mv libroutingkit.a ../routingkit/internal/routingkit/libroutingkit_darwin_arm64.a
-			mv routingkit.go ../routingkit/internal/routingkit/routingkit_darwin_arm64.go
+			mv routingkit_darwin_arm64_wrap.cxx ../routingkit/bindings/routingkit/
+			mv libroutingkit.a ../routingkit/bindings/routingkit/libroutingkit_darwin_arm64.a
+			mv routingkit.go ../routingkit/bindings/routingkit/routingkit_darwin_arm64.go
 		;;
 		esac
 	;;
 esac
 
 
-cp Client.h ../routingkit/internal/routingkit/
-rm -rf ../routingkit/internal/routingkit/include
-cp -r RoutingKit/include ../routingkit/internal/routingkit/include
+cp Client.h ../routingkit/bindings/routingkit/
+rm -rf ../routingkit/bindings/routingkit/include
+cp -r RoutingKit/include ../routingkit/bindings/routingkit/include
 popd
