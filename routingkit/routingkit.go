@@ -12,9 +12,13 @@ import (
 	"strconv"
 
 	"github.com/nextmv-io/go-routingkit/routingkit/bindings/routingkit"
+	keep "github.com/nextmv-io/go-routingkit/routingkit/bindings/routingkit/include/routingkit"
 	"github.com/paulmach/osm"
 	"github.com/paulmach/osm/osmpbf"
 )
+
+// Keep C++ dependencies by referencing a file from their directory
+var Keep bool = keep.Keep
 
 // MaxDistance represents the maximum possible route distance.
 var MaxDistance uint32

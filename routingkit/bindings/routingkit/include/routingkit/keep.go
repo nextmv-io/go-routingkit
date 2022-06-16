@@ -1,0 +1,4 @@
+package routingkit
+
+// THIS FILE MEANS TO CONVINCE GO VENDORING ENGINE TO KEEP THE C++ DEPENDENCIES
+const Keep = true
