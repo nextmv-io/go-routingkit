@@ -23,7 +23,15 @@ cd temp
 
 case $GOOS in
 	linux)
-		ar -x /usr/lib/x86_64-linux-gnu/libz.a
+		# Find libz.a in the usual locations.
+		libzlocation=($(find /usr/lib ! -readable -prune -o -name "libz.a" -print))
+		if [ ${#libzlocation[@]} -eq 0 ]; then
+			echo "libz.a not found"
+			exit 1
+		else
+			echo "libz.a found at ${libzlocation[0]}"
+			ar -x "${libzlocation[0]}"
+		fi
 	;;
 	darwin)
 		ar -x "$(brew --prefix zlib)/lib/libz.a"
@@ -65,6 +73,6 @@ esac
 
 
 cp Client.h ../routingkit/internal/routingkit/
-rm -rf ../routingkit/internal/routingkit/include
-cp -r RoutingKit/include ../routingkit/internal/routingkit/include
+rm -f ../routingkit/internal/routingkit/include/routingkit/*.h
+cp -v RoutingKit/include/routingkit/* ../routingkit/internal/routingkit/include/routingkit/
 popd
