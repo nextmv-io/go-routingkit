@@ -16,8 +16,10 @@ case $GOOS in
 		then
 			sudo apt-get install -y zlib1g-dev
 		elif command -v yum &> /dev/null
+		then
 			sudo yum install -y zlib-devel
 		elif command -v pacman &> /dev/null
+		then
 			sudo pacman -S --noconfirm zlib
 		else
 			echo "cannot find package manager for zlib installation"
