@@ -17,7 +17,7 @@ case $GOOS in
 			sudo apt-get install -y zlib1g-dev
 		elif command -v yum &> /dev/null
 		then
-			sudo yum install -y zlib-devel
+			sudo yum install -y zlib-devel zlib-static
 		elif command -v pacman &> /dev/null
 		then
 			sudo pacman -S --noconfirm zlib
