@@ -29,7 +29,7 @@ cd temp
 case $GOOS in
 	linux)
 		# Find libz.a in the usual locations.
-		libzlocation=($(find /usr/lib ! -readable -prune -o -name "libz.a" -print))
+		libzlocation=($(find /usr ! -readable -prune -o -name "libz.a" -print))
 		if [ ${#libzlocation[@]} -eq 0 ]; then
 			echo "libz.a not found"
 			exit 1
