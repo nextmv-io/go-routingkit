@@ -22,7 +22,7 @@ case $GOOS in
 	;;
 esac
 
-mkdir temp
+mkdir -p temp
 cd temp
 
 # Extract libz library
