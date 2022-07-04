@@ -1,9 +1,15 @@
 #!/bin/bash
+set -e
+
+# Move to script dir
 HERE="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 pushd "${HERE}" || exit 1
+
+# Set OS and ARCH according to go
 GOOS="$( go env GOOS )"
 GOARCH=$( go env GOARCH )
 
+# Compile according to platform
 case $GOOS in
 	linux)
 		g++ -IRoutingKit/include -LRoutingKit/lib/libroutingkit.a \
@@ -19,8 +25,7 @@ esac
 mkdir temp
 cd temp
 
-
-
+# Extract libz library
 case $GOOS in
 	linux)
 		# Find libz.a in the usual locations.
@@ -38,10 +43,12 @@ case $GOOS in
 	;;
 esac
 
+# Link everything
 cd ..
 ar rvs libroutingkit.a Client.o RoutingKit/build/* temp/*
 rm -r temp
 
+# Generate bindings via swig
 case $GOOS in
 	linux)
 		case $GOARCH in
@@ -50,6 +57,12 @@ case $GOOS in
 			mv routingkit_linux_amd64_wrap.cxx ../routingkit/internal/routingkit/
 			mv libroutingkit.a ../routingkit/internal/routingkit/libroutingkit_linux_amd64.a
 			mv routingkit.go ../routingkit/internal/routingkit/routingkit_linux_amd64.go
+		;;
+		arm64)
+			swig -go -cgo -c++ -IRoutingKit/include/routingkit -intgosize 64 -O routingkit_linux_arm64.i
+			mv routingkit_linux_arm64_wrap.cxx ../routingkit/internal/routingkit/
+			mv libroutingkit.a ../routingkit/internal/routingkit/libroutingkit_linux_arm64.a
+			mv routingkit.go ../routingkit/internal/routingkit/routingkit_linux_arm64.go
 		;;
 		esac
 	;;
@@ -71,8 +84,9 @@ case $GOOS in
 	;;
 esac
 
-
+# Copy to final location
 cp Client.h ../routingkit/internal/routingkit/
 rm -f ../routingkit/internal/routingkit/include/routingkit/*.h
 cp -v RoutingKit/include/routingkit/* ../routingkit/internal/routingkit/include/routingkit/
+
 popd

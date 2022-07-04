@@ -1,20 +1,40 @@
 #!/bin/bash
 set -eu
+
+# Move to script dir
 HERE="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 pushd "${HERE}" || exit 1
+
+# Set OS and ARCH according to go
 GOOS="$( go env GOOS )"
 GOARCH="$( go env GOARCH )"
+
+# Install dependencies
 case $GOOS in
 	linux)
-		sudo apt-get install -y zlib1g-dev
+		if command -v apt &> /dev/null
+		then
+			sudo apt-get install -y zlib1g-dev
+		elif command -v yum &> /dev/null
+			sudo yum install -y zlib-devel
+		elif command -v pacman &> /dev/null
+			sudo pacman -S --noconfirm zlib
+		else
+			echo "cannot find package manager for zlib installation"
+			exit 1
+		fi
 	;;
 	darwin)
 		brew install zlib
 		brew install libomp
 	;;
 esac
+
+# Clone routingkit at specific revision
 git clone https://github.com/RoutingKit/RoutingKit.git || (cd RoutingKit ; git pull; cd ..)
 cd RoutingKit && git reset --hard && git checkout f7d7d14042268123cf778e6129b99eb2249f7f4d
+
+# Make necessary adjustments for some platforms
 if [ "$GOOS" = "darwin" ]; then
 	sed -i '' "s/CC=g++/CC=clang++/" Makefile
 	sed -i '' "s/\(CFLAGS=.*-std=c++11\) \(.*\)/\1 -stdlib=libc++ \2/" Makefile
@@ -29,7 +49,12 @@ if [ "$GOOS" = "darwin" ]; then
 		sed -i '' "s/-DNDEBUG/-DNDEBUG -DROUTING_KIT_NO_ALIGNED_ALLOC/" Makefile
 	fi
 fi
+
+# Cleanup
 rm -rv build || echo "no build directory"
+
+# Build
 make
 rm -v lib/libroutingkit.so
+
 popd
