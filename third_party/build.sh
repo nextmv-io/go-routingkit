@@ -1,5 +1,7 @@
-#!/bin/bash
 set -e
+
+# alias ar to llvm-ar
+alias ar="/opt/homebrew/opt/llvm@14/bin/llvm-ar"
 
 # Move to script dir
 HERE="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
@@ -45,7 +47,7 @@ esac
 
 # Link everything
 cd ..
-ar rvs libroutingkit.a Client.o RoutingKit/build/* temp/*
+/opt/homebrew/opt/llvm@14/bin/llvm-ar rvs libroutingkit.a Client.o RoutingKit/build/* temp/*
 rm -r temp
 
 # Generate bindings via swig
