@@ -1,7 +1,11 @@
 set -e
 
 # alias ar to llvm-ar
-alias ar="/opt/homebrew/opt/llvm@14/bin/llvm-ar"
+case $GOOS in
+	darwin)
+		alias ar="/opt/homebrew/opt/llvm@14/bin/llvm-ar"
+	;;
+esac
 
 # Move to script dir
 HERE="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
