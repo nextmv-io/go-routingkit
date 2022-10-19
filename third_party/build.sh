@@ -1,4 +1,3 @@
-#!/bin/bash
 set -e
 
 # Move to script dir
@@ -8,6 +7,13 @@ pushd "${HERE}" || exit 1
 # Set OS and ARCH according to go
 GOOS="$( go env GOOS )"
 GOARCH=$( go env GOARCH )
+
+# alias ar to llvm-ar
+case $GOOS in
+	darwin)
+		alias ar="/opt/homebrew/opt/llvm@14/bin/llvm-ar"
+	;;
+esac
 
 # Compile according to platform
 case $GOOS in

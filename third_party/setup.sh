@@ -29,6 +29,10 @@ case $GOOS in
 	darwin)
 		brew install zlib
 		brew install libomp
+		# this version needs to be compatible to the Xcode version installed on
+		# the machine that runs build.sh as per
+		# https://en.wikipedia.org/wiki/Xcode#14.x_series
+		brew install llvm@14
 	;;
 esac
 
