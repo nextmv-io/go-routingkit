@@ -1,12 +1,5 @@
 set -e
 
-# alias ar to llvm-ar
-case $GOOS in
-	darwin)
-		alias ar="/opt/homebrew/opt/llvm@14/bin/llvm-ar"
-	;;
-esac
-
 # Move to script dir
 HERE="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 pushd "${HERE}" || exit 1
@@ -14,6 +7,13 @@ pushd "${HERE}" || exit 1
 # Set OS and ARCH according to go
 GOOS="$( go env GOOS )"
 GOARCH=$( go env GOARCH )
+
+# alias ar to llvm-ar
+case $GOOS in
+	darwin)
+		alias ar="/opt/homebrew/opt/llvm@14/bin/llvm-ar"
+	;;
+esac
 
 # Compile according to platform
 case $GOOS in
