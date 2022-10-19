@@ -51,7 +51,7 @@ esac
 
 # Link everything
 cd ..
-/opt/homebrew/opt/llvm@14/bin/llvm-ar rvs libroutingkit.a Client.o RoutingKit/build/* temp/*
+ar rvs libroutingkit.a Client.o RoutingKit/build/* temp/*
 rm -r temp
 
 # Generate bindings via swig
