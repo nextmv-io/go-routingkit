@@ -33,6 +33,8 @@ case $GOOS in
 		# the machine that runs build.sh as per
 		# https://en.wikipedia.org/wiki/Xcode#14.x_series
 		brew install llvm@14
+		export CC=/opt/homebrew/opt/llvm@14/bin/clang
+		export CXX=/opt/homebrew/opt/llvm@14/bin/clang++
 	;;
 esac
 
@@ -42,15 +44,15 @@ cd RoutingKit && git reset --hard && git checkout f7d7d14042268123cf778e6129b99e
 
 # Make necessary adjustments for some platforms
 if [ "$GOOS" = "darwin" ]; then
-	sed -i '' "s/CC=g++/CC=clang++/" Makefile
-	sed -i '' "s/\(CFLAGS=.*-std=c++11\) \(.*\)/\1 -stdlib=libc++ \2/" Makefile
-	sed -i '' "s/OMP_CFLAGS=-fopenmp/OMP_CFLAGS=-Xpreprocessor -fopenmp -lomp/" Makefile
-	sed -i '' "s/OMP_LDFLAGS=-fopenmp/OMP_LDFLAGS=-Xpreprocessor -fopenmp -lomp/" Makefile
+	sed -i '' "s/CC=g++/CC=\/opt\/homebrew\/opt\/llvm@14\/bin\/clang++/" Makefile
+	sed -i '' "s/\(CFLAGS=.*-std=c++11\) \(.*\)/\1 -stdlib=libc++ -mmacosx-version-min=10.15 \2/" Makefile
+	sed -i '' "s/OMP_CFLAGS=-fopenmp/OMP_CFLAGS=-Xpreprocessor -fopenmp/" Makefile
+	sed -i '' "s/OMP_LDFLAGS=-fopenmp/OMP_LDFLAGS=-Xpreprocessor -fopenmp/" Makefile
 
 	if [ "$GOARCH" = "arm64" ]; then
 		sed -i '' "s/-march=native/-mcpu=apple-m1/" Makefile
 		sed -i '' "s/-Iinclude/-Iinclude -I\/opt\/homebrew\/opt\/libomp\/include/" Makefile
-		sed -i '' "s/^LDFLAGS=/LDFLAGS=-L\/opt\/homebrew\/opt\/libomp\/lib/" Makefile
+		sed -i '' "s/^LDFLAGS=/LDFLAGS=-L\/opt\/homebrew\/opt\/libomp\/lib -lomp/" Makefile
 	else
 		sed -i '' "s/-DNDEBUG/-DNDEBUG -DROUTING_KIT_NO_ALIGNED_ALLOC/" Makefile
 	fi

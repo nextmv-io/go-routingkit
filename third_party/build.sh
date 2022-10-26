@@ -11,6 +11,8 @@ GOARCH=$( go env GOARCH )
 # alias ar to llvm-ar
 case $GOOS in
 	darwin)
+		export CC=/opt/homebrew/opt/llvm@14/bin/clang
+		export CXX=/opt/homebrew/opt/llvm@14/bin/clang++
 		alias ar="/opt/homebrew/opt/llvm@14/bin/llvm-ar"
 	;;
 esac
@@ -22,9 +24,9 @@ case $GOOS in
 			-std=c++11 -c Client.cpp -lroutingkit -lz -fopenmp -pthread -lm -fPIC -ffast-math -O3
 	;;
 	darwin)
-		clang++ -IRoutingKit/include -LRoutingKit/lib/libroutingkit.a \
-			-std=c++11 -stdlib=libc++ -c Client.cpp -lroutingkit -lz -Xpreprocessor -fopenmp -lomp \
-			-pthread -lm -fPIC -ffast-math -O3
+		/opt/homebrew/opt/llvm@14/bin/clang++ -IRoutingKit/include \
+			-std=c++11 -stdlib=libc++ -c Client.cpp -Xpreprocessor -fopenmp \
+			-pthread -fPIC -ffast-math -O3 -mmacosx-version-min=10.15
 	;;
 esac
 
