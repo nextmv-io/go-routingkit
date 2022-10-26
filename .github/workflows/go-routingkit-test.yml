@@ -1,25 +1,28 @@
 name: go-routingkit test
 on: [push]
 
+defaults:
+  run:
+    working-directory: ./third_party
+
 jobs:
   build:
-    name: go-routingkit test
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      # Forbid parallel builds (may cause problems with git commits)
+      max-parallel: 1
+      matrix:
+        os: [macos-latest, ubuntu-latest]
     steps:
+      - uses: actions/checkout@v2
+      - run: echo "Compiling for ${{matrix.os}}"
       - name: set up go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         with:
-          go-version: 1.13
+          go-version: 1.19
         id: go
-
-      # Clone the repo
-      - name: git clone
-        uses: actions/checkout@v2
-
-      # Build the everything
-      - name: go build
-        run: go build -v ./...
-
-      # Run the tests
-      - name: go test
-        run: go test -v -cover -race ./... -args -clean_ch=false
+      - name: Test
+        run: |
+          go mod tidy
+          go test -v -cover -race ./... -args -clean_ch=false
+        working-directory: .
