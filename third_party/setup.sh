@@ -33,6 +33,7 @@ case $GOOS in
 		# the machine that runs build.sh as per
 		# https://en.wikipedia.org/wiki/Xcode#14.x_series
 		brew install llvm@14
+		echo "llm installed at $(brew --prefix llvm@14)"
 		export CC=/opt/homebrew/opt/llvm@14/bin/clang
 		export CXX=/opt/homebrew/opt/llvm@14/bin/clang++
 	;;
