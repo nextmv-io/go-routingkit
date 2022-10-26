@@ -10,6 +10,8 @@ jobs:
   build:
     runs-on: ${{ matrix.os }}
     strategy:
+      # Forbid parallel builds (may cause problems with git commits)
+      max-parallel: 1
       matrix:
         os: [macos-latest, ubuntu-latest]
     steps:
