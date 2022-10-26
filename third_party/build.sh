@@ -16,6 +16,9 @@ case $GOOS in
 		export AR="$(brew --prefix llvm@14)/bin/llvm-ar"
 		alias ar="$(brew --prefix llvm@14)/bin/llvm-ar"
 	;;
+	linux)
+		export AR=ar
+	;;
 esac
 
 # Compile according to platform
