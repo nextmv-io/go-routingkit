@@ -47,10 +47,11 @@ jobs:
           git config --local user.email "bot@nextmv.io"
           git config --local user.name "nextmv bot"
           git pull
+          git checkout -b update/binaries-${{matrix.os}}
           git add ../routingkit/internal/routingkit/
-          git commit -m "Adding ${{matrix.os}} binaries" || echo "no commit necessary"
-      - name: Push changes
-        uses: ad-m/github-push-action@master
-        with:
-          branch: ${{ github.ref }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          git commit -m "Add ${{matrix.os}} binaries" || echo "no commit necessary"
+      - name: Create PR
+        run: |
+          gh pr create -B stable --title 'Add ${{matrix.os}} binaries' --body 'Automatically created by Github nextmv bot'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
