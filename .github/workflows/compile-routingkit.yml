@@ -52,6 +52,6 @@ jobs:
           git commit -m "Add ${{matrix.os}} binaries" || echo "no commit necessary"
       - name: Create PR
         run: |
-          gh pr create -B stable --title 'Add ${{matrix.os}} binaries' --body 'Automatically created by Github nextmv bot'
+          gh pr create -B stable --title 'Add ${{matrix.os}} binaries' --body 'Please review'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
