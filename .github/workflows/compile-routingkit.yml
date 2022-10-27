@@ -38,7 +38,9 @@ jobs:
           echo ">>> Running build.sh"
           bash build.sh
       - name: Test
-        run: go test -v -cover -race ./... -args -clean_ch=false
+        run: |
+          go mod tidy
+          go test -v -cover -race ./... -args -clean_ch=false
         working-directory: .
       - name: Commit files
         run: |
