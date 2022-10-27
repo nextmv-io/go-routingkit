@@ -50,7 +50,7 @@ jobs:
           git checkout -b update/binaries-${{matrix.os}}
           git add ../routingkit/internal/routingkit/
           git commit -m "Add ${{matrix.os}} binaries" || echo "no commit necessary"
-          git push origin -b update/binaries-${{matrix.os}}
+          git push origin update/binaries-${{matrix.os}}
       - name: Create PR
         run: |
           gh pr create -B stable --title 'Add ${{matrix.os}} binaries' --body 'Please review and delete branch after merge'
