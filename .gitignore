@@ -16,8 +16,6 @@
 
 .vscode/
 
-go.sum
-
 # ignore C++ object files
 .o
 
