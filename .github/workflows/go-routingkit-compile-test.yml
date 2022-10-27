@@ -1,0 +1,32 @@
+name: test compile routingkit
+on: [push]
+
+defaults:
+  run:
+    working-directory: ./third_party
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v2
+      - run: echo "Compiling for ${{matrix.os}}"
+      - name: set up go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.19
+        id: go
+      - name: Compile
+        run: |
+          echo ">>> Running setup.sh"
+          bash setup.sh
+          echo ">>> Running build.sh"
+          bash build.sh
+      - name: Test
+        run: |
+          go mod tidy
+          go test -v -cover -race ./... -args -clean_ch=false
+        working-directory: .
