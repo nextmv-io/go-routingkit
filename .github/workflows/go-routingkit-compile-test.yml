@@ -19,6 +19,12 @@ jobs:
         with:
           go-version: 1.19
         id: go
+      - name: Test
+        run: |
+          echo ">>> Running test before compiling"
+          go mod tidy
+          go test -v -cover -race ./... -args -clean_ch=false
+        working-directory: .
       - name: Compile
         run: |
           echo ">>> Running setup.sh"
