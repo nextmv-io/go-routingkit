@@ -1,8 +1,5 @@
 set -e
 
-# alias ar to llvm-ar
-alias ar="/opt/homebrew/opt/llvm@14/bin/llvm-ar"
-
 # Move to script dir
 HERE="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 pushd "${HERE}" || exit 1
@@ -16,8 +13,11 @@ case $GOOS in
 	linux)
 		g++ -IRoutingKit/include -LRoutingKit/lib/libroutingkit.a \
 			-std=c++11 -c Client.cpp -lroutingkit -lz -fopenmp -pthread -lm -fPIC -ffast-math -O3
+		ar_path="$(which ar)"
 	;;
 	darwin)
+		# alias ar to llvm-ar
+		ar_path="$(brew --prefix llvm@14)/bin/llvm-ar"
 		clang++ -IRoutingKit/include -LRoutingKit/lib/libroutingkit.a \
 			-std=c++11 -stdlib=libc++ -c Client.cpp -lroutingkit -lz -Xpreprocessor -fopenmp -lomp \
 			-pthread -lm -fPIC -ffast-math -O3
@@ -41,13 +41,14 @@ case $GOOS in
 		fi
 	;;
 	darwin)
-		ar -x "$(brew --prefix zlib)/lib/libz.a"
+		$ar_path -x "$(brew --prefix zlib)/lib/libz.a"
 	;;
 esac
 
+
 # Link everything
 cd ..
-/opt/homebrew/opt/llvm@14/bin/llvm-ar rvs libroutingkit.a Client.o RoutingKit/build/* temp/*
+$ar_path rvs libroutingkit.a Client.o RoutingKit/build/* temp/*
 rm -r temp
 
 # Generate bindings via swig

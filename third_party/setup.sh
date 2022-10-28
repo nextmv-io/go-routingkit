@@ -46,11 +46,11 @@ if [ "$GOOS" = "darwin" ]; then
 	sed -i '' "s/\(CFLAGS=.*-std=c++11\) \(.*\)/\1 -stdlib=libc++ \2/" Makefile
 	sed -i '' "s/OMP_CFLAGS=-fopenmp/OMP_CFLAGS=-Xpreprocessor -fopenmp -lomp/" Makefile
 	sed -i '' "s/OMP_LDFLAGS=-fopenmp/OMP_LDFLAGS=-Xpreprocessor -fopenmp -lomp/" Makefile
+	sed -i '' "s~-Iinclude~-Iinclude -I$(brew --prefix libomp)/include~" Makefile
+	sed -i '' "s~^LDFLAGS=~LDFLAGS=-L$(brew --prefix libomp)/lib -lomp~" Makefile
 
 	if [ "$GOARCH" = "arm64" ]; then
 		sed -i '' "s/-march=native/-mcpu=apple-m1/" Makefile
-		sed -i '' "s/-Iinclude/-Iinclude -I\/opt\/homebrew\/opt\/libomp\/include/" Makefile
-		sed -i '' "s/^LDFLAGS=/LDFLAGS=-L\/opt\/homebrew\/opt\/libomp\/lib/" Makefile
 	else
 		sed -i '' "s/-DNDEBUG/-DNDEBUG -DROUTING_KIT_NO_ALIGNED_ALLOC/" Makefile
 	fi
