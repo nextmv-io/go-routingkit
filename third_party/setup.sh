@@ -33,7 +33,6 @@ case $GOOS in
 		# the machine that runs build.sh as per
 		# https://en.wikipedia.org/wiki/Xcode#14.x_series
 		brew install llvm@14
-		echo "llm installed at $(brew --prefix llvm@14)"
 	;;
 esac
 
@@ -43,24 +42,18 @@ cd RoutingKit && git reset --hard && git checkout f7d7d14042268123cf778e6129b99e
 
 # Make necessary adjustments for some platforms
 if [ "$GOOS" = "darwin" ]; then
-	sed -i '' "s/CC=g++//" Makefile
-	sed -i '' "s~AR=ar~AR=$(brew --prefix llvm@14)/bin/llvm-ar~" Makefile
-
-	sed -i '' "s/\(CFLAGS=.*-std=c++11\) \(.*\)/\1 -stdlib=libc++ -mmacosx-version-min=10.15 \2/" Makefile
+	sed -i '' "s/CC=g++/CC=clang++/" Makefile
+	sed -i '' "s/\(CFLAGS=.*-std=c++11\) \(.*\)/\1 -stdlib=libc++ \2/" Makefile
 	sed -i '' "s/OMP_CFLAGS=-fopenmp/OMP_CFLAGS=-Xpreprocessor -fopenmp -lomp/" Makefile
 	sed -i '' "s/OMP_LDFLAGS=-fopenmp/OMP_LDFLAGS=-Xpreprocessor -fopenmp -lomp/" Makefile
 	sed -i '' "s~-Iinclude~-Iinclude -I$(brew --prefix libomp)/include~" Makefile
 	sed -i '' "s~^LDFLAGS=~LDFLAGS=-L$(brew --prefix libomp)/lib -lomp~" Makefile
 
 	if [ "$GOARCH" = "arm64" ]; then
-		sed -i '' "s~-march=native~-mcpu=apple-m1~" Makefile
+		sed -i '' "s/-march=native/-mcpu=apple-m1/" Makefile
 	else
-		sed -i '' "s~-DNDEBUG~-DNDEBUG -DROUTING_KIT_NO_ALIGNED_ALLOC~" Makefile
+		sed -i '' "s/-DNDEBUG/-DNDEBUG -DROUTING_KIT_NO_ALIGNED_ALLOC/" Makefile
 	fi
-
-	# routingkit uses CC for compiling c++
-	export CC="$(brew --prefix llvm@14)/bin/clang++"
-	export CXX=$(brew --prefix llvm@14)/bin/clang++
 fi
 
 # Cleanup

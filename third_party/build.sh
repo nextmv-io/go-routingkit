@@ -8,29 +8,19 @@ pushd "${HERE}" || exit 1
 GOOS="$( go env GOOS )"
 GOARCH=$( go env GOARCH )
 
-# alias ar to llvm-ar
-case $GOOS in
-	darwin)
-		export CC="$(brew --prefix llvm@14)/bin/clang"
-		export CXX=$(brew --prefix llvm@14)/bin/clang++
-		export AR="$(brew --prefix llvm@14)/bin/llvm-ar"
-		alias ar="$(brew --prefix llvm@14)/bin/llvm-ar"
-	;;
-	linux)
-		export AR=ar
-	;;
-esac
-
 # Compile according to platform
 case $GOOS in
 	linux)
 		g++ -IRoutingKit/include -LRoutingKit/lib/libroutingkit.a \
 			-std=c++11 -c Client.cpp -lroutingkit -lz -fopenmp -pthread -lm -fPIC -ffast-math -O3
+		ar_path="$(which ar)"
 	;;
 	darwin)
-		$CXX -IRoutingKit/include \
-			-std=c++11 -stdlib=libc++ -c Client.cpp -Xpreprocessor -fopenmp \
-			-pthread -fPIC -ffast-math -O3 -mmacosx-version-min=10.15
+		# alias ar to llvm-ar
+		ar_path="$(brew --prefix llvm@14)/bin/llvm-ar"
+		clang++ -IRoutingKit/include -LRoutingKit/lib/libroutingkit.a \
+			-std=c++11 -stdlib=libc++ -c Client.cpp -lroutingkit -lz -Xpreprocessor -fopenmp -lomp \
+			-pthread -lm -fPIC -ffast-math -O3
 	;;
 esac
 
@@ -51,13 +41,14 @@ case $GOOS in
 		fi
 	;;
 	darwin)
-		ar -x "$(brew --prefix zlib)/lib/libz.a"
+		$ar_path -x "$(brew --prefix zlib)/lib/libz.a"
 	;;
 esac
 
+
 # Link everything
 cd ..
-$AR rvs libroutingkit.a Client.o RoutingKit/build/* temp/*
+$ar_path rvs libroutingkit.a Client.o RoutingKit/build/* temp/*
 rm -r temp
 
 # Generate bindings via swig
