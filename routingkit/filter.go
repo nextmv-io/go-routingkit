@@ -32,70 +32,15 @@ func CarTagMapFilter(id int, tags map[string]string) bool {
 		return false
 	}
 
-	if val, ok := tags["route"]; ok && val == "shuttle_train" {
+	// Allow special modes of transport
+	if route == "shuttle_train" ||
+		route == "ferry" ||
+		tags["bridge"] == "movable" && tags["capacity:car"] != "0" {
 		return true
 	}
-	// TODO: make this configurable
-	if tags["toll"] == "yes" {
-		return false
-	}
-	if highway == "steps" {
-		return false
-	}
-	if highway == "construction" || tags["railway"] == "construction" {
-		return false
-	}
-	if construction, ok := tags["construction"]; ok && !(construction == "no" ||
-		construction == "widening" ||
-		construction == "minor") {
-		return false
-	}
-	if tags["proposed"] != "" {
-		return false
-	}
-	// TODO: if we are time-aware we may be able to handle this better
-	if tags["oneway"] == "reversible" {
-		return false
-	}
-	if tags["impassable"] == "yes" || tags["status"] == "impassable" {
-		return false
-	}
 
-	if highway == "area" ||
-		highway == "reversible" ||
-		highway == "impassable" ||
-		highway == "hov_lanes" ||
-		highway == "steps" ||
-		highway == "construction" ||
-		highway == "proposed" {
-		return false
-	}
-
-	var access string
-	if motorcar, ok := tags["motorcar"]; ok {
-		access = motorcar
-	} else if motorVehicle, ok := tags["motor_vehicle"]; ok {
-		access = motorVehicle
-	} else if vehicle, ok := tags["vehicle"]; ok {
-		access = vehicle
-	} else if accessVal, ok := tags["access"]; ok {
-		access = accessVal
-	}
-	if access == "no" ||
-		access == "agricultural" ||
-		access == "forestry" ||
-		access == "emergency" ||
-		access == "psv" ||
-		access == "private" {
-		return false
-	}
-	// TODO: the following access tags should only be usable if the way is needed to reach
-	// the destination: "customers", "private", "delivery", "destination".
-	// To implement this, we can set the edge weight to be very high.
-	if highway == "service" {
-		return true
-	}
-	if highway == "motorway" ||
+	// Make sure the highway type is drivable
+	if !(highway == "motorway" ||
 		highway == "motorway_link" ||
 		highway == "trunk" ||
 		highway == "trunk_link" ||
@@ -108,23 +53,43 @@ func CarTagMapFilter(id int, tags map[string]string) bool {
 		highway == "unclassified" ||
 		highway == "residential" ||
 		highway == "living_street" ||
-		highway == "service" {
-		return true
-	}
-	if val, ok := tags["route"]; ok && val == "ferry" {
-		return true
-	}
-	if tags["bridge"] == "movable" && tags["capacity:car"] != "0" {
-		return true
+		highway == "service") {
+		return false
 	}
 
+	// Forbid some special cases
+	if tags["railway"] == "construction" {
+		return false
+	}
+	if construction, ok := tags["construction"]; ok && !(construction == "no" ||
+		construction == "widening" ||
+		construction == "minor") {
+		return false
+	}
+	if tags["proposed"] != "" {
+		return false
+	}
 	if tags["service"] == "emergency_access" {
 		return false
 	}
-
-	//TODO: should be configurable whether the vehicle can travel in HOV lanes
-	if allLanesAreHOV(tags) {
+	// TODO: if we are time-aware we may be able to handle this better
+	if tags["oneway"] == "reversible" {
 		return false
+	}
+	if tags["impassable"] == "yes" || tags["status"] == "impassable" {
+		return false
+	}
+
+	// Check access
+	var access string
+	if motorcar, ok := tags["motorcar"]; ok {
+		access = motorcar
+	} else if motorVehicle, ok := tags["motor_vehicle"]; ok {
+		access = motorVehicle
+	} else if vehicle, ok := tags["vehicle"]; ok {
+		access = vehicle
+	} else if accessVal, ok := tags["access"]; ok {
+		access = accessVal
 	}
 	if access == "yes" ||
 		access == "motorcar" ||
@@ -132,11 +97,25 @@ func CarTagMapFilter(id int, tags map[string]string) bool {
 		access == "vehicle" ||
 		access == "permissive" ||
 		access == "designated" ||
-		access == "hov" {
+		access == "hov" ||
+		access == "customers" ||
+		access == "private" ||
+		access == "delivery" ||
+		access == "destination" ||
+		access == "permit" {
 		return true
 	}
 
-	return false
+	// TODO: the following access tags should only be usable if the way is needed to reach
+	// the destination: "customers", "private", "delivery", "destination".
+	// To implement this, we can set the edge weight to be very high.
+
+	//TODO: should be configurable whether the vehicle can travel in HOV lanes
+	if allLanesAreHOV(tags) {
+		return false
+	}
+
+	return true
 }
 
 // BikeTagMapFilter filters the map for map tags usable by bikes
