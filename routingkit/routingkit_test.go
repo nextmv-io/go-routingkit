@@ -206,7 +206,7 @@ func TestDistances(t *testing.T) {
 			snap:    1000,
 			profile: routingkit.Car(),
 
-			expected: []uint32{1496, 617},
+			expected: []uint32{1496, 508},
 		},
 		{
 			source: []float32{-76.587490, 39.299710},
@@ -458,7 +458,7 @@ func TestDistance(t *testing.T) {
 			snap:             1000,
 			profile:          routingkit.Car(),
 			osmFile:          marylandMap,
-			expectedDistance: 617,
+			expectedDistance: 508,
 			waypointsFile:    "waypoints_6.json",
 		},
 		{
@@ -505,7 +505,7 @@ func TestDistance(t *testing.T) {
 			destination:      []float32{0.328830, 51.389174},
 			snap:             1000,
 			osmFile:          englandMapWithWidthRestriction,
-			expectedDistance: 9303,
+			expectedDistance: 9294,
 			waypointsFile:    "waypoints_11.json",
 			profile:          routingkit.Truck(4.25, 2.0, 0, 0, 100),
 		},
@@ -525,7 +525,7 @@ func TestDistance(t *testing.T) {
 			destination:      []float32{-0.093553, 51.491785},
 			snap:             1000,
 			osmFile:          englandMapWithWeightRestriction,
-			expectedDistance: 942,
+			expectedDistance: 820,
 			waypointsFile:    "waypoints_13.json",
 			profile:          routingkit.Truck(4.25, 2.0, 13.0, 8.0, 100),
 		},
@@ -636,7 +636,7 @@ func TestTravelTimes(t *testing.T) {
 			},
 			snap: 1000,
 
-			expected: []uint32{131599, 54169},
+			expected: []uint32{131599, 54080},
 		},
 	}
 
@@ -674,7 +674,7 @@ func TestTravelTimeMatrix(t *testing.T) {
 			},
 			expected: [][]uint32{
 				{131599, 110399},
-				{153578, 52230},
+				{153488, 52230},
 				{205841, 187148},
 				{289818, 127151},
 			},

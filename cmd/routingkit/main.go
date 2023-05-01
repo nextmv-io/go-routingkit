@@ -1,4 +1,4 @@
-//main.go
+// main.go
 package main
 
 import (
@@ -16,6 +16,7 @@ import (
 
 type Router interface {
 	Route(from []float32, to []float32) (uint32, [][]float32)
+	Matrix(sources [][]float32, targets [][]float32) [][]uint32
 }
 
 type parameters struct {
@@ -23,6 +24,7 @@ type parameters struct {
 	out     *os.File
 	mapFile string
 	measure string
+	mode    string
 	width   float64
 	height  float64
 	length  float64
@@ -37,6 +39,14 @@ var measureEnum = struct {
 }{
 	DISTANCE:   "distance",
 	TRAVELTIME: "traveltime",
+}
+
+var modeEnum = struct {
+	TUPLES string
+	MATRIX string
+}{
+	TUPLES: "tuples",
+	MATRIX: "matrix",
 }
 
 var profileEnum = struct {
@@ -85,36 +95,66 @@ func main() {
 		os.Exit(1)
 	}
 
-	input, err := read(params.in)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "error reading input: %v\n", err)
+	switch params.mode {
+	case modeEnum.TUPLES:
+		input, err := readTuples(params.in)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "error reading input: %v\n", err)
+			os.Exit(1)
+		}
+
+		trips := make([]trip, len(input.Tuples))
+		var wg sync.WaitGroup
+		wg.Add(len(input.Tuples))
+		for i, p := range input.Tuples {
+			go func(i int, p pointTuple) {
+				defer wg.Done()
+				from := []float32{p.From.Lon, p.From.Lat}
+				to := []float32{p.To.Lon, p.To.Lat}
+				dist, wpTuples := client.Route(from, to)
+				waypoints := make([]position, len(wpTuples))
+				for w, tuple := range wpTuples {
+					waypoints[w] = position{Lon: tuple[0], Lat: tuple[1]}
+				}
+				trips[i] = trip{Cost: dist, Waypoints: waypoints}
+			}(i, p)
+		}
+		wg.Wait()
+
+		output := outputTuples{Trips: trips}
+		err = writeTuples(params.out, output)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "error writing output: %v", err)
+			os.Exit(1)
+		}
+	case modeEnum.MATRIX:
+		input, err := readMatrix(params.in)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "error reading input: %v\n", err)
+			os.Exit(1)
+		}
+
+		sources := make([][]float32, len(input.Points))
+		for i, p := range input.Points {
+			sources[i] = []float32{p.Lon, p.Lat}
+		}
+		targets := make([][]float32, len(input.Points))
+		for i, p := range input.Points {
+			targets[i] = []float32{p.Lon, p.Lat}
+		}
+		distances := client.Matrix(sources, targets)
+
+		output := outputMatrix{Matrix: distances}
+		err = writeMatrix(params.out, output)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "error writing output: %v", err)
+			os.Exit(1)
+		}
+	default:
+		fmt.Fprintf(os.Stderr, "invalid option for mode "+params.mode+"\n")
 		os.Exit(1)
 	}
 
-	trips := make([]trip, len(input.Tuples))
-	var wg sync.WaitGroup
-	wg.Add(len(input.Tuples))
-	for i, p := range input.Tuples {
-		go func(i int, p pointTuple) {
-			defer wg.Done()
-			from := []float32{p.From.Lon, p.From.Lat}
-			to := []float32{p.To.Lon, p.To.Lat}
-			dist, wpTuples := client.Route(from, to)
-			waypoints := make([]position, len(wpTuples))
-			for w, tuple := range wpTuples {
-				waypoints[w] = position{Lon: tuple[0], Lat: tuple[1]}
-			}
-			trips[i] = trip{Cost: dist, Waypoints: waypoints}
-		}(i, p)
-	}
-	wg.Wait()
-
-	output := output{Trips: trips}
-	err = write(params.out, output)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "error writing output: %v", err)
-		os.Exit(1)
-	}
 }
 
 func parseFlags() (params parameters, err error) {
@@ -148,6 +188,12 @@ func parseFlags() (params parameters, err error) {
 		"measure",
 		measureEnum.DISTANCE,
 		"distance|traveltime",
+	)
+	flag.StringVar(
+		&params.mode,
+		"mode",
+		modeEnum.TUPLES,
+		"tuples|matrix",
 	)
 	flag.Float64Var(
 		&params.length,
@@ -216,7 +262,7 @@ func parseFlags() (params parameters, err error) {
 	return params, nil
 }
 
-func read(file *os.File) (in input, err error) {
+func readTuples(file *os.File) (in inputTuples, err error) {
 	dat, err := ioutil.ReadAll(file)
 	if err != nil {
 		return in, err
@@ -228,7 +274,7 @@ func read(file *os.File) (in input, err error) {
 	return in, nil
 }
 
-func write(file *os.File, output output) (err error) {
+func writeTuples(file *os.File, output outputTuples) (err error) {
 	b, err := json.Marshal(output)
 	if err != nil {
 		return err
@@ -240,7 +286,31 @@ func write(file *os.File, output output) (err error) {
 	return nil
 }
 
-type input struct {
+func readMatrix(file *os.File) (in inputMatrix, err error) {
+	dat, err := ioutil.ReadAll(file)
+	if err != nil {
+		return in, err
+	}
+	err = json.Unmarshal(dat, &in)
+	if err != nil {
+		return in, err
+	}
+	return in, nil
+}
+
+func writeMatrix(file *os.File, output outputMatrix) (err error) {
+	b, err := json.Marshal(output)
+	if err != nil {
+		return err
+	}
+	_, err = file.Write(b)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type inputTuples struct {
 	Tuples []pointTuple `json:"tuples"`
 }
 
@@ -254,11 +324,19 @@ type position struct {
 	Lat float32 `json:"lat"`
 }
 
-type output struct {
+type outputTuples struct {
 	Trips []trip `json:"trips"`
 }
 
 type trip struct {
 	Waypoints []position `json:"waypoints"`
 	Cost      uint32     `json:"cost"`
+}
+
+type inputMatrix struct {
+	Points []position `json:"points"`
+}
+
+type outputMatrix struct {
+	Matrix [][]uint32 `json:"matrix"`
 }
