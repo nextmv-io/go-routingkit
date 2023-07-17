@@ -47,21 +47,32 @@ go install github.com/nextmv-io/go-routingkit/cmd/routingkit@latest
 ### Arguments
 
 ```go
-Usage of ./routingkit:
+Usage of routingkit:
+  -height float
+     truck height (default 1.7976931348623157e+308)
   -input string
-        path to input file. default is stdin.
+     path to input file. default is stdin.
+  -length float
+     truck length (default 1.7976931348623157e+308)
   -map string
-        path to map file (default "data/map.osm.pbf")
+     path to map file (default "data/map.osm.pbf")
   -measure string
-        distance|traveltime (default "distance")
+     distance|traveltime (default "distance")
+  -mode string
+     tuples|matrix (default "tuples")
   -output string
-        path to output file. default is stdout.
+     path to output file. default is stdout.
   -profile string
-        car|bike|pedestrian - bike and pedestrian only work with measure=distance
-        (default "car")
+     car|truck|bike|pedestrian (default "car")
+  -speed int
+     truck speed in m/s (default=27) (default 27)
+  -weight float
+     truck weight (default 1.7976931348623157e+308)
+  -width float
+     truck width (default 1.7976931348623157e+308)
 ```
 
-### Input / output
+### Tuples mode
 
 Find a sample `--input` below. Each request is given as a tuple of two locations
 defining the `from` and `to` part of the trip. The position of the location is
@@ -138,6 +149,37 @@ positions are again given as longitude (`lon`) & latitude (`lat`).
             ],
             "cost": 45401
         }
+    ]
+}
+```
+
+### Matrix mode
+
+In matrix mode, the input is given as a list of locations. The output is a
+matrix of costs between all locations. An example `--input` is given below.
+
+```jsonc
+{
+    "points": [
+        { "lon": -76.733, "lat": 38.887 },
+        { "lon": -77.095, "lat": 38.981 },
+        { "lon": -76.888, "lat": 38.951 }
+    ]
+}
+```
+
+When we execute the command like this, we get the following output.
+
+```bash
+routingkit --input input.json --mode matrix --map maryland-latest.osm.pbf
+```
+
+```jsonc
+{
+    "matrix": [
+        [0, 40761, 20788],
+        [40934, 0, 21124],
+        [20635, 21264, 0]
     ]
 }
 ```
