@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/sha1"
 	"encoding/hex"
+	"encoding/xml"
 	"fmt"
 	"io"
 	"os"
@@ -473,4 +474,71 @@ func (c TravelTimeClient) TravelTimes(source []float32, targets [][]float32) []u
 // street network point within the given radius in meters.
 func (c *TravelTimeClient) SetSnapRadius(n float32) {
 	c.client.SetSnapRadius(n)
+}
+
+// Shrink creates a new .osm file in xml format containing only the ways that
+// match the given tagMapFilter. The new file will be written to the given
+// outputFile.
+func Shrink(osmFile string, tagMapFilter TagMapFilter, outputFile string) error {
+	file, err := os.Open(osmFile)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	// The third parameter is the number of parallel decoders to use.
+	scanner := osmpbf.New(context.Background(), file, runtime.GOMAXPROCS(0))
+	scanner.SkipNodes = true
+	scanner.SkipRelations = true
+	defer scanner.Close()
+
+	ways := []*osm.Way{}
+	nodeIds := map[osm.NodeID]struct{}{}
+
+	for scanner.Scan() {
+		switch o := scanner.Object().(type) {
+		case *osm.Way:
+			id := int(o.ID)
+			tagMap := o.Tags.Map()
+			if tagMapFilter != nil && tagMapFilter(id, tagMap) {
+				ways = append(ways, o)
+				for _, node := range o.Nodes {
+					nodeIds[node.ID] = struct{}{}
+				}
+			}
+		}
+	}
+
+	if err = scanner.Err(); err != nil {
+		return err
+	}
+
+	nodes := []*osm.Node{}
+	scanner.SkipNodes = false
+	scanner.SkipWays = true
+	for scanner.Scan() {
+		switch o := scanner.Object().(type) {
+		case *osm.Node:
+			if _, ok := nodeIds[o.ID]; ok {
+				nodes = append(nodes, o)
+			}
+		}
+	}
+
+	if err = scanner.Err(); err != nil {
+		return err
+	}
+
+	osm := osm.OSM{
+		Ways:  ways,
+		Nodes: nodes,
+	}
+
+	bytes, err := xml.Marshal(osm)
+	if err != nil {
+		return err
+	}
+
+	err = os.WriteFile(outputFile, bytes, 0644)
+	return err
 }
