@@ -501,6 +501,11 @@ func Shrink(osmFile string, tagMapFilter TagMapFilter, outputFile string) error 
 			id := int(o.ID)
 			tagMap := o.Tags.Map()
 			if tagMapFilter != nil && tagMapFilter(id, tagMap) {
+				// remove unnecessary data
+				o.Updates = nil
+				o.Committed = nil
+				o.User = ""
+
 				ways = append(ways, o)
 				for _, node := range o.Nodes {
 					nodeIds[node.ID] = struct{}{}
@@ -520,6 +525,9 @@ func Shrink(osmFile string, tagMapFilter TagMapFilter, outputFile string) error 
 		switch o := scanner.Object().(type) {
 		case *osm.Node:
 			if _, ok := nodeIds[o.ID]; ok {
+				// remove unnecessary data
+				o.Committed = nil
+				o.User = ""
 				nodes = append(nodes, o)
 			}
 		}
@@ -530,8 +538,9 @@ func Shrink(osmFile string, tagMapFilter TagMapFilter, outputFile string) error 
 	}
 
 	osm := osm.OSM{
-		Ways:  ways,
-		Nodes: nodes,
+		Version: 0.6,
+		Ways:    ways,
+		Nodes:   nodes,
 	}
 
 	bytes, err := xml.Marshal(osm)
