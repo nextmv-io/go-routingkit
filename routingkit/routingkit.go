@@ -500,7 +500,7 @@ func Shrink(osmFile string, tagMapFilter TagMapFilter, outputFile string) error 
 		case *osm.Way:
 			id := int(o.ID)
 			tagMap := o.Tags.Map()
-			if tagMapFilter != nil && tagMapFilter(id, tagMap) {
+			if tagMapFilter != nil || tagMapFilter(id, tagMap) {
 				// remove unnecessary data
 				o.Updates = nil
 				o.Committed = nil
@@ -518,22 +518,8 @@ func Shrink(osmFile string, tagMapFilter TagMapFilter, outputFile string) error 
 		return err
 	}
 
-	nodes := []*osm.Node{}
-	scanner.SkipNodes = false
-	scanner.SkipWays = true
-	for scanner.Scan() {
-		switch o := scanner.Object().(type) {
-		case *osm.Node:
-			if _, ok := nodeIds[o.ID]; ok {
-				// remove unnecessary data
-				o.Committed = nil
-				o.User = ""
-				nodes = append(nodes, o)
-			}
-		}
-	}
-
-	if err = scanner.Err(); err != nil {
+	nodes, err := getNodes(osmFile, nodeIds)
+	if err != nil {
 		return err
 	}
 
@@ -550,4 +536,35 @@ func Shrink(osmFile string, tagMapFilter TagMapFilter, outputFile string) error 
 
 	err = os.WriteFile(outputFile, bytes, 0644)
 	return err
+}
+
+func getNodes(osmFile string, nodeIds map[osm.NodeID]struct{}) ([]*osm.Node, error) {
+	file, err := os.Open(osmFile)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+	// The third parameter is the number of parallel decoders to use.
+	scanner := osmpbf.New(context.Background(), file, runtime.GOMAXPROCS(0))
+	scanner.SkipWays = true
+	scanner.SkipRelations = true
+	defer scanner.Close()
+
+	nodes := []*osm.Node{}
+	for scanner.Scan() {
+		switch o := scanner.Object().(type) {
+		case *osm.Node:
+			if _, ok := nodeIds[o.ID]; ok {
+				// remove unnecessary data
+				o.Committed = nil
+				o.User = ""
+				nodes = append(nodes, o)
+			}
+		}
+	}
+
+	if err = scanner.Err(); err != nil {
+		return nil, err
+	}
+	return nodes, nil
 }
