@@ -4,6 +4,6 @@ go 1.13
 
 require (
 	github.com/google/go-cmp v0.5.6
-	github.com/nextmv-io/osm v0.0.0-20230901192339-86cc279a91cc
+	github.com/nextmv-io/osm v0.0.0-20230901192722-53ca2374122e
 	github.com/paulmach/orb v0.1.6 // indirect
 )
