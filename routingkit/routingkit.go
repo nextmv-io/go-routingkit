@@ -549,18 +549,20 @@ func getNodes(osmFile string, nodeIds map[osm.NodeID]struct{}) ([]*osm.Node, err
 	scanner := osmpbf.New(context.Background(), file, runtime.GOMAXPROCS(0))
 	scanner.SkipWays = true
 	scanner.SkipRelations = true
+	scanner.FilterNode = func(n *osm.Node) bool {
+		_, ok := nodeIds[n.ID]
+		return ok
+	}
 	defer scanner.Close()
 
 	nodes := []*osm.Node{}
 	for scanner.Scan() {
 		switch o := scanner.Object().(type) {
 		case *osm.Node:
-			if _, ok := nodeIds[o.ID]; ok {
-				// remove unnecessary data
-				o.Committed = nil
-				o.User = ""
-				nodes = append(nodes, o)
-			}
+			// remove unnecessary data
+			o.Committed = nil
+			o.User = ""
+			nodes = append(nodes, o)
 		}
 	}
 
