@@ -512,33 +512,7 @@ func Shrink(osmFile string, tagMapFilter TagMapFilter, outputFile string) error 
 	}
 	defer scanner.Close()
 
-	ways := []*osm.Way{}
 	nodeIds := map[osm.NodeID]struct{}{}
-
-	for scanner.Scan() {
-		switch o := scanner.Object().(type) {
-		case *osm.Way:
-			// remove unnecessary data
-			o.Updates = nil
-			o.Committed = nil
-			o.User = ""
-
-			ways = append(ways, o)
-			for _, node := range o.Nodes {
-				nodeIds[node.ID] = struct{}{}
-			}
-		}
-	}
-
-	if err = scanner.Err(); err != nil {
-		return err
-	}
-
-	nodes, err := getNodes(osmFile, nodeIds)
-	if err != nil {
-		return err
-	}
-
 	file, err = os.Create(outputFile)
 	if err != nil {
 		return err
@@ -549,36 +523,39 @@ func Shrink(osmFile string, tagMapFilter TagMapFilter, outputFile string) error 
 	}
 	defer writer.Close()
 
-	for _, node := range nodes {
-		if err = writer.WriteObject(node); err != nil {
-			return err
+	for scanner.Scan() {
+		switch o := scanner.Object().(type) {
+		case *osm.Way:
+			// remove unnecessary data
+			o.Updates = nil
+			o.Committed = nil
+			o.User = ""
+
+			if err = writer.WriteObject(o); err != nil {
+				return err
+			}
+			for _, node := range o.Nodes {
+				nodeIds[node.ID] = struct{}{}
+			}
 		}
 	}
 
-	for _, way := range ways {
-		if err = writer.WriteObject(way); err != nil {
-			return err
-		}
+	if err = scanner.Err(); err != nil {
+		return err
 	}
 
-	// osm := osm.OSM{
-	// 	Version: "0.6",
-	// 	Ways:    ways,
-	// 	Nodes:   nodes,
-	// }
-
-	// bytes, err := xml.Marshal(osm)
-	// if err != nil {
-	// 	return err
-	// }
+	err = getNodes(osmFile, nodeIds, writer)
+	if err != nil {
+		return err
+	}
 
 	return err
 }
 
-func getNodes(osmFile string, nodeIds map[osm.NodeID]struct{}) ([]*osm.Node, error) {
+func getNodes(osmFile string, nodeIds map[osm.NodeID]struct{}, writer osmpbf.Writer) error {
 	file, err := os.Open(osmFile)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer file.Close()
 	// The third parameter is the number of parallel decoders to use.
@@ -591,19 +568,20 @@ func getNodes(osmFile string, nodeIds map[osm.NodeID]struct{}) ([]*osm.Node, err
 	}
 	defer scanner.Close()
 
-	nodes := []*osm.Node{}
 	for scanner.Scan() {
 		switch o := scanner.Object().(type) {
 		case *osm.Node:
 			// remove unnecessary data
 			o.Committed = nil
 			o.User = ""
-			nodes = append(nodes, o)
+			if err = writer.WriteObject(o); err != nil {
+				return err
+			}
 		}
 	}
 
 	if err = scanner.Err(); err != nil {
-		return nil, err
+		return err
 	}
-	return nodes, nil
+	return nil
 }
