@@ -502,7 +502,7 @@ func Shrink(osmFile string, tagMapFilter TagMapFilter, outputFile string) error 
 	defer file.Close()
 
 	// The third parameter is the number of parallel decoders to use.
-	scanner := osmpbf.New(context.Background(), file, 1)
+	scanner := osmpbf.New(context.Background(), file, runtime.GOMAXPROCS(0))
 	scanner.SkipNodes = true
 	scanner.SkipRelations = true
 	scanner.FilterWay = func(w *osm.Way) bool {
@@ -513,16 +513,18 @@ func Shrink(osmFile string, tagMapFilter TagMapFilter, outputFile string) error 
 	defer scanner.Close()
 
 	nodeIds := map[osm.NodeID]struct{}{}
-	file, err = os.Create(outputFile)
+	pbfFile, err := os.Create(outputFile)
 	if err != nil {
 		return err
 	}
-	defer file.Close()
-	writer, err := osmpbf.NewWriter(file)
+	writer, err := osmpbf.NewWriter(pbfFile)
 	if err != nil {
 		return err
 	}
-	defer writer.Close()
+	defer func() {
+		writer.Close()
+		pbfFile.Close()
+	}()
 
 	for scanner.Scan() {
 		switch o := scanner.Object().(type) {
@@ -560,7 +562,7 @@ func getNodes(osmFile string, nodeIds map[osm.NodeID]struct{}, writer osmpbf.Wri
 	}
 	defer file.Close()
 	// The third parameter is the number of parallel decoders to use.
-	scanner := osmpbf.New(context.Background(), file, 1)
+	scanner := osmpbf.New(context.Background(), file, runtime.GOMAXPROCS(0))
 	scanner.SkipWays = true
 	scanner.SkipRelations = true
 	scanner.FilterNode = func(n *osm.Node) bool {
