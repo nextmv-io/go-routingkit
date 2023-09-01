@@ -490,6 +490,11 @@ func Shrink(osmFile string, tagMapFilter TagMapFilter, outputFile string) error 
 	scanner := osmpbf.New(context.Background(), file, runtime.GOMAXPROCS(0))
 	scanner.SkipNodes = true
 	scanner.SkipRelations = true
+	scanner.FilterWay = func(w *osm.Way) bool {
+		id := int(w.ID)
+		tagMap := w.Tags.Map()
+		return tagMapFilter == nil || tagMapFilter(id, tagMap)
+	}
 	defer scanner.Close()
 
 	ways := []*osm.Way{}
@@ -498,18 +503,14 @@ func Shrink(osmFile string, tagMapFilter TagMapFilter, outputFile string) error 
 	for scanner.Scan() {
 		switch o := scanner.Object().(type) {
 		case *osm.Way:
-			id := int(o.ID)
-			tagMap := o.Tags.Map()
-			if tagMapFilter != nil || tagMapFilter(id, tagMap) {
-				// remove unnecessary data
-				o.Updates = nil
-				o.Committed = nil
-				o.User = ""
+			// remove unnecessary data
+			o.Updates = nil
+			o.Committed = nil
+			o.User = ""
 
-				ways = append(ways, o)
-				for _, node := range o.Nodes {
-					nodeIds[node.ID] = struct{}{}
-				}
+			ways = append(ways, o)
+			for _, node := range o.Nodes {
+				nodeIds[node.ID] = struct{}{}
 			}
 		}
 	}
@@ -524,7 +525,7 @@ func Shrink(osmFile string, tagMapFilter TagMapFilter, outputFile string) error 
 	}
 
 	osm := osm.OSM{
-		Version: 0.6,
+		Version: "0.6",
 		Ways:    ways,
 		Nodes:   nodes,
 	}
