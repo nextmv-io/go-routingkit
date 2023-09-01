@@ -24,7 +24,13 @@ var Keep bool = keep.Keep
 // MaxDistance represents the maximum possible route distance.
 var MaxDistance uint32
 
-func parsePBF(osmFile string, tagMapFilter TagMapFilter, speedMapper SpeedMapper) (map[int]bool, map[int]int) {
+func parsePBF(osmFile string, tagMapFilter TagMapFilter, speedMapper SpeedMapper) (map[int]bool, map[int]int, error) {
+	if tagMapFilter == nil {
+		return nil, nil, fmt.Errorf("tagMapFilter must not be nil")
+	}
+	if speedMapper == nil {
+		return nil, nil, fmt.Errorf("speedMapper must not be nil")
+	}
 	file, err := os.Open(osmFile)
 	if err != nil {
 		panic(err)
@@ -35,6 +41,19 @@ func parsePBF(osmFile string, tagMapFilter TagMapFilter, speedMapper SpeedMapper
 	scanner := osmpbf.New(context.Background(), file, runtime.GOMAXPROCS(0))
 	scanner.SkipNodes = true
 	scanner.SkipRelations = true
+	scanner.FilterWay = func(w *osm.Way) bool {
+		id := int(w.ID)
+		tagMap := w.Tags.Map()
+		if tagMapFilter(id, tagMap) {
+			// if the speed is returned as 0, that means the way is not
+			// usable
+			if speedMapper(id, tagMap) == 0 {
+				return false
+			}
+			return true
+		}
+		return false
+	}
 	defer scanner.Close()
 
 	allowed := map[int]bool{}
@@ -45,20 +64,8 @@ func parsePBF(osmFile string, tagMapFilter TagMapFilter, speedMapper SpeedMapper
 		case *osm.Way:
 			id := int(o.ID)
 			tagMap := o.Tags.Map()
-			if tagMapFilter != nil && tagMapFilter(id, tagMap) {
-				allowed[id] = true
-				// we only need to write the speed into ways that are actually
-				// allowed
-				if speedMapper != nil {
-					waySpeeds[id] = speedMapper(id, tagMap)
-					// if the speed is returned as 0, that means the way is not
-					// usable
-					if waySpeeds[id] == 0 {
-						waySpeeds[id] = 1 // prevents routingkit crash
-						allowed[id] = false
-					}
-				}
-			}
+			allowed[id] = true
+			waySpeeds[id] = speedMapper(id, tagMap)
 		}
 	}
 
@@ -66,7 +73,7 @@ func parsePBF(osmFile string, tagMapFilter TagMapFilter, speedMapper SpeedMapper
 		panic(err)
 	}
 
-	return allowed, waySpeeds
+	return allowed, waySpeeds, nil
 }
 
 func Car() Profile {
@@ -176,7 +183,10 @@ func NewDistanceClient(mapFile string, profile Profile) (DistanceClient, error) 
 		return DistanceClient{}, fmt.Errorf("could not find map file at %v", mapFile)
 	}
 
-	allowedWayIDs, waySpeeds := parsePBF(mapFile, profile.Filter, profile.SpeedMapper)
+	allowedWayIDs, waySpeeds, err := parsePBF(mapFile, profile.Filter, profile.SpeedMapper)
+	if err != nil {
+		return DistanceClient{}, err
+	}
 
 	chFile, err := chFileName(mapFile, profile, allowedWayIDs, waySpeeds, false)
 	if err != nil {
@@ -413,7 +423,10 @@ func NewTravelTimeClient(mapFile string, profile Profile) (TravelTimeClient, err
 		return TravelTimeClient{}, fmt.Errorf("could not find map file at %v", mapFile)
 	}
 
-	allowedWayIDs, waySpeeds := parsePBF(mapFile, profile.Filter, profile.SpeedMapper)
+	allowedWayIDs, waySpeeds, err := parsePBF(mapFile, profile.Filter, profile.SpeedMapper)
+	if err != nil {
+		return TravelTimeClient{}, err
+	}
 	chFile, err := chFileName(mapFile, profile, allowedWayIDs, waySpeeds, true)
 	if err != nil {
 		return TravelTimeClient{}, err
@@ -480,6 +493,9 @@ func (c *TravelTimeClient) SetSnapRadius(n float32) {
 // match the given tagMapFilter. The new file will be written to the given
 // outputFile.
 func Shrink(osmFile string, tagMapFilter TagMapFilter, outputFile string) error {
+	if tagMapFilter == nil {
+		return fmt.Errorf("tagMapFilter must not be nil")
+	}
 	file, err := os.Open(osmFile)
 	if err != nil {
 		return err
@@ -493,7 +509,7 @@ func Shrink(osmFile string, tagMapFilter TagMapFilter, outputFile string) error 
 	scanner.FilterWay = func(w *osm.Way) bool {
 		id := int(w.ID)
 		tagMap := w.Tags.Map()
-		return tagMapFilter == nil || tagMapFilter(id, tagMap)
+		return tagMapFilter(id, tagMap)
 	}
 	defer scanner.Close()
 
