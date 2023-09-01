@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/sha1"
 	"encoding/hex"
-	"encoding/xml"
 	"fmt"
 	"io"
 	"os"
@@ -14,8 +13,8 @@ import (
 
 	"github.com/nextmv-io/go-routingkit/routingkit/internal/routingkit"
 	keep "github.com/nextmv-io/go-routingkit/routingkit/internal/routingkit/include/routingkit"
-	"github.com/paulmach/osm"
-	"github.com/paulmach/osm/osmpbf"
+	"github.com/nextmv-io/osm"
+	"github.com/nextmv-io/osm/osmpbf"
 )
 
 // Keep C++ dependencies by referencing a file from their directory
@@ -540,18 +539,39 @@ func Shrink(osmFile string, tagMapFilter TagMapFilter, outputFile string) error 
 		return err
 	}
 
-	osm := osm.OSM{
-		Version: "0.6",
-		Ways:    ways,
-		Nodes:   nodes,
-	}
-
-	bytes, err := xml.Marshal(osm)
+	file, err = os.Create(outputFile)
 	if err != nil {
 		return err
 	}
+	writer, err := osmpbf.NewWriter(file)
+	if err != nil {
+		return err
+	}
+	defer writer.Close()
 
-	err = os.WriteFile(outputFile, bytes, 0644)
+	for _, node := range nodes {
+		if err = writer.WriteObject(node); err != nil {
+			return err
+		}
+	}
+
+	for _, way := range ways {
+		if err = writer.WriteObject(way); err != nil {
+			return err
+		}
+	}
+
+	// osm := osm.OSM{
+	// 	Version: "0.6",
+	// 	Ways:    ways,
+	// 	Nodes:   nodes,
+	// }
+
+	// bytes, err := xml.Marshal(osm)
+	// if err != nil {
+	// 	return err
+	// }
+
 	return err
 }
 
