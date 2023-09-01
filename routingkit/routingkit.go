@@ -517,6 +517,7 @@ func Shrink(osmFile string, tagMapFilter TagMapFilter, outputFile string) error 
 	if err != nil {
 		return err
 	}
+	defer file.Close()
 	writer, err := osmpbf.NewWriter(file)
 	if err != nil {
 		return err
