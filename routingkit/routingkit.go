@@ -488,21 +488,21 @@ func (c *TravelTimeClient) SetSnapRadius(n float32) {
 	c.client.SetSnapRadius(n)
 }
 
-// Shrink creates a new .osm file in xml format containing only the ways that
+// Shrink creates a new .osm file in pbf format containing only the ways that
 // match the given tagMapFilter. The new file will be written to the given
 // outputFile.
-func Shrink(osmFile string, tagMapFilter TagMapFilter, outputFile string) error {
+func Shrink(pbfFilename string, tagMapFilter TagMapFilter, pbfOutput io.Writer) error {
 	if tagMapFilter == nil {
 		return fmt.Errorf("tagMapFilter must not be nil")
 	}
-	file, err := os.Open(osmFile)
+	pbfFile, err := os.Open(pbfFilename)
 	if err != nil {
 		return err
 	}
-	defer file.Close()
+	defer pbfFile.Close()
 
 	// The third parameter is the number of parallel decoders to use.
-	scanner := osmpbf.New(context.Background(), file, runtime.GOMAXPROCS(0))
+	scanner := osmpbf.New(context.Background(), pbfFile, runtime.GOMAXPROCS(0))
 	scanner.SkipNodes = true
 	scanner.SkipRelations = true
 	scanner.FilterWay = func(w *osm.Way) bool {
@@ -513,18 +513,11 @@ func Shrink(osmFile string, tagMapFilter TagMapFilter, outputFile string) error 
 	defer scanner.Close()
 
 	nodeIds := map[osm.NodeID]struct{}{}
-	pbfFile, err := os.Create(outputFile)
+	writer, err := osmpbf.NewWriter(pbfOutput)
 	if err != nil {
 		return err
 	}
-	writer, err := osmpbf.NewWriter(pbfFile)
-	if err != nil {
-		return err
-	}
-	defer func() {
-		writer.Close()
-		pbfFile.Close()
-	}()
+	defer writer.Close()
 
 	for scanner.Scan() {
 		switch o := scanner.Object().(type) {
@@ -547,7 +540,7 @@ func Shrink(osmFile string, tagMapFilter TagMapFilter, outputFile string) error 
 		return err
 	}
 
-	err = getNodes(osmFile, nodeIds, writer)
+	err = getNodes(pbfFilename, nodeIds, writer)
 	if err != nil {
 		return err
 	}
@@ -574,7 +567,6 @@ func getNodes(osmFile string, nodeIds map[osm.NodeID]struct{}, writer osmpbf.Wri
 	for scanner.Scan() {
 		switch o := scanner.Object().(type) {
 		case *osm.Node:
-			// remove unnecessary data
 			o.Committed = nil
 			o.User = ""
 			if err = writer.WriteObject(o); err != nil {

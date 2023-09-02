@@ -5,7 +5,6 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"math"
 	"math/rand"
 	"os"
@@ -21,6 +20,10 @@ import (
 // This is a small map file containing data for the bounding box from
 // -76.60735000000001,39.28971 to -76.57749,39.31587
 var marylandMap string = "testdata/maryland.osm.pbf"
+
+// This is the same file as marylandMap but with a few nodes and ways removed.
+// Only the nodes and ways that are allowed by the car profile are kept.
+var shrunkMarylandMap string = "testdata/maryland_shrunk.osm.pbf"
 
 // This is another small map of Maryland that contains data for the
 // bounding box from -76.663640,39.240043 to -76.605023,39.269623.
@@ -54,12 +57,12 @@ func cleanCH() error {
 	return nil
 }
 
-// tempFile returns the location of a temporary file. It uses ioutil.TempFile
+// tempFile returns the location of a temporary file. It uses os.CreateTemp
 // under the hood, but if the file exists (but does not contain a valid
 // contraction hierarchy), we'll get an error from routingkit, so we need to
 // delete it and allow routingkit to recreate it
 func tempFile(dir, pattern string) (string, error) {
-	ch, err := ioutil.TempFile("", "routingkit_test.ch")
+	ch, err := os.CreateTemp("", "routingkit_test.ch")
 	if err != nil {
 		return "", fmt.Errorf("creating tmp ch: %v", err)
 	}
@@ -145,6 +148,95 @@ func TestCreateCH(t *testing.T) {
 	}
 	if os.Stat(chFile); err != nil {
 		t.Errorf("expected ch file to be created, but got error stating file: %v", err)
+	}
+}
+
+func TestShrunkMatrix(t *testing.T) {
+	tests := []struct {
+		sources      [][]float32
+		destinations [][]float32
+		profile      routingkit.Profile
+		ch           string
+
+		expected [][]uint32
+	}{
+		{
+			sources: [][]float32{
+				{-76.587490, 39.299710},
+				{-76.594045, 39.300524},
+				{-76.586664, 39.290938},
+				{-76.598423, 39.289484},
+			},
+			destinations: [][]float32{
+				{-76.582855, 39.309095},
+				{-76.599388, 39.302014},
+			},
+			expected: [][]uint32{
+				{1496, 1259},
+				{1831, 575},
+				{2372, 2224},
+				{3399, 1548},
+			},
+			profile: routingkit.Car(),
+		},
+		{
+			sources: [][]float32{
+				{-76.587490, 39.299710},
+				{-76.594045, 39.300524},
+				{-76.586664, 39.290938},
+				{-76.598423, 39.289484},
+			},
+			destinations: [][]float32{
+				{-76.582855, 39.309095},
+				{-76.599388, 39.302014},
+			},
+			expected: [][]uint32{
+				{1440, 1259},
+				{1796, 575},
+				{2372, 2216},
+				{3364, 1548},
+			},
+			profile: routingkit.Bike(),
+		},
+		{
+			sources: [][]float32{
+				{-76.587490, 39.299710},
+				{-76.594045, 39.300524},
+				{-76.586664, 39.290938},
+				{-76.598423, 39.289484},
+			},
+			destinations: [][]float32{
+				{-76.582855, 39.309095},
+				{-76.599388, 39.302014},
+			},
+			expected: [][]uint32{
+				{1429, 1242},
+				{1589, 558},
+				{2367, 2189},
+				{3151, 1533},
+			},
+			profile: routingkit.Pedestrian(),
+		},
+	}
+
+	for i, test := range tests {
+		file, err := os.Create(shrunkMarylandMap)
+		if err != nil {
+			t.Fatalf("creating file: %v", err)
+		}
+		err = routingkit.Shrink(marylandMap, test.profile.Filter, file)
+		if err != nil {
+			t.Fatalf("shrinking: %v", err)
+		}
+		shrunkClient, err := routingkit.NewDistanceClient(shrunkMarylandMap, test.profile)
+		if err != nil {
+			t.Fatalf("creating shrunk Client: %v", err)
+		}
+
+		gotShrunk := shrunkClient.Matrix(test.sources, test.destinations)
+		if !reflect.DeepEqual(test.expected, gotShrunk) {
+			t.Errorf("[%d] expected %v, got %v", i, test.expected, gotShrunk)
+		}
 	}
 }
 
