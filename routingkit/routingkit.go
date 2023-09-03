@@ -11,6 +11,7 @@ import (
 	"sort"
 	"strconv"
 
+	"github.com/golang/geo/s2"
 	"github.com/nextmv-io/go-routingkit/routingkit/internal/routingkit"
 	keep "github.com/nextmv-io/go-routingkit/routingkit/internal/routingkit/include/routingkit"
 	"github.com/nextmv-io/osm"
@@ -546,6 +547,153 @@ func Shrink(pbfFilename string, tagMapFilter TagMapFilter, pbfOutput io.Writer) 
 	}
 
 	return err
+}
+
+func ShrinkToCovering(
+	pbfFilename string,
+	tagMapFilter TagMapFilter,
+	points [][]float32,
+	pbfOutput io.Writer,
+) error {
+	if tagMapFilter == nil {
+		return fmt.Errorf("tagMapFilter must not be nil")
+	}
+	if len(points) == 0 {
+		return fmt.Errorf("points must not be empty")
+	}
+	pbfFile, err := os.Open(pbfFilename)
+	if err != nil {
+		return err
+	}
+	defer pbfFile.Close()
+
+	// query := s2.NewConvexHullQuery()
+	// for _, point := range points {
+	// 	ll := s2.LatLngFromDegrees(float64(point[1]), float64(point[0]))
+	// 	p := s2.PointFromLatLng(ll)
+	// 	query.AddPoint(p)
+	// }
+	// cap := query.CapBound()
+
+	// see https://s2geometry.io/resources/s2cell_statistics
+	coverer := s2.NewRegionCoverer()
+	coverer.MinLevel = 5
+	coverer.MaxLevel = 13
+
+	cells := []s2.CellID{}
+	for _, point := range points {
+		ll := s2.LatLngFromDegrees(float64(point[1]), float64(point[0]))
+		cell := s2.CellFromLatLng(ll)
+		cells = append(cells, cell.ID())
+	}
+
+	union := s2.CellUnion(cells)
+
+	covering := coverer.Covering(s2.Region(&union))
+	cap := covering.CapBound()
+
+	// The third parameter is the number of parallel decoders to use.
+	scanner := osmpbf.New(context.Background(), pbfFile, runtime.GOMAXPROCS(0))
+	scanner.SkipWays = true
+	scanner.SkipRelations = true
+	scanner.FilterNode = func(n *osm.Node) bool {
+		lat := float64(n.Lat)
+		lng := float64(n.Lon)
+		ll := s2.LatLngFromDegrees(lat, lng)
+		p := s2.PointFromLatLng(ll)
+		return cap.ContainsPoint(p)
+	}
+	defer scanner.Close()
+
+	nodeIds := map[osm.NodeID]*osm.Node{}
+	for scanner.Scan() {
+		switch o := scanner.Object().(type) {
+		case *osm.Node:
+			o.Committed = nil
+			o.User = ""
+			nodeIds[o.ID] = o
+		}
+	}
+
+	if err = scanner.Err(); err != nil {
+		return err
+	}
+
+	err = getWays(pbfFilename, tagMapFilter, nodeIds, pbfOutput)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func getWays(
+	pbfFilename string,
+	tagMapFilter TagMapFilter,
+	nodeIds map[osm.NodeID]*osm.Node,
+	pbfOutput io.Writer,
+) error {
+	pbfFile, err := os.Open(pbfFilename)
+	if err != nil {
+		return err
+	}
+	defer pbfFile.Close()
+
+	acceptedNodes := []*osm.Node{}
+	// The third parameter is the number of parallel decoders to use.
+	scanner := osmpbf.New(context.Background(), pbfFile, runtime.GOMAXPROCS(0))
+	scanner.SkipNodes = true
+	scanner.SkipRelations = true
+	scanner.FilterWay = func(w *osm.Way) bool {
+		id := int(w.ID)
+		tagMap := w.Tags.Map()
+		tagMapFilterResult := tagMapFilter(id, tagMap)
+		if !tagMapFilterResult {
+			return false
+		}
+		for _, node := range w.Nodes {
+			if _, ok := nodeIds[node.ID]; !ok {
+				return false
+			}
+		}
+		for _, node := range w.Nodes {
+			acceptedNodes = append(acceptedNodes, nodeIds[node.ID])
+		}
+		return true
+	}
+	defer scanner.Close()
+
+	writer, err := osmpbf.NewWriter(pbfOutput)
+	if err != nil {
+		return err
+	}
+	defer writer.Close()
+
+	for scanner.Scan() {
+		switch o := scanner.Object().(type) {
+		case *osm.Way:
+			// remove unnecessary data
+			o.Updates = nil
+			o.Committed = nil
+			o.User = ""
+
+			if err = writer.WriteObject(o); err != nil {
+				return err
+			}
+		}
+	}
+
+	if err = scanner.Err(); err != nil {
+		return err
+	}
+
+	for _, node := range acceptedNodes {
+		if err = writer.WriteObject(node); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func getNodes(osmFile string, nodeIds map[osm.NodeID]struct{}, writer osmpbf.Writer) error {
