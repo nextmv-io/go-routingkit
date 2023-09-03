@@ -16,6 +16,8 @@ import (
 	keep "github.com/nextmv-io/go-routingkit/routingkit/internal/routingkit/include/routingkit"
 	"github.com/nextmv-io/osm"
 	"github.com/nextmv-io/osm/osmpbf"
+	"github.com/twpayne/go-geom"
+	"github.com/twpayne/go-geom/encoding/geojson"
 )
 
 // Keep C++ dependencies by referencing a file from their directory
@@ -567,29 +569,20 @@ func ShrinkToCovering(
 	}
 	defer pbfFile.Close()
 
-	// query := s2.NewConvexHullQuery()
-	// for _, point := range points {
-	// 	ll := s2.LatLngFromDegrees(float64(point[1]), float64(point[0]))
-	// 	p := s2.PointFromLatLng(ll)
-	// 	query.AddPoint(p)
-	// }
-	// cap := query.CapBound()
+	query := s2.NewConvexHullQuery()
+	for _, point := range points {
+		ll := s2.LatLngFromDegrees(float64(point[1]), float64(point[0]))
+		p := s2.PointFromLatLng(ll)
+		query.AddPoint(p)
+	}
 
 	// see https://s2geometry.io/resources/s2cell_statistics
 	coverer := s2.NewRegionCoverer()
 	coverer.MinLevel = 5
 	coverer.MaxLevel = 13
+	coverer.MaxCells = 20
 
-	cells := []s2.CellID{}
-	for _, point := range points {
-		ll := s2.LatLngFromDegrees(float64(point[1]), float64(point[0]))
-		cell := s2.CellFromLatLng(ll)
-		cells = append(cells, cell.ID())
-	}
-
-	union := s2.CellUnion(cells)
-
-	covering := coverer.Covering(s2.Region(&union))
+	covering := coverer.Covering(s2.Region(query.ConvexHull()))
 	cap := covering.CapBound()
 
 	// The third parameter is the number of parallel decoders to use.
@@ -727,4 +720,32 @@ func getNodes(osmFile string, nodeIds map[osm.NodeID]struct{}, writer osmpbf.Wri
 		return err
 	}
 	return nil
+}
+
+func CellUnionToGeoJSON(cu s2.CellUnion) []byte {
+	fc := geojson.FeatureCollection{}
+	for _, cid := range cu {
+		f := &geojson.Feature{}
+		f.Properties = make(map[string]interface{})
+		f.Properties["id"] = cid.ToToken()
+		f.Properties["uid"] = strconv.FormatUint(uint64(cid), 10)
+		f.Properties["str"] = cid.String()
+		f.Properties["level"] = cid.Level()
+
+		c := s2.CellFromCellID(cid)
+		coords := make([]float64, 5*2)
+		for i := 0; i < 4; i++ {
+			p := c.Vertex(i)
+			ll := s2.LatLngFromPoint(p)
+			coords[i*2] = ll.Lng.Degrees()
+			coords[i*2+1] = ll.Lat.Degrees()
+		}
+		// last is first
+		coords[8], coords[9] = coords[0], coords[1]
+		ng := geom.NewPolygonFlat(geom.XY, coords, []int{10})
+		f.Geometry = ng
+		fc.Features = append(fc.Features, f)
+	}
+	b, _ := fc.MarshalJSON()
+	return b
 }
