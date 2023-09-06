@@ -224,7 +224,12 @@ func TestShrunkMatrix(t *testing.T) {
 		if err != nil {
 			t.Fatalf("creating file: %v", err)
 		}
-		err = routingkit.Shrink(marylandMap, test.profile.Filter, file)
+		allPoints := append(test.sources, test.destinations...)
+		originalPbf, err := os.Open(marylandMap)
+		if err != nil {
+			t.Fatalf("opening file: %v", err)
+		}
+		_, err = routingkit.ShrinkToHullRect(originalPbf, test.profile.Filter, allPoints, 100, file)
 		if err != nil {
 			t.Fatalf("shrinking: %v", err)
 		}

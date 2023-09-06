@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"io"
+	"math"
 	"os"
 	"runtime"
 	"sort"
@@ -16,8 +17,6 @@ import (
 	keep "github.com/nextmv-io/go-routingkit/routingkit/internal/routingkit/include/routingkit"
 	"github.com/nextmv-io/osm"
 	"github.com/nextmv-io/osm/osmpbf"
-	"github.com/twpayne/go-geom"
-	"github.com/twpayne/go-geom/encoding/geojson"
 )
 
 // Keep C++ dependencies by referencing a file from their directory
@@ -491,83 +490,24 @@ func (c *TravelTimeClient) SetSnapRadius(n float32) {
 	c.client.SetSnapRadius(n)
 }
 
-// Shrink creates a new .osm file in pbf format containing only the ways that
-// match the given tagMapFilter. The new file will be written to the given
-// outputFile.
-func Shrink(pbfFilename string, tagMapFilter TagMapFilter, pbfOutput io.Writer) error {
-	if tagMapFilter == nil {
-		return fmt.Errorf("tagMapFilter must not be nil")
-	}
-	pbfFile, err := os.Open(pbfFilename)
-	if err != nil {
-		return err
-	}
-	defer pbfFile.Close()
-
-	// The third parameter is the number of parallel decoders to use.
-	scanner := osmpbf.New(context.Background(), pbfFile, runtime.GOMAXPROCS(0))
-	scanner.SkipNodes = true
-	scanner.SkipRelations = true
-	scanner.FilterWay = func(w *osm.Way) bool {
-		id := int(w.ID)
-		tagMap := w.Tags.Map()
-		return tagMapFilter(id, tagMap)
-	}
-	defer scanner.Close()
-
-	nodeIds := map[osm.NodeID]struct{}{}
-	writer, err := osmpbf.NewWriter(pbfOutput)
-	if err != nil {
-		return err
-	}
-	defer writer.Close()
-
-	for scanner.Scan() {
-		switch o := scanner.Object().(type) {
-		case *osm.Way:
-			// remove unnecessary data
-			o.Updates = nil
-			o.Committed = nil
-			o.User = ""
-
-			if err = writer.WriteObject(o); err != nil {
-				return err
-			}
-			for _, node := range o.Nodes {
-				nodeIds[node.ID] = struct{}{}
-			}
-		}
-	}
-
-	if err = scanner.Err(); err != nil {
-		return err
-	}
-
-	err = getNodes(pbfFilename, nodeIds, writer)
-	if err != nil {
-		return err
-	}
-
-	return err
-}
-
-func ShrinkToCovering(
-	pbfFilename string,
+// ShrinkToHullRect writes a new .osm.pbf file to the given pbfOutput writer
+// containing only the ways and nodes that are within the bounding box of the
+// convex hull of the given points expanded by the given margin in meters. It
+// will also remove any ways that do not pass the given tagMapFilter. The
+// returned [][]float64 is the expanded bounding box.
+func ShrinkToHullRect(
+	pbfFile io.ReadSeeker,
 	tagMapFilter TagMapFilter,
 	points [][]float32,
+	margin float64,
 	pbfOutput io.Writer,
-) error {
+) ([][]float64, error) {
 	if tagMapFilter == nil {
-		return fmt.Errorf("tagMapFilter must not be nil")
+		return nil, fmt.Errorf("tagMapFilter must not be nil")
 	}
 	if len(points) == 0 {
-		return fmt.Errorf("points must not be empty")
+		return nil, fmt.Errorf("points must not be empty")
 	}
-	pbfFile, err := os.Open(pbfFilename)
-	if err != nil {
-		return err
-	}
-	defer pbfFile.Close()
 
 	query := s2.NewConvexHullQuery()
 	for _, point := range points {
@@ -576,14 +516,16 @@ func ShrinkToCovering(
 		query.AddPoint(p)
 	}
 
-	// see https://s2geometry.io/resources/s2cell_statistics
-	coverer := s2.NewRegionCoverer()
-	coverer.MinLevel = 5
-	coverer.MaxLevel = 13
-	coverer.MaxCells = 20
+	hull := query.ConvexHull()
+	rect := hull.RectBound()
+	// convert margin in meters to lat degrees
+	latDegrees := margin / 111111
 
-	covering := coverer.Covering(s2.Region(query.ConvexHull()))
-	cap := covering.CapBound()
+	// convert margin in meters to lng degrees
+	lngDegrees := margin / (111111 * math.Cos(rect.Center().Lat.Radians()))
+
+	rect.Lat = rect.Lat.Expanded(latDegrees)
+	rect.Lng = rect.Lng.Expanded(lngDegrees)
 
 	// The third parameter is the number of parallel decoders to use.
 	scanner := osmpbf.New(context.Background(), pbfFile, runtime.GOMAXPROCS(0))
@@ -594,7 +536,7 @@ func ShrinkToCovering(
 		lng := float64(n.Lon)
 		ll := s2.LatLngFromDegrees(lat, lng)
 		p := s2.PointFromLatLng(ll)
-		return cap.ContainsPoint(p)
+		return rect.ContainsPoint(p)
 	}
 	defer scanner.Close()
 
@@ -608,30 +550,37 @@ func ShrinkToCovering(
 		}
 	}
 
-	if err = scanner.Err(); err != nil {
-		return err
+	if err := scanner.Err(); err != nil {
+		return nil, err
 	}
 
-	err = getWays(pbfFilename, tagMapFilter, nodeIds, pbfOutput)
+	err := getWays(pbfFile, tagMapFilter, nodeIds, pbfOutput)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return [][]float64{
+		{
+			rect.Lo().Lng.Degrees(),
+			rect.Lo().Lat.Degrees(),
+		},
+		{
+			rect.Hi().Lng.Degrees(),
+			rect.Hi().Lat.Degrees(),
+		},
+	}, nil
 }
 
 func getWays(
-	pbfFilename string,
+	pbfFile io.ReadSeeker,
 	tagMapFilter TagMapFilter,
 	nodeIds map[osm.NodeID]*osm.Node,
 	pbfOutput io.Writer,
 ) error {
-	pbfFile, err := os.Open(pbfFilename)
+	_, err := pbfFile.Seek(0, io.SeekStart)
 	if err != nil {
 		return err
 	}
-	defer pbfFile.Close()
-
 	acceptedNodes := []*osm.Node{}
 	// The third parameter is the number of parallel decoders to use.
 	scanner := osmpbf.New(context.Background(), pbfFile, runtime.GOMAXPROCS(0))
@@ -656,7 +605,7 @@ func getWays(
 	}
 	defer scanner.Close()
 
-	writer, err := osmpbf.NewWriter(pbfOutput)
+	writer, err := osmpbf.NewEncoder(pbfOutput)
 	if err != nil {
 		return err
 	}
@@ -670,7 +619,7 @@ func getWays(
 			o.Committed = nil
 			o.User = ""
 
-			if err = writer.WriteObject(o); err != nil {
+			if err = writer.Encode(o); err != nil {
 				return err
 			}
 		}
@@ -681,7 +630,7 @@ func getWays(
 	}
 
 	for _, node := range acceptedNodes {
-		if err = writer.WriteObject(node); err != nil {
+		if err = writer.Encode(node); err != nil {
 			return err
 		}
 	}
@@ -689,7 +638,7 @@ func getWays(
 	return nil
 }
 
-func getNodes(osmFile string, nodeIds map[osm.NodeID]struct{}, writer osmpbf.Writer) error {
+func getNodes(osmFile string, nodeIds map[osm.NodeID]struct{}, writer osmpbf.Encoder) error {
 	file, err := os.Open(osmFile)
 	if err != nil {
 		return err
@@ -710,7 +659,7 @@ func getNodes(osmFile string, nodeIds map[osm.NodeID]struct{}, writer osmpbf.Wri
 		case *osm.Node:
 			o.Committed = nil
 			o.User = ""
-			if err = writer.WriteObject(o); err != nil {
+			if err = writer.Encode(o); err != nil {
 				return err
 			}
 		}
@@ -720,32 +669,4 @@ func getNodes(osmFile string, nodeIds map[osm.NodeID]struct{}, writer osmpbf.Wri
 		return err
 	}
 	return nil
-}
-
-func CellUnionToGeoJSON(cu s2.CellUnion) []byte {
-	fc := geojson.FeatureCollection{}
-	for _, cid := range cu {
-		f := &geojson.Feature{}
-		f.Properties = make(map[string]interface{})
-		f.Properties["id"] = cid.ToToken()
-		f.Properties["uid"] = strconv.FormatUint(uint64(cid), 10)
-		f.Properties["str"] = cid.String()
-		f.Properties["level"] = cid.Level()
-
-		c := s2.CellFromCellID(cid)
-		coords := make([]float64, 5*2)
-		for i := 0; i < 4; i++ {
-			p := c.Vertex(i)
-			ll := s2.LatLngFromPoint(p)
-			coords[i*2] = ll.Lng.Degrees()
-			coords[i*2+1] = ll.Lat.Degrees()
-		}
-		// last is first
-		coords[8], coords[9] = coords[0], coords[1]
-		ng := geom.NewPolygonFlat(geom.XY, coords, []int{10})
-		f.Geometry = ng
-		fc.Features = append(fc.Features, f)
-	}
-	b, _ := fc.MarshalJSON()
-	return b
 }
