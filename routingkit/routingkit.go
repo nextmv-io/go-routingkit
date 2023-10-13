@@ -494,7 +494,8 @@ func (c *TravelTimeClient) SetSnapRadius(n float32) {
 // containing only the ways and nodes that are within the bounding box of the
 // convex hull of the given points expanded by the given margin in meters. It
 // will also remove any ways that do not pass the given tagMapFilter. The
-// returned [][]float64 is the expanded bounding box.
+// returned [][]float64 holds the lower left and upper right lon/lat coordinates
+// describing the expanded bounding box.
 func ShrinkToHullRect(
 	pbfFile io.ReadSeeker,
 	tagMapFilter TagMapFilter,
