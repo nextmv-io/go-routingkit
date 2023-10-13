@@ -6,15 +6,17 @@ import (
 	"encoding/hex"
 	"fmt"
 	"io"
+	"math"
 	"os"
 	"runtime"
 	"sort"
 	"strconv"
 
+	"github.com/golang/geo/s2"
 	"github.com/nextmv-io/go-routingkit/routingkit/internal/routingkit"
 	keep "github.com/nextmv-io/go-routingkit/routingkit/internal/routingkit/include/routingkit"
-	"github.com/paulmach/osm"
-	"github.com/paulmach/osm/osmpbf"
+	"github.com/nextmv-io/osm"
+	"github.com/nextmv-io/osm/osmpbf"
 )
 
 // Keep C++ dependencies by referencing a file from their directory
@@ -23,7 +25,13 @@ var Keep bool = keep.Keep
 // MaxDistance represents the maximum possible route distance.
 var MaxDistance uint32
 
-func parsePBF(osmFile string, tagMapFilter TagMapFilter, speedMapper SpeedMapper) (map[int]bool, map[int]int) {
+func parsePBF(osmFile string, tagMapFilter TagMapFilter, speedMapper SpeedMapper) (map[int]bool, map[int]int, error) {
+	if tagMapFilter == nil {
+		return nil, nil, fmt.Errorf("tagMapFilter must not be nil")
+	}
+	if speedMapper == nil {
+		return nil, nil, fmt.Errorf("speedMapper must not be nil")
+	}
 	file, err := os.Open(osmFile)
 	if err != nil {
 		panic(err)
@@ -34,6 +42,19 @@ func parsePBF(osmFile string, tagMapFilter TagMapFilter, speedMapper SpeedMapper
 	scanner := osmpbf.New(context.Background(), file, runtime.GOMAXPROCS(0))
 	scanner.SkipNodes = true
 	scanner.SkipRelations = true
+	scanner.FilterWay = func(w *osm.Way) bool {
+		id := int(w.ID)
+		tagMap := w.Tags.Map()
+		if tagMapFilter(id, tagMap) {
+			// if the speed is returned as 0, that means the way is not
+			// usable
+			if speedMapper(id, tagMap) == 0 {
+				return false
+			}
+			return true
+		}
+		return false
+	}
 	defer scanner.Close()
 
 	allowed := map[int]bool{}
@@ -44,20 +65,8 @@ func parsePBF(osmFile string, tagMapFilter TagMapFilter, speedMapper SpeedMapper
 		case *osm.Way:
 			id := int(o.ID)
 			tagMap := o.Tags.Map()
-			if tagMapFilter != nil && tagMapFilter(id, tagMap) {
-				allowed[id] = true
-				// we only need to write the speed into ways that are actually
-				// allowed
-				if speedMapper != nil {
-					waySpeeds[id] = speedMapper(id, tagMap)
-					// if the speed is returned as 0, that means the way is not
-					// usable
-					if waySpeeds[id] == 0 {
-						waySpeeds[id] = 1 // prevents routingkit crash
-						allowed[id] = false
-					}
-				}
-			}
+			allowed[id] = true
+			waySpeeds[id] = speedMapper(id, tagMap)
 		}
 	}
 
@@ -65,7 +74,7 @@ func parsePBF(osmFile string, tagMapFilter TagMapFilter, speedMapper SpeedMapper
 		panic(err)
 	}
 
-	return allowed, waySpeeds
+	return allowed, waySpeeds, nil
 }
 
 func Car() Profile {
@@ -175,7 +184,10 @@ func NewDistanceClient(mapFile string, profile Profile) (DistanceClient, error) 
 		return DistanceClient{}, fmt.Errorf("could not find map file at %v", mapFile)
 	}
 
-	allowedWayIDs, waySpeeds := parsePBF(mapFile, profile.Filter, profile.SpeedMapper)
+	allowedWayIDs, waySpeeds, err := parsePBF(mapFile, profile.Filter, profile.SpeedMapper)
+	if err != nil {
+		return DistanceClient{}, err
+	}
 
 	chFile, err := chFileName(mapFile, profile, allowedWayIDs, waySpeeds, false)
 	if err != nil {
@@ -412,7 +424,10 @@ func NewTravelTimeClient(mapFile string, profile Profile) (TravelTimeClient, err
 		return TravelTimeClient{}, fmt.Errorf("could not find map file at %v", mapFile)
 	}
 
-	allowedWayIDs, waySpeeds := parsePBF(mapFile, profile.Filter, profile.SpeedMapper)
+	allowedWayIDs, waySpeeds, err := parsePBF(mapFile, profile.Filter, profile.SpeedMapper)
+	if err != nil {
+		return TravelTimeClient{}, err
+	}
 	chFile, err := chFileName(mapFile, profile, allowedWayIDs, waySpeeds, true)
 	if err != nil {
 		return TravelTimeClient{}, err
@@ -473,4 +488,186 @@ func (c TravelTimeClient) TravelTimes(source []float32, targets [][]float32) []u
 // street network point within the given radius in meters.
 func (c *TravelTimeClient) SetSnapRadius(n float32) {
 	c.client.SetSnapRadius(n)
+}
+
+// ShrinkToHullRect writes a new .osm.pbf file to the given pbfOutput writer
+// containing only the ways and nodes that are within the bounding box of the
+// convex hull of the given points expanded by the given margin in meters. It
+// will also remove any ways that do not pass the given tagMapFilter. The
+// returned [][]float64 holds the lower left and upper right lon/lat coordinates
+// describing the expanded bounding box.
+func ShrinkToHullRect(
+	pbfFile io.ReadSeeker,
+	tagMapFilter TagMapFilter,
+	points [][]float32,
+	margin float64,
+	pbfOutput io.Writer,
+) ([][]float64, error) {
+	if tagMapFilter == nil {
+		return nil, fmt.Errorf("tagMapFilter must not be nil")
+	}
+	if len(points) == 0 {
+		return nil, fmt.Errorf("points must not be empty")
+	}
+
+	query := s2.NewConvexHullQuery()
+	for _, point := range points {
+		ll := s2.LatLngFromDegrees(float64(point[1]), float64(point[0]))
+		p := s2.PointFromLatLng(ll)
+		query.AddPoint(p)
+	}
+
+	hull := query.ConvexHull()
+	rect := hull.RectBound()
+	// convert margin in meters to lat degrees
+	latDegrees := margin / 111111
+
+	// convert margin in meters to lng degrees
+	lngDegrees := margin / (111111 * math.Cos(rect.Center().Lat.Radians()))
+
+	rect.Lat = rect.Lat.Expanded(latDegrees)
+	rect.Lng = rect.Lng.Expanded(lngDegrees)
+
+	// The third parameter is the number of parallel decoders to use.
+	scanner := osmpbf.New(context.Background(), pbfFile, runtime.GOMAXPROCS(0))
+	scanner.SkipWays = true
+	scanner.SkipRelations = true
+	scanner.FilterNode = func(n *osm.Node) bool {
+		lat := float64(n.Lat)
+		lng := float64(n.Lon)
+		ll := s2.LatLngFromDegrees(lat, lng)
+		p := s2.PointFromLatLng(ll)
+		return rect.ContainsPoint(p)
+	}
+	defer scanner.Close()
+
+	nodeIds := map[osm.NodeID]*osm.Node{}
+	for scanner.Scan() {
+		switch o := scanner.Object().(type) {
+		case *osm.Node:
+			o.Committed = nil
+			o.User = ""
+			nodeIds[o.ID] = o
+		}
+	}
+
+	if err := scanner.Err(); err != nil {
+		return nil, err
+	}
+
+	err := getWays(pbfFile, tagMapFilter, nodeIds, pbfOutput)
+	if err != nil {
+		return nil, err
+	}
+
+	return [][]float64{
+		{
+			rect.Lo().Lng.Degrees(),
+			rect.Lo().Lat.Degrees(),
+		},
+		{
+			rect.Hi().Lng.Degrees(),
+			rect.Hi().Lat.Degrees(),
+		},
+	}, nil
+}
+
+func getWays(
+	pbfFile io.ReadSeeker,
+	tagMapFilter TagMapFilter,
+	nodeIds map[osm.NodeID]*osm.Node,
+	pbfOutput io.Writer,
+) error {
+	_, err := pbfFile.Seek(0, io.SeekStart)
+	if err != nil {
+		return err
+	}
+	acceptedNodes := []*osm.Node{}
+	// The third parameter is the number of parallel decoders to use.
+	scanner := osmpbf.New(context.Background(), pbfFile, runtime.GOMAXPROCS(0))
+	scanner.SkipNodes = true
+	scanner.SkipRelations = true
+	scanner.FilterWay = func(w *osm.Way) bool {
+		id := int(w.ID)
+		tagMap := w.Tags.Map()
+		tagMapFilterResult := tagMapFilter(id, tagMap)
+		if !tagMapFilterResult {
+			return false
+		}
+		for _, node := range w.Nodes {
+			if _, ok := nodeIds[node.ID]; !ok {
+				return false
+			}
+		}
+		for _, node := range w.Nodes {
+			acceptedNodes = append(acceptedNodes, nodeIds[node.ID])
+		}
+		return true
+	}
+	defer scanner.Close()
+
+	writer, err := osmpbf.NewEncoder(pbfOutput)
+	if err != nil {
+		return err
+	}
+	defer writer.Close()
+
+	for scanner.Scan() {
+		switch o := scanner.Object().(type) {
+		case *osm.Way:
+			// remove unnecessary data
+			o.Updates = nil
+			o.Committed = nil
+			o.User = ""
+
+			if err = writer.Encode(o); err != nil {
+				return err
+			}
+		}
+	}
+
+	if err = scanner.Err(); err != nil {
+		return err
+	}
+
+	for _, node := range acceptedNodes {
+		if err = writer.Encode(node); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func getNodes(osmFile string, nodeIds map[osm.NodeID]struct{}, writer osmpbf.Encoder) error {
+	file, err := os.Open(osmFile)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+	// The third parameter is the number of parallel decoders to use.
+	scanner := osmpbf.New(context.Background(), file, runtime.GOMAXPROCS(0))
+	scanner.SkipWays = true
+	scanner.SkipRelations = true
+	scanner.FilterNode = func(n *osm.Node) bool {
+		_, ok := nodeIds[n.ID]
+		return ok
+	}
+	defer scanner.Close()
+
+	for scanner.Scan() {
+		switch o := scanner.Object().(type) {
+		case *osm.Node:
+			o.Committed = nil
+			o.User = ""
+			if err = writer.Encode(o); err != nil {
+				return err
+			}
+		}
+	}
+
+	if err = scanner.Err(); err != nil {
+		return err
+	}
+	return nil
 }
