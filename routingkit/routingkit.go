@@ -584,7 +584,7 @@ func getWays(
 	}
 	acceptedNodes := []*osm.Node{}
 	// The third parameter is the number of parallel decoders to use.
-	scanner := osmpbf.New(context.Background(), pbfFile, runtime.GOMAXPROCS(0))
+	scanner := osmpbf.New(context.Background(), pbfFile, runtime.GOMAXPROCS(1))
 	scanner.SkipNodes = true
 	scanner.SkipRelations = true
 	scanner.FilterWay = func(w *osm.Way) bool {
@@ -646,7 +646,7 @@ func getNodes(osmFile string, nodeIds map[osm.NodeID]struct{}, writer osmpbf.Enc
 	}
 	defer file.Close()
 	// The third parameter is the number of parallel decoders to use.
-	scanner := osmpbf.New(context.Background(), file, runtime.GOMAXPROCS(0))
+	scanner := osmpbf.New(context.Background(), file, runtime.GOMAXPROCS(1))
 	scanner.SkipWays = true
 	scanner.SkipRelations = true
 	scanner.FilterNode = func(n *osm.Node) bool {
