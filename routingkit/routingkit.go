@@ -519,19 +519,20 @@ func ShrinkToHullRect(
 	scanner := osmpbf.New(context.Background(), pbfFile, runtime.GOMAXPROCS(0))
 	scanner.SkipWays = true
 	scanner.SkipRelations = true
-	scanner.FilterNode = func(n *osm.Node) bool {
-		lat := float64(n.Lat)
-		lng := float64(n.Lon)
-		ll := s2.LatLngFromDegrees(lat, lng)
-		p := s2.PointFromLatLng(ll)
-		return rect.ContainsPoint(p)
-	}
 	defer scanner.Close()
 
 	nodeIds := map[osm.NodeID]*osm.Node{}
 	for scanner.Scan() {
 		switch o := scanner.Object().(type) {
 		case *osm.Node:
+			lat := float64(o.Lat)
+			lng := float64(o.Lon)
+			ll := s2.LatLngFromDegrees(lat, lng)
+			p := s2.PointFromLatLng(ll)
+			if !rect.ContainsPoint(p) {
+				continue
+			}
+
 			o.Committed = nil
 			o.User = ""
 			nodeIds[o.ID] = o
@@ -574,23 +575,6 @@ func getWays(
 	scanner := osmpbf.New(context.Background(), pbfFile, runtime.GOMAXPROCS(0))
 	scanner.SkipNodes = true
 	scanner.SkipRelations = true
-	scanner.FilterWay = func(w *osm.Way) bool {
-		id := int(w.ID)
-		tagMap := w.Tags.Map()
-		tagMapFilterResult := tagMapFilter(id, tagMap)
-		if !tagMapFilterResult {
-			return false
-		}
-		for _, node := range w.Nodes {
-			if _, ok := nodeIds[node.ID]; !ok {
-				return false
-			}
-		}
-		for _, node := range w.Nodes {
-			acceptedNodes = append(acceptedNodes, nodeIds[node.ID])
-		}
-		return true
-	}
 	defer scanner.Close()
 
 	writer, err := osmpbf.NewEncoder(pbfOutput)
@@ -602,6 +586,23 @@ func getWays(
 	for scanner.Scan() {
 		switch o := scanner.Object().(type) {
 		case *osm.Way:
+			id := int(o.ID)
+			tagMap := o.Tags.Map()
+			tagMapFilterResult := tagMapFilter(id, tagMap)
+			if !tagMapFilterResult {
+				continue
+			}
+			for _, node := range o.Nodes {
+				if _, ok := nodeIds[node.ID]; !ok {
+					continue
+				}
+			}
+			for _, node := range o.Nodes {
+				if node, ok := nodeIds[node.ID]; ok && node != nil {
+					acceptedNodes = append(acceptedNodes, node)
+				}
+			}
+
 			// remove unnecessary data
 			o.Updates = nil
 			o.Committed = nil
