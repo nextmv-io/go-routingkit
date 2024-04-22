@@ -44,6 +44,13 @@ Install binary to `PATH`. Requires `$(go env GOPATH)/bin` to be included in
 go install github.com/nextmv-io/go-routingkit/cmd/routingkit@latest
 ```
 
+Alternatively you can install the binary in a known location (e.g.
+`/usr/local/bin`) like so:
+
+```bash
+sudo GOBIN=/usr/local/bin/ go install github.com/nextmv-io/go-routingkit/cmd/routingkit@latest
+```
+
 ### Arguments
 
 ```go
